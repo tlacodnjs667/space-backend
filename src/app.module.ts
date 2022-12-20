@@ -13,7 +13,7 @@ dotenv.config();
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
       entities: [],
-      synchrocize: true,
+      synchrocize: false,
     }),
   ],
 })
