@@ -1,31 +1,33 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import configuration from './config/configuration'
+import { DataSource } from 'typeorm';
+import { UserModule } from './user/user.module';
+import { UserController } from './user/user.controller';
+
 import * as dotenv from 'dotenv';
+import { DatabaseModule } from './database/database.module';
 dotenv.config();
+// type: process.env.TYPEORM_CONNECTION,
 
 @Module({
   imports: [
-    ConfigModule.forRoot({   // configuration 설정을 coifg module 불러 올 때 로드한다
-      isGlobal: true,
-      load: [configuration],
+    UserModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.TYPEORM_HOST,
+      port: +process.env.TYPEORM_PORT,
+      username: process.env.TYPEORM_USERNAME,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DATABASE,
+      entities: [],
+      synchronize: true,
+      autoLoadEntities: true,
+      retryAttempts: 5,
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('database.host'),
-        port: configService.get('database.port'),
-        username: configService.get('database.user'),
-        password: configService.get('database.password'),
-        database: configService.get('database.name'),
-        entities: [],
-        synchronize: true,
-      })
-    })
-  ]
+    DatabaseModule,
+  ],
+  controllers: [UserController],
 })
-
-export class AppModule {}
+export class AppModule {
+  constructor(private datasource: DataSource) {}
+}
