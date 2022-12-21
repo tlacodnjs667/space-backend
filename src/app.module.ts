@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
 
 import * as dotenv from 'dotenv';
+import { DatabaseModule } from './database/database.module';
 dotenv.config();
 // type: process.env.TYPEORM_CONNECTION,
 
@@ -23,6 +24,7 @@ dotenv.config();
       autoLoadEntities: true,
       retryAttempts: 5,
     }),
+    DatabaseModule,
   ],
   controllers: [UserController],
 })
