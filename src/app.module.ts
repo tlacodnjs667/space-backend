@@ -23,6 +23,5 @@ dotenv.config();
     PhotoModule,
     // DatabaseModule,
   ],
-  
 })
 export class AppModule {}
