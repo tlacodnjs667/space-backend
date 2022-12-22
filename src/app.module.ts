@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
-// import { DatabaseModule } from './database/database.module';
+import { DataSource } from 'typeorm';
 import { DatabaseModule } from './database/database.module';
 import { PhotoModule } from './photo/photo.module';
 dotenv.config();
@@ -16,12 +16,15 @@ dotenv.config();
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: [],
+      entities: ['entities/*.ts'],
       synchronize: false,
+      logging: ['warn', 'error'],
     }),
     DatabaseModule,
     PhotoModule,
     // DatabaseModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private datasource: DataSource) {}
+}
