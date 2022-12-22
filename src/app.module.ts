@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import * as dotenv from 'dotenv';
+import { DatabaseModule } from './database/database.module';
 dotenv.config();
 // type: process.env.TYPEORM_CONNECTION,
 
@@ -17,6 +18,7 @@ dotenv.config();
       entities: [],
       synchronize: false,
     }),
+    DatabaseModule,
   ],
 })
 export class AppModule {}
