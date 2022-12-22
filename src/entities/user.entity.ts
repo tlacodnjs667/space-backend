@@ -4,10 +4,20 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ length: 30 })
+  @Column({ length: 100 })
   name: string;
   @Column({ length: 200 })
-  description: string;
-  @Column({ length: 30 })
-  status: string;
+  kakao_id: string;
+  @Column({ length: 100 })
+  email: string;
+  @Column('date')
+  birthday: string;
+  @Column({ length: 150 })
+  nickname: string;
+  @Column({ length: 1000 })
+  thumbnail: string;
+  @Column({ length: 10 })
+  gender: string;
+  @Column({ length: 100 })
+  phone: string;
 }

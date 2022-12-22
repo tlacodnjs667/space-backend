@@ -3,9 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 import { DatabaseModule } from './database/database.module';
-import { PhotoModule } from './photo/photo.module';
 dotenv.config();
-// type: process.env.TYPEORM_CONNECTION,
 
 @Module({
   imports: [
@@ -21,7 +19,6 @@ dotenv.config();
       logging: ['warn', 'error'],
     }),
     DatabaseModule,
-    PhotoModule,
     // DatabaseModule,
   ],
 })
