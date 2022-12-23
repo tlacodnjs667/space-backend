@@ -19,7 +19,6 @@ dotenv.config();
       logging: ['warn', 'error'],
     }),
     DatabaseModule,
-    // DatabaseModule,
   ],
 })
 export class AppModule {
