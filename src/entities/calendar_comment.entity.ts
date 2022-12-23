@@ -3,12 +3,15 @@ import { LaunchingCalendar } from './launching_calendar.entity';
 import { User } from './user.entity';
 @Entity()
 export class CalendarComment {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-    @Column({ length: 500 })
-    comment: string;
-    @ManyToOne(() => LaunchingCalendar, (calendar) => calendar.id, { nullable: true, cascade: false })
-    calendar_id: LaunchingCalendar
-    @ManyToOne(() => User, (user) => user.id, { nullable: true, cascade: false })
-    user_id: User
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column({ length: 500 })
+  comment: string;
+  @ManyToOne(() => LaunchingCalendar, (calendar) => calendar.id, {
+    nullable: true,
+    cascade: false,
+  })
+  calendar_id: LaunchingCalendar;
+  @ManyToOne(() => User, (user) => user.id, { nullable: true, cascade: false })
+  user_id: User;
 }
