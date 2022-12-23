@@ -17,6 +17,9 @@ export class LaunchingCalendar {
   image: string;
   @Column('int')
   likeCounting: number;
-  @ManyToOne(() => Admin, (admin) => admin.id, { nullable: true, cascade: false })
-  admin_id: Admin
+  @ManyToOne(() => Admin, (admin) => admin.id, {
+    nullable: true,
+    cascade: false,
+  })
+  admin_id: Admin;
 }

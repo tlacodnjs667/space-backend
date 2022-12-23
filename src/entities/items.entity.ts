@@ -1,15 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MainSubCategories } from './main_sub_categories.entity';
 
 @Entity()
-export class SubCategories {
+export class Items {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ length: 30 })
   name: string;
-  @OneToMany(
+  @ManyToOne(
     () => MainSubCategories,
     (main_sub_category) => main_sub_category.id,
+    { nullable: false },
   )
-  main_sub_category: MainSubCategories[];
+  main_sub_category: MainSubCategories;
 }
