@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { MainSubCategories } from './main_sub_categories.entity';
+import { Product } from './products.entity';
 
 @Entity()
 export class Items {
@@ -13,4 +20,6 @@ export class Items {
     { nullable: false },
   )
   main_sub_category: MainSubCategories;
+  @OneToMany(() => Product, (product) => product.id)
+  product: Product[];
 }
