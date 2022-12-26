@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Size } from './size.entity';
+import { ProductColor } from './product_color.entity';
 
 
 @Entity()
@@ -10,8 +11,8 @@ export class Product_options {
   detail_size: number;
   @Column('int')
   stock: number;
-  @ManyToOne(()=>Product_colors, (product_colors)=>product_color.id)
-  product_colors: Product_colors[];
+  @ManyToOne(()=>ProductColor, (productColor)=>productColor.id)
+  productColor: ProductColor[];
   @ManyToOne(()=>Size, (Size)=>Size.id)
   size: Size[];
   
