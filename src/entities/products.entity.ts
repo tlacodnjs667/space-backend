@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Admin } from './admin.entity';
 import { Items } from './items.entity';
+import { ProductImage } from './product_img.entity';
 
 @Entity()
 export class Product {
@@ -29,4 +31,6 @@ export class Product {
   admin: number;
   @ManyToOne(() => Items, (item) => item.id)
   item: number;
+  @OneToMany(() => ProductImage, (product_img) => product_img.id)
+  product_img: Product[];
 }
