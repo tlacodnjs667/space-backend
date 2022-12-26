@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Admin } from './admin.entity';
 @Entity()
-export class CalendarComment {
+export class EventWinnerPost {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ length: 100 })
@@ -22,5 +22,5 @@ export class CalendarComment {
     nullable: true,
     cascade: false,
   })
-  admin_id: Admin;
+  admin: Admin;
 }

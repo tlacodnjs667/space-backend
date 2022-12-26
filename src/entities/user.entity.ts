@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Cart } from './cart.entity';
+import { ProductLike } from './like.entity';
+import { Review } from './review.entity';
+import { ReviewLike } from './review_like.entity';
 
 @Entity()
 export class User {
@@ -20,4 +24,12 @@ export class User {
   gender: string;
   @Column({ length: 100 })
   phone: string;
+  @OneToMany(() => Review, (review) => review.id)
+  review: Review[];
+  @OneToMany(() => ReviewLike, (review_like) => review_like.id)
+  review_like: ReviewLike[];
+  @OneToMany(() => ProductLike, (product_like) => product_like.id)
+  product_like: ProductLike[];
+  @OneToMany(() => Cart, (cart) => cart.id)
+  cart: Cart[];
 }
