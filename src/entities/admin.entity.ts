@@ -28,5 +28,5 @@ export class Admin {
   )
   launching_calendar: LaunchingCalendar[];
   @OneToMany(() => EventWinnerPost, (event_winner_post) => event_winner_post.id)
-  event_winner_post: EventWinnerPost;
+  event_winner_post: EventWinnerPost[];
 }

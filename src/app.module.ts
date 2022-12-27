@@ -22,7 +22,9 @@ dotenv.config();
     }),
     DatabaseModule,
   ],
-  controllers: [UserController],
-  providers: [UserService],
+  controllers: [MainController, UserController],
+  providers: [MainService, UserService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private datasource: DataSource) {}
+}

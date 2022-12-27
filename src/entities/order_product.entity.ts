@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Order } from './order.entity' 
-import { OrderStatus } from './order_status.entity';
-import { Product_options } from './product_options.entity';
+import { Order } from './order.entity';
+import { ProductOptions } from './product_options.entity';
+import { ShipmentStatus } from './shipment_status.entity';
 
 @Entity()
 export class OrderProducts {
@@ -11,10 +11,10 @@ export class OrderProducts {
   company: string;
   @Column('varchar')
   tracking_number: string;
-  @ManyToOne(()=>Order, (order)=>order.id)
-  order: Order[];
-  @ManyToOne(()=>OrderStatus, (orderStatus)=>orderStatus.id)
-  orderStatus: OrderStatus[];
-  @ManyToOne(()=>Product_options, (product_options)=>product_options.id)
-  prodct_options: Product_options[];
+  @ManyToOne(() => Order, (order) => order.id)
+  order: Order;
+  @ManyToOne(() => ShipmentStatus, (shipment_status) => shipment_status.id)
+  shipment_status: ShipmentStatus;
+  @ManyToOne(() => ProductOptions, (product_options) => product_options.id)
+  prodct_options: ProductOptions;
 }
