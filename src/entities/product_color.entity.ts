@@ -3,8 +3,8 @@ import { Product } from './products.entity';
 
 @Entity()
 export class ProductColor {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Product, (product) => product.id)
   product: number;
 }

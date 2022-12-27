@@ -3,8 +3,8 @@ import { Review } from './review.entity';
 
 @Entity()
 export class ReviewImg {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Review, (review) => review.id)
   review: number;
   @Column({ length: 1000 })

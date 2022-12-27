@@ -3,8 +3,8 @@ import { WeeklyCody } from './weekly_cody.entity';
 
 @Entity()
 export class WeeklyStyle {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 100 })
   name: string;
   @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id)

@@ -11,8 +11,8 @@ import { Items } from './items.entity';
 
 @Entity()
 export class MainSubCategories {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 30 })
   name: string;
   @ManyToOne(

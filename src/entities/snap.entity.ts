@@ -5,8 +5,8 @@ import { Product } from './products.entity';
 
 @Entity()
 export class Snap {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Admin, (admin) => admin.id)
   admin: Admin;
   @Column({ length: 40 })

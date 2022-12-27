@@ -4,8 +4,8 @@ import { User } from './user.entity';
 
 @Entity()
 export class ReviewLike {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column()
   is_helpful: boolean;
   @ManyToOne(() => User, (user) => user.id)

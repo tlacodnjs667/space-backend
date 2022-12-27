@@ -4,8 +4,8 @@ import { ProductColor } from './product_color.entity';
 
 @Entity()
 export class Product_options {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column('int')
   detail_size: number;
   @Column('int')

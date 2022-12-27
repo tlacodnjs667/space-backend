@@ -6,8 +6,8 @@ import { ReviewLike } from './review_like.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 100 })
   name: string;
   @Column({ length: 200 })

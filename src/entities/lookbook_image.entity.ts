@@ -3,8 +3,8 @@ import { Lookbook } from './lookbook.entity';
 
 @Entity()
 export class LookbookImage {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 1000 })
   image: string;
   @ManyToOne(() => Lookbook, (lookbook) => lookbook.id)

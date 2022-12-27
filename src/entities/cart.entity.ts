@@ -4,8 +4,8 @@ import { User } from './user.entity';
 
 @Entity()
 export class Cart {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => User, (user) => user.id, { cascade: true })
   user: User;
   @ManyToOne(() => Product, (product) => product.id, { cascade: true })

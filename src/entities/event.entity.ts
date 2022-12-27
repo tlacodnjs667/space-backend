@@ -11,8 +11,8 @@ import { EventStatus } from './event_status.entity';
 
 @Entity()
 export class Event {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Admin, (admin) => admin.id, {
     nullable: true,
     cascade: false,

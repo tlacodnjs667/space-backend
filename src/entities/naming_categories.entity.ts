@@ -3,8 +3,8 @@ import { MainCategories } from './main_categories.entity';
 
 @Entity()
 export class NamingCategories {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 30 })
   name: string;
   @ManyToOne(

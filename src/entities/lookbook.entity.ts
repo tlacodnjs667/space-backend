@@ -13,8 +13,8 @@ import { Product } from './products.entity';
 
 @Entity()
 export class Lookbook {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 100, nullable: false })
   title: string;
   @Column({ length: 100, nullable: false })
