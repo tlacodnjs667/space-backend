@@ -4,9 +4,9 @@ import { OrderStatus } from './order_status.entity';
 import { Product_options } from './product_options.entity';
 
 @Entity()
-export class Order_products {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class OrderProducts {
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column('varchar')
   company: string;
   @Column('varchar')

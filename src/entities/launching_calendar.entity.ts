@@ -3,8 +3,8 @@ import { Admin } from './admin.entity';
 
 @Entity()
 export class LaunchingCalendar {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 300 })
   title: string;
   @Column({ length: 100 })

@@ -12,8 +12,8 @@ import { User } from './user.entity';
 
 @Entity()
 export class Review {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Product, (product) => product.id)
   product: Product;
   @ManyToOne(() => User, (user) => user.id)

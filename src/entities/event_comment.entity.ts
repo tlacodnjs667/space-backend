@@ -10,8 +10,8 @@ import { Event } from './event.entity';
 
 @Entity()
 export class EventComment {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 1000 })
   content: string;
   @CreateDateColumn()

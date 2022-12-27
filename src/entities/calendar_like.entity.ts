@@ -3,8 +3,8 @@ import { LaunchingCalendar } from './launching_calendar.entity';
 import { User } from './user.entity';
 @Entity()
 export class CalendarLike {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => User, (user) => user.id, { nullable: true, cascade: false })
   user_id: User;
   @ManyToOne(

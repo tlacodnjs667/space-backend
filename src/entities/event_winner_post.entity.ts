@@ -8,8 +8,8 @@ import {
 import { Admin } from './admin.entity';
 @Entity()
 export class EventWinnerPost {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 100 })
   title: string;
   @Column({ length: 2000 })

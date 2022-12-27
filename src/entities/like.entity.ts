@@ -4,8 +4,8 @@ import { User } from './user.entity';
 
 @Entity()
 export class ProductLike {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @ManyToOne(() => Product, (product) => product.id)
   product: number;
   @ManyToOne(() => User, (user) => user.id)

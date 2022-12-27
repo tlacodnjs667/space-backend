@@ -8,8 +8,8 @@ import { WeeklyCody } from './weekly_cody.entity';
 
 @Entity()
 export class Admin {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 100 })
   name: string;
   @Column({ length: 100 })

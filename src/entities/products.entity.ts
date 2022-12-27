@@ -19,8 +19,8 @@ import { WeeklyCody } from './weekly_cody.entity';
 
 @Entity()
 export class Product {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column('varchar')
   name: string;
   @Column({ length: 1000 })

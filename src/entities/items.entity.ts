@@ -11,8 +11,8 @@ import { Snap } from './snap.entity';
 
 @Entity()
 export class Items {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ length: 30 })
   name: string;
   @ManyToOne(
