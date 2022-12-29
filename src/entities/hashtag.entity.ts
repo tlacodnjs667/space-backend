@@ -1,12 +1,14 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WeeklyCody } from './weekly_cody.entity';
 
-@Entity()
+@Entity({ name: 'hashtags' })
 export class Hashtag {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   name: string;
-  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id)
+  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id, {
+    onDelete: 'NO ACTION',
+  })
   weekly_cody: WeeklyCody[];
 }

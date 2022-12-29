@@ -6,21 +6,21 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Admin } from './admin.entity';
-@Entity()
+@Entity({ name: 'event_winner_posts' })
 export class EventWinnerPost {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   title: string;
-  @Column({ length: 2000 })
+  @Column({ length: 2000, nullable: false, type: 'varchar' })
   description: string;
   @CreateDateColumn()
   created_at: Date;
-  @Column('int')
+  @Column({ type: 'int' })
   seeing_count: number;
   @ManyToOne(() => Admin, (admin) => admin.id, {
-    nullable: true,
-    cascade: false,
+    nullable: false,
+    onDelete: 'CASCADE',
   })
   admin: Admin;
 }

@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Event } from './event.entity';
-@Entity()
+@Entity({ name: 'event_status' })
 export class EventStatus {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 40 })
+  @Column({ length: 40, nullable: false })
   name: string;
   @OneToMany(() => Event, (event) => event.id)
   event: Event[];

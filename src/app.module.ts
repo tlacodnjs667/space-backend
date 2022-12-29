@@ -22,8 +22,8 @@ dotenv.config();
     }),
     DatabaseModule,
   ],
-  controllers: [MainController, UserController],
-  providers: [MainService, UserService],
+  controllers: [UserController],
+  providers: [UserService],
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}

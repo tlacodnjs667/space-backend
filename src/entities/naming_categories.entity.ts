@@ -3,14 +3,14 @@ import { MainCategories } from './main_categories.entity';
 
 @Entity()
 export class NamingCategories {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30 })
+  @Column({ length: 30, nullable: false })
   name: string;
   @ManyToOne(
     () => MainCategories,
     (main_category: MainCategories) => main_category.id,
-    { cascade: true, nullable: false },
+    { nullable: false, onDelete: 'CASCADE' },
   )
   main_category: MainCategories;
 }

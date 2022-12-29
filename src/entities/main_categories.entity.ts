@@ -2,11 +2,11 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MainSubCategories } from './main_sub_categories.entity';
 import { NamingCategories } from './naming_categories.entity';
 
-@Entity()
+@Entity({ name: 'main_categories' })
 export class MainCategories {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30 })
+  @Column({ length: 30, nullable: false })
   name: string;
   @OneToMany(() => NamingCategories, (naming_category) => naming_category.id)
   naming_category: NamingCategories[];

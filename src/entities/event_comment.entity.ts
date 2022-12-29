@@ -8,19 +8,22 @@ import {
 import { User } from './user.entity';
 import { Event } from './event.entity';
 
-@Entity()
+@Entity({ name: 'event_comments' })
 export class EventComment {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false })
   content: string;
-  @CreateDateColumn()
+  @CreateDateColumn({ nullable: false })
   created_at: Date;
-  @ManyToOne(() => User, (user) => user.id, { nullable: true, cascade: false })
+  @ManyToOne(() => User, (user) => user.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   user_id: User;
   @ManyToOne(() => Event, (event) => event.id, {
-    nullable: true,
-    cascade: false,
+    nullable: false,
+    onDelete: 'CASCADE',
   })
   event_id: Event;
 }

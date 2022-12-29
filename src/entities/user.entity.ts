@@ -1,10 +1,18 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Cart } from './cart.entity';
 import { ProductLike } from './like.entity';
+import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { ReviewLike } from './review_like.entity';
 
 @Entity()
+@Unique(['kakao_id', 'email'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,4 +40,6 @@ export class User {
   product_like: ProductLike[];
   @OneToMany(() => Cart, (cart) => cart.id)
   cart: Cart[];
+  @OneToMany(() => Order, (order) => order.id)
+  order: Order[];
 }

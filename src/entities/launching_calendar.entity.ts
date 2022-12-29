@@ -1,25 +1,25 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Admin } from './admin.entity';
 
-@Entity()
+@Entity({ name: 'launching_calendars' })
 export class LaunchingCalendar {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 300 })
+  @Column({ length: 300, nullable: false, type: 'varchar' })
   title: string;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false, type: 'varchar' })
   email: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false, type: 'varchar' })
   thumbnail: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false, type: 'varchar' })
   content: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: true, type: 'varchar' })
   image: string;
-  @Column('int')
+  @Column({ type: 'int', default: 0 })
   likeCounting: number;
   @ManyToOne(() => Admin, (admin) => admin.id, {
-    nullable: true,
-    cascade: false,
+    nullable: false,
+    onDelete: 'CASCADE',
   })
   admin_id: Admin;
 }
