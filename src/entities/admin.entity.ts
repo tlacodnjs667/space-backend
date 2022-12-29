@@ -6,13 +6,13 @@ import { Product } from './products.entity';
 import { Snap } from './snap.entity';
 import { WeeklyCody } from './weekly_cody.entity';
 
-@Entity()
+@Entity({ name: 'admins' })
 export class Admin {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   name: string;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   position: string;
   @OneToMany(() => Product, (product) => product.id)
   product: Product[];
@@ -28,5 +28,5 @@ export class Admin {
   )
   launching_calendar: LaunchingCalendar[];
   @OneToMany(() => EventWinnerPost, (event_winner_post) => event_winner_post.id)
-  event_winner_post: EventWinnerPost;
+  event_winner_post: EventWinnerPost[];
 }

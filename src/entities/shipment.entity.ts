@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Order } from './order.entity' 
+import { Order } from './order.entity';
 
 @Entity()
 export class Shipment {
@@ -11,6 +11,6 @@ export class Shipment {
   address: string;
   @Column('varchar')
   detail_address: string;
-  @ManyToOne(()=>Order, (order)=>order.id)
+  @ManyToOne(() => Order, (order) => order.id)
   order: Order[];
 }

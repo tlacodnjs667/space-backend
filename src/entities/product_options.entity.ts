@@ -3,7 +3,7 @@ import { Size } from './size.entity';
 import { ProductColor } from './product_color.entity';
 
 @Entity()
-export class Product_options {
+export class ProductOptions {
   @PrimaryGeneratedColumn()
   id: number;
   @Column('int')

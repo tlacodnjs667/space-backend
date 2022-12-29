@@ -3,10 +3,10 @@ import { OrderProducts } from './order_product.entity';
 
 @Entity()
 export class ShipmentStatus {
-    @PrimaryGeneratedColumn()
-    id: number;
-    @Column('varchar')
-    name: string;
-    @OneToMany(() => OrderProducts, (shipment) => shipment.id)
-    shipment: OrderProducts[];
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column('varchar')
+  name: string;
+  @OneToMany(() => OrderProducts, (order_products) => order_products.id)
+  order_products: OrderProducts[];
 }

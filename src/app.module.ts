@@ -25,4 +25,6 @@ dotenv.config();
   controllers: [UserController],
   providers: [UserService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private datasource: DataSource) {}
+}

@@ -1,17 +1,26 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { OrderProducts } from './order_product.entity';
 import { OrderStatus } from './order_status.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Entity({ name: 'orders' })
 export class Order {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
   @Column('varchar')
   order_number: string;
-  @Column('int')
+  @Column({ type: 'varchar', nullable: false })
   total_price: number;
-  @ManyToOne(()=>User, (user)=>user.id)
-  user: User[];
-  @ManyToOne(()=>OrderStatus, (orderStatus)=>orderStatus.id)
-  orderStatus: OrderStatus[];
+  @ManyToOne(() => User, (user) => user.id)
+  user: User;
+  @ManyToOne(() => OrderStatus, (order_status) => order_status.id)
+  order_status: OrderStatus;
+  @OneToMany(() => OrderProducts, (order_product) => order_product.id)
+  order_product: OrderProducts[];
 }

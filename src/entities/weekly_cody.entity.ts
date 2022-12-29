@@ -22,9 +22,9 @@ export class WeeklyCody {
   @ManyToOne(() => Admin, (admin) => admin.id)
   admin: Admin;
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.id)
-  @JoinTable()
+  @JoinTable({ name: 'cody_tag' })
   hashtag: Hashtag[];
   @ManyToMany(() => Product, (product) => product.id)
-  @JoinTable()
+  @JoinTable({ name: 'cody_product' })
   product: Product[];
 }
