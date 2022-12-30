@@ -21,7 +21,7 @@ import { WeeklyCody } from './weekly_cody.entity';
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column('varchar')
+  @Column({ length: 100 })
   name: string;
   @Column({ length: 1000 })
   thumbnail: string;

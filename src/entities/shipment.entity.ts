@@ -6,7 +6,7 @@ export class Shipment {
   @PrimaryGeneratedColumn()
   id: number;
   @Column('varchar')
-  addresse_name: string;
+  address_name: string;
   @Column('varchar')
   address: string;
   @Column('varchar')

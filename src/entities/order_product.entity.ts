@@ -14,7 +14,6 @@ export class OrderProducts {
   @ManyToOne(() => Order, (order) => order.id, {
     nullable: false,
     onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
   })
   order: Order;
   @ManyToOne(() => ShipmentStatus, (shipment_status) => shipment_status.id, {
@@ -26,5 +25,5 @@ export class OrderProducts {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  prodct_options: ProductOptions;
+  product_options: ProductOptions;
 }

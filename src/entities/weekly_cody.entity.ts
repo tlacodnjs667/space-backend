@@ -11,13 +11,15 @@ import { Hashtag } from './hashtag.entity';
 import { Product } from './products.entity';
 import { WeeklyStyle } from './weekly_style.entity';
 
-@Entity()
+@Entity({ name: 'weekly_cody' })
 export class WeeklyCody {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @ManyToOne(() => WeeklyStyle, (weekly_style) => weekly_style.id)
+  @ManyToOne(() => WeeklyStyle, (weekly_style) => weekly_style.id, {
+    nullable: false,
+  })
   weekly_style: WeeklyStyle;
   @ManyToOne(() => Admin, (admin) => admin.id)
   admin: Admin;

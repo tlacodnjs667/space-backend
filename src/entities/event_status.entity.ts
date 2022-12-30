@@ -4,7 +4,7 @@ import { Event } from './event.entity';
 export class EventStatus {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 40, nullable: false })
+  @Column({ length: 30, nullable: false })
   name: string;
   @OneToMany(() => Event, (event) => event.id)
   event: Event[];
