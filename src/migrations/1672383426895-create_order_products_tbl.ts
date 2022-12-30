@@ -12,7 +12,7 @@ export class createOrderProductsTbl1672383426895 implements MigrationInterface {
                 product_option_id INT NULL,
                 FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
                 FOREIGN KEY (shipment_status_id) REFERENCES shipment_status(id) ON DELETE CASCADE,
-                FOREIGN KEY (product_option_id) REFERENCES product_options(id)
+                FOREIGN KEY (product_option_id) REFERENCES product_option(id)
             )
         `);
   }

@@ -8,7 +8,7 @@ export class createCalendarLikesTbl1672377932840 implements MigrationInterface {
             user_id INT NOT NULL,
             launching_calendar_id INT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (launching_calendar_id) REFERENCES launching_calendars(id) ON DELETE CASCADE
+            FOREIGN KEY (launching_calendar_id) REFERENCES launching_calendar(id) ON DELETE CASCADE
         );
     `);
   }
