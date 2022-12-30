@@ -5,7 +5,7 @@ import { Lookbook } from './lookbook.entity';
 export class LookbookImage {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 1000, type: 'varchar', nullable: true })
+  @Column({ length: 1000, type: 'varchar', nullable: false })
   image: string;
   @ManyToOne(() => Lookbook, (lookbook) => lookbook.id, {
     nullable: false,

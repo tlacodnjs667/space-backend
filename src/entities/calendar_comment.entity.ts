@@ -11,10 +11,10 @@ export class CalendarComment {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  calendar_id: LaunchingCalendar;
+  calendar: LaunchingCalendar;
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  user_id: User;
+  user: User;
 }

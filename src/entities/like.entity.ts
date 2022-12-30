@@ -11,6 +11,9 @@ export class ProductLike {
     onDelete: 'CASCADE',
   })
   product: number;
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   user: number;
 }

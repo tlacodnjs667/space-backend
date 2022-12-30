@@ -13,7 +13,7 @@ export class EventComment {
   @PrimaryGeneratedColumn('increment')
   id: number;
   @Column({ length: 1000, nullable: false })
-  content: string;
+  comment: string;
   @CreateDateColumn({ nullable: false })
   created_at: Date;
   @ManyToOne(() => User, (user) => user.id, {

@@ -13,9 +13,9 @@ import { User } from './user.entity';
 export class Order {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column('varchar')
+  @Column({ length: 500 })
   order_number: string;
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'int', nullable: false })
   total_price: number;
   @ManyToOne(() => User, (user) => user.id)
   user: User;

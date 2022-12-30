@@ -11,7 +11,7 @@ export class ProductOptions {
   @Column('int')
   stock: number;
   @ManyToOne(() => ProductColor, (productColor) => productColor.id)
-  productColor: ProductColor[];
+  productColor: ProductColor;
   @ManyToOne(() => Size, (Size) => Size.id)
-  size: Size[];
+  size: Size;
 }

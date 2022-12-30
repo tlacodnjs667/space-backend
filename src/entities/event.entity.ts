@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
-  OneToMany,
 } from 'typeorm';
 import { Admin } from './admin.entity';
 import { EventStatus } from './event_status.entity';
@@ -28,8 +27,11 @@ export class Event {
   thumbnail: string;
   @Column({ length: 1000, nullable: true })
   template: string;
-  @OneToMany(() => EventStatus, (event_status) => event_status.id)
-  event_status: EventStatus[];
+  @ManyToOne(() => EventStatus, (event_status) => event_status.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  event_status: EventStatus;
   @Column('datetime')
   start_date: Date;
   @Column('datetime')

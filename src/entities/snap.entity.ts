@@ -3,7 +3,7 @@ import { Admin } from './admin.entity';
 import { Items } from './items.entity';
 import { Product } from './products.entity';
 
-@Entity()
+@Entity({ name: 'snaps' })
 export class Snap {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,9 +11,9 @@ export class Snap {
   admin: Admin;
   @Column({ length: 40 })
   model_name: string;
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  @Column({ type: 'int', nullable: false })
   model_height: number;
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  @Column({ type: 'int', nullable: false })
   model_weight: number;
   @Column({ length: 50 })
   cloth_color: string;

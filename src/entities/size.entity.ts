@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductOptions } from './product_options.entity';
 
 @Entity()
 export class Size {
@@ -6,4 +7,6 @@ export class Size {
   id: number;
   @Column({ length: 200 })
   name: string;
+  @OneToMany(() => ProductOptions, (product_option) => product_option.id)
+  product_option: ProductOptions[];
 }
