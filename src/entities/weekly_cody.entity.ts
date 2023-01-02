@@ -26,7 +26,7 @@ export class WeeklyCody {
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.id)
   @JoinTable({ name: 'cody_tag' })
   hashtag: Hashtag[];
-  @ManyToMany(() => Product, (product) => product.id)
   @JoinTable({ name: 'cody_product' })
+  @ManyToMany(() => Product, (product) => product.weekly_cody)
   product: Product[];
 }

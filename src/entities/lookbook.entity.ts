@@ -25,8 +25,8 @@ export class Lookbook {
   thumbnail: string;
   @ManyToOne(() => Admin, (admin) => admin.id, { nullable: false })
   admin: number;
-  @ManyToMany(() => Product, (product) => product.id)
   @JoinTable({ name: 'lookbook_product' })
+  @ManyToMany(() => Product, (product) => product.lookbook)
   product: Product[];
   @OneToMany(() => LookbookImage, (lookbook_image) => lookbook_image.id, {
     nullable: false,
