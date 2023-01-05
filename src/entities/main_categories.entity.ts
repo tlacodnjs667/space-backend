@@ -6,7 +6,7 @@ import { NamingCategories } from './naming_categories.entity';
 export class MainCategories {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30, nullable: false })
+  @Column({ length: 40, nullable: false })
   name: string;
   @OneToMany(() => NamingCategories, (naming_category) => naming_category.id)
   naming_category: NamingCategories[];

@@ -5,7 +5,7 @@ import { WeeklyCody } from './weekly_cody.entity';
 export class Hashtag {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100, nullable: false })
+  @Column({ length: 30, nullable: false })
   name: string;
   @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id, {
     onDelete: 'NO ACTION',
