@@ -21,12 +21,12 @@ export class WeeklyCody {
     nullable: false,
   })
   weekly_style: WeeklyStyle;
-  @ManyToOne(() => Admin, (admin) => admin.id)
+  @ManyToOne(() => Admin, (admin) => admin.id, { nullable: false })
   admin: Admin;
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.id)
   @JoinTable({ name: 'cody_tag' })
   hashtag: Hashtag[];
-  @JoinTable({ name: 'cody_product' })
   @ManyToMany(() => Product, (product) => product.weekly_cody)
+  @JoinTable({ name: 'cody_product' })
   product: Product[];
 }

@@ -12,7 +12,7 @@ export class createUsersTbl1672328645061 implements MigrationInterface {
                 birthday DATE NULL,
                 thumbnail VARCHAR(1000) NOT NULL,
                 gender VARCHAR(30) NULL,
-                phone VARCHAR(100) NULL            
+                phone VARCHAR(100) NOT NULL            
             );
         `);
   }

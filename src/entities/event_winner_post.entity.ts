@@ -14,9 +14,9 @@ export class EventWinnerPost {
   title: string;
   @Column({ length: 2000, nullable: false, type: 'varchar' })
   description: string;
-  @CreateDateColumn()
+  @CreateDateColumn({ nullable: false, default: new Date() })
   created_at: Date;
-  @Column({ type: 'int' })
+  @Column({ type: 'int', nullable: false })
   seeing_count: number;
   @ManyToOne(() => Admin, (admin) => admin.id, {
     nullable: false,

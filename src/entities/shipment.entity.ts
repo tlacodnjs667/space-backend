@@ -3,14 +3,14 @@ import { Order } from './order.entity';
 
 @Entity()
 export class Shipment {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column('varchar')
+  @Column({ length: 100, type: 'varchar', nullable: false })
   address_name: string;
-  @Column('varchar')
+  @Column({ length: 200, type: 'varchar', nullable: false })
   address: string;
-  @Column('varchar')
+  @Column({ length: 100, type: 'varchar', nullable: false })
   detail_address: string;
-  @ManyToOne(() => Order, (order) => order.id)
+  @ManyToOne(() => Order, (order) => order.id, { nullable: false })
   order: Order[];
 }

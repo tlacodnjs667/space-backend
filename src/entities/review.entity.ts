@@ -14,17 +14,17 @@ import { User } from './user.entity';
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, { nullable: false })
   product: Product;
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
   user: User;
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: false })
   title: string;
-  @Column({ length: 500 })
+  @Column({ length: 500, nullable: false })
   content: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: true })
   thumbnail: string;
-  @Column()
+  @Column({ type: 'int', nullable: false })
   star: number;
   @OneToMany(() => ReviewImg, (review_image) => review_image.id)
   review_image: ReviewImg[];

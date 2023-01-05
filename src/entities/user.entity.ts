@@ -16,21 +16,21 @@ import { ReviewLike } from './review_like.entity';
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   name: string;
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: true, unique: true })
   kakao_id: string;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false, unique: true })
   email: string;
   @Column('date')
   birthday: string;
-  @Column({ length: 150 })
+  @Column({ length: 150, nullable: false })
   nickname: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @Column({ length: 10 })
+  @Column({ length: 10, nullable: true })
   gender: string;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   phone: string;
   @OneToMany(() => Review, (review) => review.id)
   review: Review[];
