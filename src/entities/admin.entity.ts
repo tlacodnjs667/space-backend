@@ -6,7 +6,13 @@ import { Product } from './products.entity';
 import { Snap } from './snap.entity';
 import { WeeklyCody } from './weekly_cody.entity';
 
-@Entity({ name: 'admins' })
+@Entity({
+  name: 'admins',
+  orderBy: {
+    name: 'ASC',
+    id: 'DESC',
+  },
+})
 export class Admin {
   @PrimaryGeneratedColumn('increment')
   id: number;

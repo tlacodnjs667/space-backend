@@ -45,8 +45,8 @@ export class Product {
   snap: Snap[];
   @OneToMany(() => Cart, (cart) => cart.id)
   cart: Cart[];
-  @ManyToMany(() => Lookbook, (lookbook) => lookbook.id)
+  @ManyToMany(() => Lookbook, (lookbook) => lookbook.product)
   lookbook: Lookbook[];
-  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id)
+  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.product)
   weekly_cody: WeeklyCody[];
 }
