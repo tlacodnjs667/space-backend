@@ -4,6 +4,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class OrderStatus {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ length: 40, nullable: false })
   name: string;
 }
