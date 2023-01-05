@@ -5,22 +5,31 @@ import { Product } from './products.entity';
 
 @Entity({ name: 'snaps' })
 export class Snap {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => Admin, (admin) => admin.id)
+  @ManyToOne(() => Admin, (admin) => admin.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   admin: Admin;
-  @Column({ length: 40 })
+  @Column({ length: 40, nullable: false })
   model_name: string;
   @Column({ type: 'int', nullable: false })
   model_height: number;
   @Column({ type: 'int', nullable: false })
   model_weight: number;
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: false })
   cloth_color: string;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   cloth_size: string;
-  @ManyToOne(() => Items, (item) => item.id)
+  @ManyToOne(() => Items, (item) => item.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   item: Items;
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   product: Product;
 }

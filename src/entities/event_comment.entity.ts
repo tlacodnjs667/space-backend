@@ -12,9 +12,9 @@ import { Event } from './event.entity';
 export class EventComment {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 1000, nullable: false })
+  @Column({ type: 'varchar', length: 1000, nullable: false })
   comment: string;
-  @CreateDateColumn({ nullable: false })
+  @CreateDateColumn({ type: 'timestamp', nullable: false })
   created_at: Date;
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,

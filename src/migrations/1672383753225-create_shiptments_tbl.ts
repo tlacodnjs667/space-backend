@@ -6,7 +6,7 @@ export class createShiptmentsTbl1672383753225 implements MigrationInterface {
             CREATE TABLE shipments (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 address_name VARCHAR(100) NOT NULL,
-                address VARCHAR(100) NOT NULL,
+                address VARCHAR(200) NOT NULL,
                 detail_address VARCHAR(100) NOT NULL,
                 order_id INT NOT NULL,
                 FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE

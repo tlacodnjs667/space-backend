@@ -7,9 +7,9 @@ import { ShipmentStatus } from './shipment_status.entity';
 export class OrderProducts {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', length: '100', nullable: false })
   shippingCompany: string;
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', length: '500', nullable: false })
   tracking_number: string;
   @ManyToOne(() => Order, (order) => order.id, {
     nullable: false,

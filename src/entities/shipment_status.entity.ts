@@ -3,9 +3,9 @@ import { OrderProducts } from './order_product.entity';
 
 @Entity({ name: 'shipment_status' })
 export class ShipmentStatus {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-  @Column('varchar')
+  @PrimaryGeneratedColumn('increment')
+  id: number;
+  @Column({ type: 'varchar', nullable: false, length: '40' })
   name: string;
   @OneToMany(() => OrderProducts, (order_products) => order_products.id)
   order_products: OrderProducts[];
