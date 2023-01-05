@@ -11,10 +11,8 @@ import { Items } from './items.entity';
 
 @Entity({ name: 'main_sub_categories' })
 export class MainSubCategories {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30, nullable: false })
-  name: string;
   @ManyToOne(
     () => MainCategories,
     (main_category: MainCategories) => main_category.id,

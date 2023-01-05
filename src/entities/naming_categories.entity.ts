@@ -5,7 +5,7 @@ import { MainCategories } from './main_categories.entity';
 export class NamingCategories {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30, nullable: false })
+  @Column({ length: 40, nullable: false })
   name: string;
   @ManyToOne(
     () => MainCategories,

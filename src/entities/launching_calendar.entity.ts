@@ -7,7 +7,7 @@ export class LaunchingCalendar {
   id: number;
   @Column({ length: 300, nullable: false, type: 'varchar' })
   title: string;
-  @Column({ length: 100, nullable: false, type: 'varchar' })
+  @Column({ length: 300, nullable: false, type: 'varchar' })
   email: string;
   @Column({ length: 1000, nullable: false, type: 'varchar' })
   thumbnail: string;

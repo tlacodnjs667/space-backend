@@ -19,19 +19,19 @@ import { WeeklyCody } from './weekly_cody.entity';
 
 @Entity()
 export class Product {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   name: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: false })
   description: string;
-  @Column()
+  @Column({nullable: false})
   price: number;
-  @CreateDateColumn()
+  @CreateDateColumn({type: 'timestamp', nullable: false})
   created_at: Date;
-  @UpdateDateColumn()
+  @UpdateDateColumn({type: 'timestamp', nullable: false})
   updated_at: Date;
   @ManyToOne(() => Admin, (admin) => admin.id)
   admin: number;

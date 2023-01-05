@@ -3,9 +3,9 @@ import { ProductOptions } from './product_options.entity';
 
 @Entity()
 export class Size {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 200 })
+  @Column({ length: 40, nullable: false })
   name: string;
   @OneToMany(() => ProductOptions, (product_option) => product_option.id)
   product_option: ProductOptions[];

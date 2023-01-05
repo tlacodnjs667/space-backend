@@ -7,8 +7,6 @@ import { ProductOptions } from './product_options.entity';
 export class ProductColor {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 100, nullable: false })
-  name: string;
   @ManyToOne(() => Product, (product) => product.id)
   product: number;
   @ManyToOne(() => Color, (color) => color.id, {

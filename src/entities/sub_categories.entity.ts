@@ -3,9 +3,9 @@ import { MainSubCategories } from './main_sub_categories.entity';
 
 @Entity()
 export class SubCategories {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
-  @Column({ length: 30 })
+  @Column({ length: 40, nullable: false })
   name: string;
   @OneToMany(
     () => MainSubCategories,
