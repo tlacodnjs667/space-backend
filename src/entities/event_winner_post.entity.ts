@@ -14,7 +14,7 @@ export class EventWinnerPost {
   title: string;
   @Column({ length: 2000, nullable: false, type: 'varchar' })
   description: string;
-  @CreateDateColumn({ nullable: false, default: new Date() })
+  @CreateDateColumn({ nullable: false })
   created_at: Date;
   @Column({ type: 'int', nullable: false })
   seeing_count: number;

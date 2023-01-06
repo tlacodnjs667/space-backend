@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MainCategories } from './main_categories.entity';
 
-@Entity()
+@Entity({ name: 'naming_categories' })
 export class NamingCategories {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -9,7 +9,7 @@ export class NamingCategories {
   name: string;
   @ManyToOne(
     () => MainCategories,
-    (main_category: MainCategories) => main_category.id,
+    (main_category: MainCategories) => main_category.naming_categories,
     { nullable: false, onDelete: 'CASCADE' },
   )
   main_category: MainCategories;

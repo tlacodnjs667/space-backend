@@ -13,7 +13,7 @@ import { WeeklyStyle } from './weekly_style.entity';
 
 @Entity({ name: 'weekly_cody' })
 export class WeeklyCody {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
   @Column({ length: 1000, nullable: false })
   thumbnail: string;

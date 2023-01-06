@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { SubCategories } from './sub_categories.entity';
 import { MainCategories } from './main_categories.entity';
@@ -15,22 +16,22 @@ export class MainSubCategories {
   id: number;
   @ManyToOne(
     () => MainCategories,
-    (main_category: MainCategories) => main_category.id,
+    (main_category) => main_category.main_sub_categories,
     {
       onDelete: 'CASCADE',
       nullable: false,
     },
   )
-  main_category_id: MainCategories;
+  main_category: MainCategories;
   @ManyToOne(
     () => SubCategories,
-    (sub_category: SubCategories) => sub_category.id,
+    (sub_category) => sub_category.main_sub_category,
     {
       onDelete: 'CASCADE',
       nullable: false,
     },
   )
   sub_category: SubCategories;
-  @OneToMany(() => Items, (item) => item.id)
+  @OneToMany(() => Items, (item) => item.main_sub_category)
   item: Items[];
 }
