@@ -5,16 +5,13 @@ import { Product } from 'src/entities/products.entity';
 import { DataSource } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-
 @Injectable()
 export class ProductService { 
-    findAll= async()=> {
-    const productList = await AppDataSource.getRepository(MainCategories)
-    .createQueryBuilder("main")
-    .getMany()
-    console.log(productList);
+    findAll = async()=> {
+    const productList = await AppDataSource.query
+
     
-    return `This action returns all product`;
+    return productList;
   }
 
 
