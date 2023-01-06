@@ -1,5 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Admin } from './admin.entity';
+import { CalendarComment } from './calendar_comment.entity';
+import { CalendarLike } from './calendar_like.entity';
 
 @Entity({ name: 'launching_calendars' })
 export class LaunchingCalendar {
@@ -17,9 +25,16 @@ export class LaunchingCalendar {
   image: string;
   @Column({ type: 'int', default: 0 })
   likeCounting: number;
-  @ManyToOne(() => Admin, (admin) => admin.id, {
+  @ManyToOne(() => Admin, (admin) => admin.launching_calendar, {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  admin_id: Admin;
+  admin: Admin;
+  @OneToMany(() => CalendarComment, (comment) => comment.calendar)
+  calendar_comment: CalendarComment[];
+  @OneToMany(
+    () => CalendarLike,
+    (calendar_like) => calendar_like.launching_calendar,
+  )
+  calendar_like: CalendarLike[];
 }

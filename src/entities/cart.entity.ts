@@ -6,12 +6,12 @@ import { User } from './user.entity';
 export class Cart {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => User, (user) => user.id, {
+  @ManyToOne(() => User, (user) => user.cart, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   user: User;
-  @ManyToOne(() => Product, (product) => product.id, {
+  @ManyToOne(() => Product, (product) => product.cart, {
     nullable: false,
     onDelete: 'CASCADE',
   })

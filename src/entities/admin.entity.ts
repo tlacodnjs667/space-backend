@@ -20,19 +20,22 @@ export class Admin {
   name: string;
   @Column({ length: 100, nullable: false })
   position: string;
-  @OneToMany(() => Product, (product) => product.id)
+  @OneToMany(() => Product, (product) => product.admin)
   product: Product[];
-  @OneToMany(() => Lookbook, (lookbook) => lookbook.id)
+  @OneToMany(() => Lookbook, (lookbook) => lookbook.admin)
   lookbook: Lookbook[];
-  @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id)
+  @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.admin)
   weekly_cody: WeeklyCody[];
-  @OneToMany(() => Snap, (snap) => snap.id)
+  @OneToMany(() => Snap, (snap) => snap.admin)
   snap: Snap[];
   @OneToMany(
     () => LaunchingCalendar,
-    (launching_calendar) => launching_calendar.id,
+    (launching_calendar) => launching_calendar.admin,
   )
   launching_calendar: LaunchingCalendar[];
-  @OneToMany(() => EventWinnerPost, (event_winner_post) => event_winner_post.id)
+  @OneToMany(
+    () => EventWinnerPost,
+    (event_winner_post) => event_winner_post.admin,
+  )
   event_winner_post: EventWinnerPost[];
 }

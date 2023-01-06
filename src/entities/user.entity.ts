@@ -5,7 +5,10 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { CalendarComment } from './calendar_comment.entity';
+import { CalendarLike } from './calendar_like.entity';
 import { Cart } from './cart.entity';
+import { EventComment } from './event_comment.entity';
 import { ProductLike } from './like.entity';
 import { Order } from './order.entity';
 import { Review } from './review.entity';
@@ -32,14 +35,20 @@ export class User {
   gender: string;
   @Column({ length: 100, nullable: false })
   phone: string;
-  @OneToMany(() => Review, (review) => review.id)
+  @OneToMany(() => Review, (review) => review.user)
   review: Review[];
-  @OneToMany(() => ReviewLike, (review_like) => review_like.id)
+  @OneToMany(() => EventComment, (review) => review.user)
+  event_comment: EventComment[];
+  @OneToMany(() => CalendarComment, (review) => review.user)
+  calendar_comment: CalendarComment[];
+  @OneToMany(() => CalendarLike, (review) => review.user)
+  calendar_like: CalendarLike[];
+  @OneToMany(() => ReviewLike, (review_like) => review_like.user)
   review_like: ReviewLike[];
-  @OneToMany(() => ProductLike, (product_like) => product_like.id)
+  @OneToMany(() => ProductLike, (product_like) => product_like.user)
   product_like: ProductLike[];
-  @OneToMany(() => Cart, (cart) => cart.id)
+  @OneToMany(() => Cart, (cart) => cart.user)
   cart: Cart[];
-  @OneToMany(() => Order, (order) => order.id)
+  @OneToMany(() => Order, (order) => order.user)
   order: Order[];
 }

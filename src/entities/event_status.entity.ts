@@ -6,6 +6,6 @@ export class EventStatus {
   id: number;
   @Column({ length: 30, nullable: false })
   name: string;
-  @OneToMany(() => Event, (event) => event.id)
+  @OneToMany(() => Event, (event) => event.event_status)
   event: Event[];
 }
