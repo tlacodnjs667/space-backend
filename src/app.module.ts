@@ -7,6 +7,7 @@ import { UserService } from './user/user.service';
 import { ConfigModule } from '@nestjs/config';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { MainModule } from './main/main.module';
+import { ProductModule } from './product/product.module';
 dotenv.config();
 
 @Module({
@@ -14,6 +15,7 @@ dotenv.config();
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     MainModule,
+    ProductModule,
   ],
   controllers: [UserController],
   providers: [UserService],

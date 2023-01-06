@@ -17,7 +17,7 @@ import { ProductImage } from './product_img.entity';
 import { Snap } from './snap.entity';
 import { WeeklyCody } from './weekly_cody.entity';
 
-@Entity()
+@Entity({name:'products'})
 export class Product {
   @PrimaryGeneratedColumn('increment')
   id: number;
