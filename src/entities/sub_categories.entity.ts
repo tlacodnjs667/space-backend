@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MainSubCategories } from './main_sub_categories.entity';
 
-@Entity()
+@Entity({ name: 'sub_categories' })
 export class SubCategories {
   @PrimaryGeneratedColumn('increment')
   id: number;

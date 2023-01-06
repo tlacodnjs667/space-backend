@@ -8,11 +8,11 @@ const databaseConfig: DataSourceOptions = {
   username: process.env.TYPEORM_USERNAME,
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
-  entities: [__dirname + '/../entities/*.entity.ts'],
+  entities: [__dirname + '/../entities/*.entity.*'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-  synchronize: false,
+  synchronize: true,
   logging: true,
-  migrationsRun: true,
+  migrationsRun: false,
 };
 
 export default databaseConfig;

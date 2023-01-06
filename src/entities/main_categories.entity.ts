@@ -8,11 +8,14 @@ export class MainCategories {
   id: number;
   @Column({ length: 40, nullable: false })
   name: string;
-  @OneToMany(() => NamingCategories, (naming_category) => naming_category.id)
-  naming_category: NamingCategories[];
+  @OneToMany(
+    () => NamingCategories,
+    (naming_category) => naming_category.main_category,
+  )
+  naming_categories: NamingCategories[];
   @OneToMany(
     () => MainSubCategories,
-    (main_sub_category) => main_sub_category.id,
+    (main_sub_category) => main_sub_category.main_category,
   )
-  main_sub_category: MainSubCategories[];
+  main_sub_categories: MainSubCategories[];
 }
