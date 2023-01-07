@@ -11,6 +11,6 @@ export class Shipment {
   address: string;
   @Column({ length: 100, type: 'varchar', nullable: false })
   detail_address: string;
-  @ManyToOne(() => Order, (order) => order.id, { nullable: false })
+  @ManyToOne(() => Order, (order) => order.shipments, { nullable: false })
   order: Order[];
 }

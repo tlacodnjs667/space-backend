@@ -6,12 +6,12 @@ import { User } from './user.entity';
 export class ProductLike {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => Product, (product) => product.id, {
+  @ManyToOne(() => Product, (product) => product.product_likes, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   product: number;
-  @ManyToOne(() => User, (user) => user.id, {
+  @ManyToOne(() => User, (user) => user.product_likes, {
     nullable: false,
     onDelete: 'CASCADE',
   })

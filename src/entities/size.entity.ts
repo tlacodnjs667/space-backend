@@ -7,6 +7,6 @@ export class Size {
   id: number;
   @Column({ length: 40, nullable: false })
   name: string;
-  @OneToMany(() => ProductOptions, (product_option) => product_option.id)
-  product_option: ProductOptions[];
+  @OneToMany(() => ProductOptions, (product_option) => product_option.size)
+  product_options: ProductOptions[];
 }

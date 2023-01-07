@@ -9,7 +9,7 @@ export class SubCategories {
   name: string;
   @OneToMany(
     () => MainSubCategories,
-    (main_sub_category) => main_sub_category.id,
+    (main_sub_category) => main_sub_category.sub_category,
   )
   main_sub_category: MainSubCategories[];
 }

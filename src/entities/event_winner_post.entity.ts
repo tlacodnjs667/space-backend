@@ -18,7 +18,7 @@ export class EventWinnerPost {
   created_at: Date;
   @Column({ type: 'int', nullable: false })
   seeing_count: number;
-  @ManyToOne(() => Admin, (admin) => admin.id, {
+  @ManyToOne(() => Admin, (admin) => admin.event_winner_posts, {
     nullable: false,
     onDelete: 'CASCADE',
   })

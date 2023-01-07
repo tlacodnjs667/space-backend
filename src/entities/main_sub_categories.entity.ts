@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { SubCategories } from './sub_categories.entity';
 import { MainCategories } from './main_categories.entity';
 import { Items } from './items.entity';

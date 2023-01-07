@@ -14,9 +14,9 @@ import { User } from './user.entity';
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => Product, (product) => product.id, { nullable: false })
+  @ManyToOne(() => Product, (product) => product.reviews, { nullable: false })
   product: Product;
-  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @ManyToOne(() => User, (user) => user.reviews, { nullable: false })
   user: User;
   @Column({ length: 200, nullable: false })
   title: string;
@@ -26,8 +26,8 @@ export class Review {
   thumbnail: string;
   @Column({ type: 'int', nullable: false })
   star: number;
-  @OneToMany(() => ReviewImg, (review_image) => review_image.id)
-  review_image: ReviewImg[];
-  @OneToMany(() => ReviewLike, (review_like) => review_like.id)
-  review_like: ReviewLike[];
+  @OneToMany(() => ReviewImg, (review_image) => review_image.review)
+  review_images: ReviewImg[];
+  @OneToMany(() => ReviewLike, (review_like) => review_like.review)
+  review_likes: ReviewLike[];
 }
