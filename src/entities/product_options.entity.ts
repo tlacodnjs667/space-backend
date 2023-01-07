@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Size } from './size.entity';
 import { ProductColor } from './product_color.entity';
+import { OrderProducts } from './order_product.entity';
 
 @Entity()
 export class ProductOptions {
@@ -13,11 +20,6 @@ export class ProductOptions {
     onDelete: 'CASCADE',
   })
   productColor: ProductColor;
-  @ManyToOne(() => Size, (Size) => Size.id, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  size: Size;
   @Column({ type: 'decimal', nullable: true, precision: 4, scale: 1 })
   top: number;
   @Column({ type: 'decimal', nullable: true, precision: 4, scale: 1 })
@@ -34,4 +36,16 @@ export class ProductOptions {
   waist_line: number;
   @Column({ type: 'decimal', nullable: true, precision: 4, scale: 1 })
   hip_line: number;
+  @ManyToOne(() => Size, (Size) => Size.product_options)
+  size: Size;
+  @OneToMany(
+    () => OrderProducts,
+    (order_products) => order_products.product_option,
+  )
+  order_products: OrderProducts[];
+  @ManyToOne(
+    () => ProductColor,
+    (product_color) => product_color.product_options,
+  )
+  product_color: ProductColor;
 }

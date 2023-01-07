@@ -5,8 +5,8 @@ import { Product } from './products.entity';
 export class ProductImage {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, (product) => product.product_imgs)
   product: number;
-  @Column({ length: 1000,  nullable: false})
+  @Column({ length: 1000, nullable: false })
   img_url: string;
 }

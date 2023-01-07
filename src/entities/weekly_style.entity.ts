@@ -7,6 +7,6 @@ export class WeeklyStyle {
   id: number;
   @Column({ length: 100 })
   name: string;
-  @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id)
-  weekly_cody: WeeklyCody[];
+  @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.weekly_style)
+  weekly_codies: WeeklyCody[];
 }

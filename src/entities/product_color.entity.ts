@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Color } from './color.entity';
 import { Product } from './products.entity';
 import { ProductOptions } from './product_options.entity';
@@ -7,13 +7,16 @@ import { ProductOptions } from './product_options.entity';
 export class ProductColor {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.product_colors)
   product: number;
-  @ManyToOne(() => Color, (color) => color.id, {
+  @ManyToOne(() => Color, (color) => color.product_colors, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   color: Color;
-  @OneToMany(() => ProductOptions, (product_option) => product_option.id)
-  product_option: ProductOptions[];
+  @OneToMany(
+    () => ProductOptions,
+    (product_option) => product_option.product_color,
+  )
+  product_options: ProductOptions[];
 }

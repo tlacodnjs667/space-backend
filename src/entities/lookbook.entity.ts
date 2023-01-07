@@ -23,14 +23,14 @@ export class Lookbook {
   content: string;
   @Column({ length: 1000, nullable: true })
   thumbnail: string;
-  @ManyToOne(() => Admin, (admin) => admin.id, { nullable: false })
+  @ManyToOne(() => Admin, (admin) => admin.lookbooks, { nullable: false })
   admin: number;
-  @ManyToMany(() => Product, (product) => product.lookbook)
-  @JoinTable()
+  @JoinTable({ name: 'lookbook_product' })
+  @ManyToMany(() => Product, (product) => product.lookbooks)
   product: Product[];
-  @OneToMany(() => LookbookImage, (lookbook_image) => lookbook_image.id, {
+  @OneToMany(() => LookbookImage, (lookbook_image) => lookbook_image.lookbook, {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  lookbook: Lookbook;
+  lookbook_images: LookbookImage[];
 }
