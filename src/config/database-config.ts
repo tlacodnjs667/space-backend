@@ -10,7 +10,7 @@ const databaseConfig: DataSourceOptions = {
   database: process.env.TYPEORM_DATABASE,
   entities: [__dirname + '/../entities/*.entity.*'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-  synchronize: true,
+  synchronize: false,
   logging: true,
   migrationsRun: false,
 };
