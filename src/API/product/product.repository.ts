@@ -61,4 +61,38 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       LIMIT 11 OFFSET 0
     `);
   },
+  ProductList() {
+    return ProductRepository.query(`
+	SELECT
+	p.id,
+	p.name,
+	p.thumbnail,
+	p.price,
+	JSON_ARRAYAGG(
+		JSON_OBJECT(
+			'colorId',IFNULL(c.id, ''),
+			'colorName',IFNULL(c.name, ''),
+			'size', sizes.size	
+		)
+	) AS color
+FROM product p
+LEFT JOIN product_color pc ON pc.productId = p.id
+LEFT JOIN colors c ON pc.colorId = c.id
+LEFT JOIN (
+		SELECT
+			po.productColorId,
+			JSON_ARRAYAGG(
+				JSON_OBJECT(
+				'sizeId',IFNULL(s.id, ''),
+				'sizeName',IFNULL(s.name, ''),
+				'stock',IFNULL(po.stock, '')		
+			) 
+		) AS size
+		FROM product_options po
+		LEFT JOIN size s ON s.id = po.sizeId
+		GROUP BY po.productColorId
+) AS sizes ON sizes.productColorId = pc.id
+GROUP BY p.id, sizes.size
+	`);
+  },
 });
