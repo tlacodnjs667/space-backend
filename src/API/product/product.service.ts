@@ -6,8 +6,10 @@ export class ProductService {
   getWeeklyBestByCategory(category: number) {
     return ProductRepository.getWeeklyBestByCategory(category);
   }
-
   getNewProduct() {
     return ProductRepository.getNewProduct();
+  }
+  productList() {
+    return ProductRepository.getProductList();
   }
 }

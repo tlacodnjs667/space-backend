@@ -1,8 +1,6 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FindProductDto } from './dto/find-product.dto';
-import { ProductRepository } from './product.repository';
-
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -15,5 +13,10 @@ export class ProductController {
   @Get('new')
   getNewProduct() {
     return this.productService.getNewProduct();
+  }
+
+  @Get('list')
+  productList() {
+    return this.productService.productList();
   }
 }
