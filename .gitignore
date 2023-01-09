@@ -1,5 +1,5 @@
 .env
-/migrations
+/src/migrations
 # compiled output
 /dist
 /node_modules
