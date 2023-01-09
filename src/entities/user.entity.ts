@@ -31,7 +31,7 @@ export class User {
   nickname: string;
   @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @Column({ length: 10, nullable: true })
+  @Column({ length: 10, nullable: true, enumName: 'femail' || 'male' })
   gender: string;
   @Column({ length: 100, nullable: false })
   phone: string;

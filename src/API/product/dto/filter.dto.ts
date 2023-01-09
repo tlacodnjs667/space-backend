@@ -3,8 +3,3 @@ export class FilterDto {
   item?: Array<number>;
   color?: Array<number>;
 }
-export class FilterDtoForService {
-  mainCategory?: any;
-  item?: Array<number>;
-  color?: Array<number>;
-}

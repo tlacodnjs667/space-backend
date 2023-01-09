@@ -1,5 +1,4 @@
 import { AppDataSource } from 'src/config/data-source';
-import { MainCategories } from 'src/entities/main_categories.entity';
 import { Product } from 'src/entities/products.entity';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
@@ -21,7 +20,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         	SELECT 
         		pc.productId as productId,
         		JSON_ARRAYAGG(
-        			c.name
+        			c.fff
         		) AS productColor
         	FROM product_color pc
         	LEFT JOIN colors c ON c.id = pc.colorId
@@ -51,7 +50,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         SELECT 
           pc.productId as productId,
           JSON_ARRAYAGG(
-            c.name
+            c.fff
           ) AS productColor
         FROM product_color pc
         LEFT JOIN colors c ON c.id = pc.colorId
@@ -64,39 +63,39 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
   },
   getProductList: () => {
     return ProductRepository.query(`
-	SELECT
-	p.id,
-	p.name,
-	p.thumbnail,
-	p.price,
-	JSON_ARRAYAGG(
-		JSON_OBJECT(
-			'colorId',IFNULL(c.id, ''),
-			'colorName',IFNULL(c.name, ''),
-			'size', sizes.size	
-		)
-	) AS color
-FROM product p
-LEFT JOIN product_color pc ON pc.productId = p.id
-LEFT JOIN colors c ON pc.colorId = c.id
-LEFT JOIN (
-		SELECT
-			po.productColorId,
-			JSON_ARRAYAGG(
-				JSON_OBJECT(
-				'sizeId',IFNULL(s.id, ''),
-				'sizeName',IFNULL(s.name, ''),
-				'stock',IFNULL(po.stock, '')		
-			) 
-		) AS size
-		FROM product_options po
-		LEFT JOIN size s ON s.id = po.sizeId
-		GROUP BY po.productColorId
-) AS sizes ON sizes.productColorId = pc.id
-GROUP BY p.id, sizes.size
+    	SELECT
+      	p.id,
+      	p.name,
+      	p.thumbnail,
+      	p.price,
+      	JSON_ARRAYAGG(
+      		JSON_OBJECT(
+		      	'colorId',IFNULL(c.id, ''),
+	      		'colorName',IFNULL(c.name, ''),
+	      		'size', sizes.size	
+      		)
+      	) AS color
+      FROM product p
+      LEFT JOIN product_color pc ON pc.productId = p.id
+      LEFT JOIN colors c ON pc.colorId = c.id
+      LEFT JOIN (
+      		SELECT
+      			po.productColorId,
+      			JSON_ARRAYAGG(
+      				JSON_OBJECT(
+      				'sizeId',IFNULL(s.id, ''),
+      				'sizeName',IFNULL(s.name, ''),
+      				'stock',IFNULL(po.stock, '')		
+      			) 
+      		) AS size
+      		FROM product_options po
+      		LEFT JOIN size s ON s.id = po.sizeId
+      		GROUP BY po.productColorId
+      ) AS sizes ON sizes.productColorId = pc.id
+      GROUP BY p.id, sizes.size
 	`);
   },
-  getColorFilter: (mainCategory: string, item: string, color: string) => {
+  getColorFilter: () => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -113,11 +112,11 @@ GROUP BY p.id, sizes.size
     LEFT JOIN product p ON pc.productId = p.id
     LEFT JOIN items i ON p.itemId = i.id
     LEFT JOIN main_sub_categories ms ON i.mainSubCategoryId = ms.id
-    WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) AND pc.colorId IN (${color})  
+    메인 아이템 컬러 아이디값 조건 
   ) AS colorInfo ON colorInfo.colorId = c.id
   `);
   },
-  getItemFilter: (mainCategory: number, item: number, color: number) => {
+  getItemFilter: () => {
     return ProductRepository.query(`
           SELECT
 	          JSON_ARRAYAGG(
@@ -133,12 +132,12 @@ GROUP BY p.id, sizes.size
           		p.itemId
           	FROM product p
           	LEFT JOIN product_color pc ON pc.productId = p.id
-            WHERE pc.colorId IN (${color})
+            컬러 아이디값 조건 
           ) AS itemInfo ON itemInfo.itemId = i.id
-          WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) 
+          메인 아이템 아이디값 조건 
     `);
   },
-  getGenderFilter: (mainCategory: number, item: number, color: number) => {
+  getGenderFilter: () => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -155,7 +154,7 @@ GROUP BY p.id, sizes.size
     LEFT JOIN items i ON ms.id = i.mainSubCategoryId
     LEFT JOIN product p ON p.itemId = i.id
     LEFT JOIN product_color pc ON pc.productId = p.id
-    WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) AND pc.colorId IN (${color})
+    메인 아이템 컬러 아이디값 조건 
     ) AS main ON mainCategoryId = m.id
     `);
   },

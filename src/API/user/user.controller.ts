@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, Headers } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
+import { LoginUserDto } from './dto/login-user.dto';
+import { Response } from 'express';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('create')
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    try {
+      const result = await this.userService.createUser(createUserDto);
+      return result;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Post('login')
+  async name(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
+    console.log(loginInfo);
+    try {
+      const a = await this.userService.checkUser(loginInfo);
+      console.log(a);
+      return res.status(200).send({ data: a });
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Get('check-token') //JWT -VALIDATE 확인을 위해 만들어진 API => 삭제 무방
+  async checkAccessToken(@Headers('accesstoken') token: string): Promise<void> {
+    return this.userService.checkAccessToken(token);
   }
 }
