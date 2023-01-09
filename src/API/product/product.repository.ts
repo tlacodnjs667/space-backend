@@ -3,7 +3,7 @@ import { Product } from 'src/entities/products.entity';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getWeeklyBestByCategory: (category: number) => {
-    return AppDataSource.getRepository(Product).query(`
+    return ProductRepository.query(`
         SELECT
         	p.id, 
             p.name, 
@@ -20,7 +20,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         	SELECT 
         		pc.productId as productId,
         		JSON_ARRAYAGG(
-        			c.fff
+        			c.name
         		) AS productColor
         	FROM product_color pc
         	LEFT JOIN colors c ON c.id = pc.colorId
@@ -33,7 +33,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     `);
   },
   getNewProduct: () => {
-    return AppDataSource.getRepository(Product).query(`
+    return ProductRepository.query(`
       SELECT
           p.id, 
           p.name, 
@@ -50,7 +50,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         SELECT 
           pc.productId as productId,
           JSON_ARRAYAGG(
-            c.fff
+            c.name
           ) AS productColor
         FROM product_color pc
         LEFT JOIN colors c ON c.id = pc.colorId
@@ -61,7 +61,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       LIMIT 11 OFFSET 0
     `);
   },
-  ProductList() {
+  getProductList: () => {
     return ProductRepository.query(`
 	SELECT
 	p.id,
