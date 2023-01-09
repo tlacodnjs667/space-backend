@@ -9,6 +9,8 @@ import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { CategoryModule } from './API/category/category.module';
 import { CategoryController } from './API/category/category.controller';
 import { CategoryService } from './API/category/category.service';
+import { ProductController } from './API/product/product.controller';
+import { ProductService } from './API/product/product.service';
 dotenv.config();
 
 @Module({
@@ -17,7 +19,7 @@ dotenv.config();
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     CategoryModule,
   ],
-  controllers: [UserController, CategoryController],
-  providers: [UserService, CategoryService],
+  controllers: [UserController, CategoryController, ProductController],
+  providers: [UserService, CategoryService, ProductService],
 })
 export class AppModule {}

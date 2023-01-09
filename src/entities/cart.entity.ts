@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './products.entity';
 import { User } from './user.entity';
 
@@ -16,4 +16,6 @@ export class Cart {
     onDelete: 'CASCADE',
   })
   product: Product;
+  @Column({ type: 'int', nullable: false })
+  quantity: number;
 }
