@@ -11,6 +11,7 @@ import { CategoryController } from './API/category/category.controller';
 import { CategoryService } from './API/category/category.service';
 import { ProductController } from './API/product/product.controller';
 import { ProductService } from './API/product/product.service';
+import { ProductModule } from './product/product.module';
 dotenv.config();
 
 @Module({
@@ -18,6 +19,7 @@ dotenv.config();
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     CategoryModule,
+    ProductModule,
   ],
   controllers: [UserController, CategoryController, ProductController],
   providers: [UserService, CategoryService, ProductService],
