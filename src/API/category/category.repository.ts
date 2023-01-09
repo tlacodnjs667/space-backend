@@ -22,9 +22,9 @@ export const CategoryRepository = AppDataSource.getRepository(
         		) AS subCate
 	        FROM main_sub_categories ms
 	        LEFT JOIN sub_categories s ON ms.sub_id = s.id	
-  	      GROUP BY mainId
-          ) AS sc ON sc.mainId = m.id
-        WHERE m.id = 2 OR m.id=3
-        `);
+			) AS sc ON sc.mainId = m.id
+		WHERE m.id = 2 OR m.id=3
+  	    GROUP BY mainId
+      `);
   },
 });
