@@ -1,4 +1,5 @@
 import { AppDataSource } from 'src/config/data-source';
+import { MainCategories } from 'src/entities/main_categories.entity';
 import { Product } from 'src/entities/products.entity';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
@@ -94,5 +95,68 @@ LEFT JOIN (
 ) AS sizes ON sizes.productColorId = pc.id
 GROUP BY p.id, sizes.size
 	`);
+  },
+  getColorFilter: (mainCategory: string, item: string, color: string) => {
+    return ProductRepository.query(`
+    SELECT
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', c.id,
+          'name', c.name
+        )
+      ) AS color
+  FROM colors c
+  INNER JOIN (
+    SELECT DISTINCT
+      pc.colorId
+    FROM product_color pc 
+    LEFT JOIN product p ON pc.productId = p.id
+    LEFT JOIN items i ON p.itemId = i.id
+    LEFT JOIN main_sub_categories ms ON i.mainSubCategoryId = ms.id
+    WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) AND pc.colorId IN (${color})  
+  ) AS colorInfo ON colorInfo.colorId = c.id
+  `);
+  },
+  getItemFilter: (mainCategory: number, item: number, color: number) => {
+    return ProductRepository.query(`
+          SELECT
+	          JSON_ARRAYAGG(
+		      	  JSON_OBJECT(
+		      		  'id', (i.id),
+		      		  'name', i.name
+		      	)
+		      ) AS item
+          FROM items i
+          LEFT JOIN main_sub_categories ms ON i.mainSubCategoryId = ms.id
+          INNER JOIN (
+          	SELECT DISTINCT
+          		p.itemId
+          	FROM product p
+          	LEFT JOIN product_color pc ON pc.productId = p.id
+            WHERE pc.colorId IN (${color})
+          ) AS itemInfo ON itemInfo.itemId = i.id
+          WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) 
+    `);
+  },
+  getGenderFilter: (mainCategory: number, item: number, color: number) => {
+    return ProductRepository.query(`
+    SELECT
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', m.id,
+          'name', m.name
+        )
+      ) AS mainCate
+  FROM main_categories m
+  INNER JOIN (
+    SELECT DISTINCT
+      ms.mainCategoryId
+    FROM main_sub_categories ms
+    LEFT JOIN items i ON ms.id = i.mainSubCategoryId
+    LEFT JOIN product p ON p.itemId = i.id
+    LEFT JOIN product_color pc ON pc.productId = p.id
+    WHERE ms.mainCategoryId IN (${mainCategory}) AND i.id IN (${item}) AND pc.colorId IN (${color})
+    ) AS main ON mainCategoryId = m.id
+    `);
   },
 });
