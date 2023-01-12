@@ -1,5 +1,5 @@
 import { AppDataSource } from 'src/config/data-source';
-import { Product } from 'src/entities/products.entity';
+import { Product } from '../../entities/products.entity';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getWeeklyBestByCategory: (category: number) => {
@@ -95,7 +95,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       GROUP BY p.id, sizes.size
 	`);
   },
-  getColorFilter: () => {
+  getColorFilter: (query: string) => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -112,7 +112,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     LEFT JOIN product p ON pc.productId = p.id
     LEFT JOIN items i ON p.itemId = i.id
     LEFT JOIN main_sub_categories ms ON i.mainSubCategoryId = ms.id
-    메인 아이템 컬러 아이디값 조건 
+    ${query}
   ) AS colorInfo ON colorInfo.colorId = c.id
   `);
   },
@@ -132,12 +132,10 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           		p.itemId
           	FROM product p
           	LEFT JOIN product_color pc ON pc.productId = p.id
-            컬러 아이디값 조건 
           ) AS itemInfo ON itemInfo.itemId = i.id
-          메인 아이템 아이디값 조건 
     `);
   },
-  getGenderFilter: () => {
+  getGenderFilter: (query: string) => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -154,7 +152,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     LEFT JOIN items i ON ms.id = i.mainSubCategoryId
     LEFT JOIN product p ON p.itemId = i.id
     LEFT JOIN product_color pc ON pc.productId = p.id
-    메인 아이템 컬러 아이디값 조건 
+    ${query}
     ) AS main ON mainCategoryId = m.id
     `);
   },

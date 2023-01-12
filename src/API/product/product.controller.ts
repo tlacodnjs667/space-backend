@@ -2,7 +2,6 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FindProductDto } from './dto/find-product.dto';
 import { FilterDto } from './dto/filter.dto';
-
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -24,14 +23,15 @@ export class ProductController {
 
   @Get('filter')
   getFilters(@Query() criteria: FilterDto) {
-    criteria.item = makeMainCategoryStructure(criteria.item); //삭제될 수도 있는 부분
-
+    console.log(criteria);
+    criteria.item = makeMainCategoryStructure(criteria.item);
+    console.log(criteria.item); //삭제될 수도 있는 부분
     return this.productService.getFilters(criteria);
   }
 }
 
-function makeMainCategoryStructure(mainCategory: string | undefined) {
-  if (mainCategory) {
-    return mainCategory?.split('[').join('').split(']').join('').split(',');
+function makeMainCategoryStructure(item: string | undefined) {
+  if (item) {
+    return item?.split('[').join('').split(']').join('').split(',');
   }
 }
