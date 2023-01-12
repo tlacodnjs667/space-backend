@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WeeklyCodyService } from './weekly_cody.service';
 import { CreateWeeklyCodyDto } from './dto/create-weekly_cody.dto';
 import { UpdateWeeklyCodyDto } from './dto/update-weekly_cody.dto';
@@ -23,7 +31,10 @@ export class WeeklyCodyController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWeeklyCodyDto: UpdateWeeklyCodyDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateWeeklyCodyDto: UpdateWeeklyCodyDto,
+  ) {
     return this.weeklyCodyService.update(+id, updateWeeklyCodyDto);
   }
 
