@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FilterDto } from './dto/filter.dto';
+import { filterElementDTO, filterResultDTO } from './dto/get-filter.dto';
 import { ProductRepository } from './product.repository';
 
 @Injectable()
@@ -15,9 +16,6 @@ export class ProductService {
   }
   async getFilters(criteria: FilterDto) {
     // 필터 가져오는 함수
-    criteria.mainCategory = Array.isArray(criteria.mainCategory)
-      ? criteria.mainCategory.map((el) => +el)
-      : null;
 
     /*여기부터 각 필터 함수 내부에서 사용할 쿼리문 만들어주는 부분*/
 
@@ -25,21 +23,15 @@ export class ProductService {
     const [colorFilterList] = await ProductRepository.getColorFilter();
     const [itemFilterList] = await ProductRepository.getItemFilter();
     const [genderFilterList] = await ProductRepository.getGenderFilter();
-
-    let { item } = itemFilterList;
-
     //이 밑에는 나온 아이템 값 처리하는 부분
-    item = makeFilteredItemStructure(item);
 
-    const filterResult = {
-      color: null,
-      item: null,
-      gender: null,
+    const filterResult: filterResultDTO = {
+      color: colorFilterList.color,
+      item: itemFilterList.item
+        ? makeFilteredItemStructure(itemFilterList.item)
+        : undefined,
+      gender: genderFilterList.mainCate,
     };
-
-    filterResult.color = colorFilterList.color;
-    filterResult.item = item; //itemFilterList.item가 아닌 우리가 데이터 형태 수정한 변수인 item값을 사용해야 함.
-    filterResult.gender = genderFilterList.mainCate;
 
     return filterResult;
   }
@@ -47,17 +39,13 @@ export class ProductService {
 
 //밑에 모듈로 뺄 return 할 아이템 id값 담은 리스트 형태 만들어주는 부분
 
-interface Obj {
-  id: Array<number>;
-  name: string;
-}
-
-function makeFilteredItemStructure(item: Array<Obj>) {
+function makeFilteredItemStructure(item: Array<filterElementDTO>) {
   const arr: Array<string> = [];
-  const arr1: Array<Obj> = [];
+  const arr1: Array<filterElementDTO> = [];
 
-  item.forEach((el: Obj) => {
+  item.forEach((el: filterElementDTO) => {
     if (!arr.includes(el.name)) {
+      // console.log(el.id);
       arr.push(el.name);
       arr1.push(el);
     } else {
@@ -68,5 +56,5 @@ function makeFilteredItemStructure(item: Array<Obj>) {
     }
   });
 
-  return item;
+  return arr1;
 }

@@ -24,7 +24,8 @@ export class ProductController {
 
   @Get('filter')
   getFilters(@Query() criteria: FilterDto) {
-    criteria.mainCategory = makeMainCategoryStructure(criteria.mainCategory);
+    criteria.item = makeMainCategoryStructure(criteria.item); //삭제될 수도 있는 부분
+
     return this.productService.getFilters(criteria);
   }
 }
