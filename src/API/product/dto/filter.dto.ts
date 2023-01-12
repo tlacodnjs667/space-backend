@@ -1,5 +1,5 @@
 export class FilterDto {
-  mainCategory?: any;
-  item?: Array<number>;
+  mainCategory?: Array<number>;
+  item?: any;
   color?: Array<number>;
 }
