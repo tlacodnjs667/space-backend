@@ -13,8 +13,8 @@ export class MakeOrderNumsMiddleware implements NestMiddleware {
   }
 }
 
-export function makeTrackingNum(): string {
-  return makeString(Math.floor(Math.random() * 10000000000000000), 16);
+function makeTrackingNum(): string {
+  return makeString(Math.floor(Math.random() * 10 ** 16), 16);
 }
 function makeOrderNum(): string {
   const ahora = new Date();
