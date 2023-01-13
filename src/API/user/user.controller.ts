@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Res, Get, Headers } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
 @Controller('user')
@@ -8,10 +8,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('create')
-  async createUser(@Body() createUserDto: CreateUserDto) {
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<ReturnCreated> {
     try {
-      const result = await this.userService.createUser(createUserDto);
-      return result;
+      return await this.userService.createUser(createUserDto);
     } catch (err) {
       console.error(err);
       return err;
@@ -31,7 +32,7 @@ export class UserController {
     }
   }
 
-  @Get('check-token') //JWT -VALIDATE 확인을 위해 만들어진 API => 삭제 무방
+  @Get('check-token') //JWT-VALIDATE 확인을 위해 만들어진 API => 삭제 무방
   async checkAccessToken(@Headers('accesstoken') token: string): Promise<void> {
     return this.userService.checkAccessToken(token);
   }

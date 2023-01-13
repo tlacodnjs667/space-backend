@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { userRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +11,7 @@ dotenv.config();
 @Injectable()
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
-  async createUser(user: CreateUserDto): Promise<void> {
+  async createUser(user: CreateUserDto): Promise<ReturnCreated> {
     const checkForDuplicate = await userRepository.checkUserInDB(user.email);
 
     if (checkForDuplicate.length) {

@@ -9,7 +9,6 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Admin } from './admin.entity';
-import { Cart } from './cart.entity';
 import { Items } from './items.entity';
 import { ProductLike } from './like.entity';
 import { Lookbook } from './lookbook.entity';
@@ -47,8 +46,6 @@ export class Product {
   product_likes: ProductLike[];
   @OneToMany(() => Snap, (snap) => snap.id)
   snaps: Snap[];
-  @OneToMany(() => Cart, (cart) => cart.id)
-  carts: Cart[];
   @OneToMany(() => ProductColor, (product_color) => product_color.product)
   product_colors: ProductColor[];
   @ManyToMany(() => Lookbook, (lookbook) => lookbook.product)
