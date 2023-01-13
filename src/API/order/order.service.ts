@@ -1,26 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { CreateOrderDto, ProductInterface } from './dto/create-order.dto';
+import { orderRepository } from './order.repository';
 
 @Injectable()
 export class OrderService {
-  create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
-  }
-
-  findAll() {
-    return `This action returns all order`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
-
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async orderProducts(orderInfo: CreateOrderDto) {
+    if (Array.isArray(orderInfo.products)) {
+      orderInfo.products = orderInfo.products
+        .map((el: ProductInterface) => `(${el.optionId}, ${el.quantity})`)
+        .join(', ');
+    }
   }
 }
