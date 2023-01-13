@@ -17,6 +17,7 @@ import { AuthMiddleware } from './middleware/auth/auth.middleware';
 import { CartController } from './API/cart/cart.controller';
 import { MakeOrderNumsMiddleware } from './middleware/auth/make-order-nums.middleware';
 import { OrderController } from './API/order/order.controller';
+import { LookbookModule } from './API/lookbook/lookbook.module';
 dotenv.config();
 
 @Module({
@@ -28,6 +29,8 @@ dotenv.config();
     ProductModule,
     CartModule,
     UserModule,
+    JwtModule,
+    LookbookModule,
   ],
   exports: [JwtModule],
 })
