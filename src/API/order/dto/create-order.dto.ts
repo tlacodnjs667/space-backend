@@ -1,9 +1,15 @@
 export class CreateOrderDto {
   orderNumber: string;
   trackingNumber: string[];
-  userId: number;
   price: number;
-  products: (string | number)[] | string; //cart의 ID 값
+  products: ProductListForOrder[] | string;
   optionInfos?: string;
-  quantity?: string;
+  address: string;
+  detail_address: string;
+  zip_number: string;
+}
+
+export interface ProductListForOrder {
+  optionId: number;
+  quantity: number;
 }

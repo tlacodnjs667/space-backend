@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { orderRepository } from './order.repository';
+import { CreateOrderDto, ProductListForOrder } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderService {
-  // async orderProducts(orderInfo: CreateOrderDto) {
-  //   if (Array.isArray(orderInfo.products)) {
-  //     orderInfo.products = orderInfo.products
-  //       .map((el: ) => `(${el.optionId}, ${el.quantity})`)
-  //       .join(', ');
-  //   }
-  // }
+  async orderProducts(orderInfo: CreateOrderDto, userId: number) {
+    if (Array.isArray(orderInfo.products)) {
+      orderInfo.products = orderInfo.products
+        .map((el: ProductListForOrder) => `(${el.optionId}, ${el.quantity})`)
+        .join(', ');
+    }
+  }
 }

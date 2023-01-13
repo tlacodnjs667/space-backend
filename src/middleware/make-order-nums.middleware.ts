@@ -5,15 +5,15 @@ import { NextFunction, Request, Response } from 'express';
 export class MakeOrderNumsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     req.body.orderNumber = makeOrderNum();
-    req.body.trackingNumber = req.body.products.map((el: number) =>
-      makeTrackingNum(),
-    );
+    req.body.trackingNumber = req.body.products.map((el: string | number) => {
+      return makeTrackingNum(el);
+    });
     next();
   }
 }
 
-function makeTrackingNum(): string {
-  return makeString(Math.floor(Math.random() * 10 ** 16), 16);
+function makeTrackingNum(el: number | string): string {
+  return makeString(Math.floor(Math.random() * 10 ** 14), 14) + el;
 }
 function makeOrderNum(): string {
   const ahora = new Date();

@@ -9,10 +9,10 @@ export class OrderController {
   @Post()
   orderProducts(
     @Body() createOrderDto: CreateOrderDto,
-    @Headers('user') userId: string,
+    @Headers('user') userId: number,
   ) {
-    console.log(userId);
+    // console.log(userId);
 
-    // return this.orderService.orderProducts(createOrderDto);
+    return this.orderService.orderProducts(createOrderDto, userId);
   }
 }

@@ -13,9 +13,10 @@ import { CartModule } from './API/cart/cart.module';
 import { UserModule } from './API/user/user.module';
 import { AuthMiddleware } from './middleware/auth/auth.middleware';
 import { CartController } from './API/cart/cart.controller';
-import { MakeOrderNumsMiddleware } from './middleware/auth/make-order-nums.middleware';
+import { MakeOrderNumsMiddleware } from './middleware/make-order-nums.middleware';
 import { OrderController } from './API/order/order.controller';
 import { LookbookModule } from './API/lookbook/lookbook.module';
+
 dotenv.config();
 
 @Module({
