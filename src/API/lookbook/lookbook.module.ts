@@ -4,6 +4,6 @@ import { LookbookController } from './lookbook.controller';
 
 @Module({
   controllers: [LookbookController],
-  providers: [LookbookService]
+  providers: [LookbookService],
 })
 export class LookbookModule {}
