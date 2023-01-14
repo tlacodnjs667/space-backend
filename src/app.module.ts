@@ -4,7 +4,6 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import * as dotenv from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './API/category/category.module';
 import { ProductModule } from './API/product/product.module';
@@ -13,12 +12,12 @@ import { CartModule } from './API/cart/cart.module';
 import { UserModule } from './API/user/user.module';
 import { AuthMiddleware } from './middleware/auth/auth.middleware';
 import { CartController } from './API/cart/cart.controller';
-import { MakeOrderNumsMiddleware } from './middleware/auth/make-order-nums.middleware';
+import { MakeOrderNumsMiddleware } from './middleware/make-order-nums.middleware';
 import { OrderController } from './API/order/order.controller';
 import { LookbookModule } from './API/lookbook/lookbook.module';
-import { Calendar } from './API/calendar/entities/calendar.entity';
 import { CalendarModule } from './API/calendar/calendar.module';
-dotenv.config();
+import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
+import { UserController } from './API/user/user.controller';
 
 @Module({
   imports: [
@@ -41,12 +40,13 @@ export class AppModule implements NestModule {
       .forRoutes(
         CartController,
         OrderController,
-        { path: 'review', method: RequestMethod.POST },
-        { path: 'review', method: RequestMethod.PATCH },
-        { path: 'review', method: RequestMethod.DELETE },
+        { path: '/review', method: RequestMethod.POST },
+        { path: '/review', method: RequestMethod.PATCH },
+        { path: '/review', method: RequestMethod.DELETE },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
       .forRoutes({ path: '/order', method: RequestMethod.POST });
+    consumer.apply(FileUploaderMiddleware).forRoutes(UserController);
   }
 }

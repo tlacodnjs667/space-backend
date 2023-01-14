@@ -3,23 +3,32 @@ import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-
+import axios from 'axios';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
+import jwt_decode from 'jwt-decode';
 import { UserInfoForJWT } from './dto/make-user-jwt.dto';
-import axios from 'axios';
+import { GetGoogleUser } from './dto/get-google-user.dto';
 dotenv.config();
 @Injectable()
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
   async createUser(user: CreateUserDto): Promise<ReturnCreated> {
-    const checkForDuplicate = await UserRepository.checkUserInDB(user.email);
+    if (!user.kakao_id || !user.google_id) {
+      //구글 정보 확인 한번 더 해야할 듯
+      const checkForDuplicate = await UserRepository.checkUserInDB(user.email);
 
-    if (checkForDuplicate.length) {
-      throw new HttpException('DUPLICATED_EMAIL', HttpStatus.CONFLICT);
+      if (checkForDuplicate.length) {
+        throw new HttpException('DUPLICATED_EMAIL', HttpStatus.CONFLICT);
+      }
+      if (!user.password)
+        throw new HttpException('CANNOT_FIND_PASSWORD', HttpStatus.NOT_FOUND);
+
+      user.password = await bcrypt.hash(
+        user.password,
+        Number(process.env.SALTROUNDS),
+      );
     }
-
-    await this.transformPassword(user);
 
     const queryForKeys = [];
     const queryForValues = [];
@@ -30,6 +39,9 @@ export class UserService {
         queryForValues.push("'" + value + "'");
       }
     }
+
+    console.log('이게 될까?');
+
     return UserRepository.createUser(
       queryForKeys.join(', '),
       queryForValues.join(', '),
@@ -49,19 +61,84 @@ export class UserService {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
     const token = await this.getAccessToken(userInfoFromDB);
-    console.log(token);
     return token;
-
-    //이제 JWT 발급해야함.
   }
 
-  async transformPassword(user: CreateUserDto) {
-    user.password = await bcrypt.hash(
-      user.password,
-      Number(process.env.SALTROUNDS),
+  async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {
+    const decodedInfo: GoogleUserInfo = jwt_decode(
+      credentialResponse.credential,
     );
-    return Promise.resolve();
+
+    const checkGoogleUserInDB = await UserRepository.checkUserInDB(
+      decodedInfo.email,
+    );
+    console.log(decodedInfo);
+    const [checkUser] = checkGoogleUserInDB;
+
+    if (checkGoogleUserInDB.length) {
+      return {
+        message: 'USER_LOGIN',
+        access_token: await this.getAccessToken(checkUser),
+      };
+    }
+
+    const user = {
+      google_id: decodedInfo.iss,
+      email: decodedInfo.email,
+      thumbnail: decodedInfo.picture,
+    };
+
+    const { insertId } = await this.createUser(user);
+
+    const UserInfoForToken: UserInfoForJWT = {
+      email: decodedInfo.email,
+      id: insertId,
+    };
+
+    return {
+      insertId,
+      message: 'USER_CREATED',
+      access_token: await this.getAccessToken(UserInfoForToken),
+    };
   }
+
+  async kakaoLogin(token: string) {
+    const urlForUserInfo = 'https://kapi.kakao.com/v2/user/me';
+    const { data } = await axios.get(urlForUserInfo, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const checkKakaoUserInDB = await UserRepository.checkUserInDB(
+      data.kakao_account.email,
+    );
+    if (checkKakaoUserInDB.length) {
+      const [KakaoUserInDB] = checkKakaoUserInDB;
+      return { access_token: await this.getAccessToken(KakaoUserInDB) };
+    }
+
+    const user = {
+      email: data.kakao_account.email,
+      thumbnail: data.properties.thumbnail,
+      gender: data.kakao_account.gender,
+    };
+
+    const { insertId } = await this.createUser(user);
+
+    const UserInfoForToken: UserInfoForJWT = {
+      id: insertId,
+      email: data.kakao_account.email,
+    };
+
+    return {
+      insertId,
+      message: 'USER_CREATED',
+      access_token: await this.getAccessToken(UserInfoForToken),
+    };
+  }
+
+  /* 위에서 사용할 */
 
   async checkHash(password: string, hashedPassword: string) {
     return await bcrypt.compare(password, hashedPassword);
@@ -73,15 +150,11 @@ export class UserService {
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
   }
-  async kakaoLogin(token: string) {
-    return UserRepository.kakaoLogin(token);
-    const urlForUserInfo = 'https://kapi.kakao.com/v2/user/me';
-    const user_ifo = await axios.get(urlForUserInfo, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const idd: string = user_ifo.data;
-    console.log(idd);
-  }
+}
+
+interface GoogleUserInfo {
+  iss: string;
+  email: string;
+  name: string;
+  picture: string;
 }

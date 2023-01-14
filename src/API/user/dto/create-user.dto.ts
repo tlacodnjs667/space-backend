@@ -1,14 +1,24 @@
+export class RequestForFormData {
+  body: CreateUserDto;
+  file: FileShape;
+}
+
+export interface FileShape {
+  location: string;
+}
+
 export class CreateUserDto {
-  name: string;
-  password: string;
+  file?: any;
+  name?: string;
+  password?: string;
   kakao_id?: string;
   google_id?: string;
   email: string;
-  birthday: string;
-  nickname: string;
-  thumbnail?: string;
-  gender: UserGender;
-  phone: string;
+  birthday?: string;
+  nickname?: string;
+  thumbnail: string;
+  gender?: UserGender;
+  phone?: string;
 }
 
 enum UserGender {

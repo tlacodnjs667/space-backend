@@ -8,7 +8,11 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     queryForValues: string,
   ): Promise<ReturnCreated> {
     return UserRepository.query(`
-        INSERT INTO USER ( ${queryForKeys} ) VALUES ( ${queryForValues} );
+        INSERT INTO USER ( 
+          ${queryForKeys}
+        ) VALUES ( 
+          ${queryForValues} 
+        );
     `);
   },
 
@@ -33,7 +37,24 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         WHERE id = '${userId} AND email = ${email}'
     `);
   },
-  async kakaoLogin(token: string) {},
+
+  async createShipmentInfo(
+    address: string,
+    detail_address: string,
+    zip_code: string,
+  ) {
+    return UserRepository.query(`
+      INSERT INTO shipment (
+        address,
+        detail_address,
+        zip_code
+      ) VALUES (
+        ${address},
+        ${detail_address},
+        ${zip_code}
+      )
+    `);
+  },
 });
 
 interface ValidatedUser {

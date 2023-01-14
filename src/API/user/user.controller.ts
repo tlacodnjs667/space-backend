@@ -1,18 +1,21 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
-import { access } from 'fs';
+import { GetGoogleUser } from './dto/get-google-user.dto';
+import { RequestForFormData, ReturnCreated } from './dto/create-user.dto';
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('create')
-  async createUser(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<ReturnCreated> {
+  async createUser(@Req() req: RequestForFormData): Promise<ReturnCreated> {
     try {
+      const { location } = req.file;
+      const createUserDto = req.body;
+      createUserDto.thumbnail = location;
+
       return await this.userService.createUser(createUserDto);
     } catch (err) {
       console.error(err);
@@ -23,29 +26,20 @@ export class UserController {
   @Post('login')
   async loginUser(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
     console.log(loginInfo);
-    try {
-      const a = await this.userService.checkUser(loginInfo);
-      console.log(a);
-      return res.status(200).send({ data: a });
-    } catch (err) {
-      console.error(err);
-      return err;
-    }
+    const data = await this.userService.checkUser(loginInfo);
+    return res.status(200).send({ data });
   }
 
   @Post('google')
-  async getInfoOfkakaoUser(@Body('access_token') token: string) {}
+  async getInfoOfGoogleUser(
+    @Body('credentialResponse') credentialResponse: GetGoogleUser,
+  ) {
+    return await this.userService.getInfoOfGoogleUser(credentialResponse);
+  }
 
   @Post('kakao')
-  async kakaoLogin(@Body('access_token') token: string) {
-    return this.userService.kakaoLogin(token);
+  async kakaoLogin(@Body('access_token') access_token: string) {
+    console.log(access_token);
+    return this.userService.kakaoLogin(access_token);
   }
 }
-
-// const {data} = responseByGoogle;
-// const {access_token} =data;
-
-// const urlToUserInfo = `https://www.googleapis.com/userinfo/v2/me?access_token=${access_token}`
-
-// const responseAboutUserInfo = await axios.get(urlToUserInfo)
-// console.log(responseAboutUserInfo.data);
