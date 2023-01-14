@@ -31,9 +31,4 @@ export class UserController {
       return err;
     }
   }
-
-  @Get('check-token') //JWT-VALIDATE 확인을 위해 만들어진 API => 삭제 무방
-  async checkAccessToken(@Headers('accesstoken') token: string): Promise<void> {
-    return this.userService.checkAccessToken(token);
-  }
 }

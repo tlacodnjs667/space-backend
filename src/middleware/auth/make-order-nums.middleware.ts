@@ -1,13 +1,12 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { ProductInterface } from 'src/API/order/dto/create-order.dto';
 
 @Injectable()
 export class MakeOrderNumsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     req.body.orderNumber = makeOrderNum();
-    req.body.trackingNumber = req.body.products.map(
-      (el: ProductInterface) => makeTrackingNum() + el.optionId,
+    req.body.trackingNumber = req.body.products.map((el: number) =>
+      makeTrackingNum(),
     );
     next();
   }

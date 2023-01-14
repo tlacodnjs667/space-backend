@@ -1,7 +1,6 @@
 import { AppDataSource } from 'src/config/data-source';
-import { CreateOrderDto, ProductInterface } from './dto/create-order.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from '../../entities/order.entity';
-import { ReturnCreated } from '../user/dto/create-user.dto';
 
 export const orderRepository = AppDataSource.getRepository(Order).extend({
   async makeOrderProduct(orderInfo: CreateOrderDto): Promise<void> {

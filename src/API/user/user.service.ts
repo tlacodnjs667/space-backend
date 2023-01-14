@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
-import { userRepository } from './user.repository';
+import { UserRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -12,11 +12,10 @@ dotenv.config();
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
   async createUser(user: CreateUserDto): Promise<ReturnCreated> {
-    const checkForDuplicate = await userRepository.checkUserInDB(user.email);
+    const checkForDuplicate = await UserRepository.checkUserInDB(user.email);
 
     if (checkForDuplicate.length) {
-      const error = new Error('DUPLICATED_EMAIL');
-      throw error;
+      throw new HttpException('DUPLICATED_EMAIL', HttpStatus.CONFLICT);
     }
 
     await this.transformPassword(user);
@@ -30,14 +29,14 @@ export class UserService {
         queryForValues.push("'" + value + "'");
       }
     }
-    return userRepository.createUser(
+    return UserRepository.createUser(
       queryForKeys.join(', '),
       queryForValues.join(', '),
     );
   }
 
   async checkUser(user: LoginUserDto) {
-    const [userInfoFromDB] = await userRepository.checkUserInDB(user.email);
+    const [userInfoFromDB] = await UserRepository.checkUserInDB(user.email);
     console.log(userInfoFromDB);
 
     const checkForClient = await this.checkHash(
@@ -46,8 +45,7 @@ export class UserService {
     );
 
     if (!checkForClient) {
-      const error = new Error("PASSWORD_ISN'T VALID");
-      throw error;
+      throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
     const token = await this.getAccessToken(userInfoFromDB);
     console.log(token);
@@ -73,14 +71,5 @@ export class UserService {
       { email: user.email, userId: user.id },
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
-  }
-
-  async checkAccessToken(token: string) {
-    //JWT -VALIDATE 확인을 위해 만들어진 API
-    const a = this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRETKEY,
-    });
-
-    return a;
   }
 }

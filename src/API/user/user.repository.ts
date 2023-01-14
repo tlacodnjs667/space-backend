@@ -2,18 +2,18 @@ import { AppDataSource } from 'src/config/data-source';
 import { User } from 'src/entities/user.entity';
 import { ReturnCreated } from './dto/create-user.dto';
 
-export const userRepository = AppDataSource.getRepository(User).extend({
+export const UserRepository = AppDataSource.getRepository(User).extend({
   async createUser(
     queryForKeys: string,
     queryForValues: string,
   ): Promise<ReturnCreated> {
-    return userRepository.query(`
+    return UserRepository.query(`
         INSERT INTO USER ( ${queryForKeys} ) VALUES ( ${queryForValues} );
     `);
   },
 
-  async checkUserInDB(email: string) {
-    return userRepository.query(`
+  async checkUserInDB(email: string): Promise<ValidatedUser[]> {
+    return UserRepository.query(`
         SELECT
           id,
           email,
@@ -22,4 +22,21 @@ export const userRepository = AppDataSource.getRepository(User).extend({
         WHERE email = '${email}'
     `);
   },
+  async checkValidation(
+    userId: number,
+    email: string,
+  ): Promise<Pick<ValidatedUser, 'id'>[]> {
+    return UserRepository.query(`
+        SELECT
+          id
+        FROM user
+        WHERE id = '${userId} AND email = ${email}'
+    `);
+  },
 });
+
+interface ValidatedUser {
+  id: number;
+  email: string;
+  password: string;
+}
