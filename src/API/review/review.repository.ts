@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { Review } from 'src/entities/review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 

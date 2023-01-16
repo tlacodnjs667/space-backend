@@ -2,6 +2,7 @@ export class CreateUserDto {
   name: string;
   password: string;
   kakao_id?: string;
+  google_id?: string;
   email: string;
   birthday: string;
   nickname: string;

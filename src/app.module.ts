@@ -4,10 +4,8 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
-import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { CategoryModule } from './API/category/category.module';
 import { ProductModule } from './API/product/product.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -23,7 +21,6 @@ dotenv.config();
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     JwtModule,
     CategoryModule,
     ProductModule,
@@ -42,8 +39,8 @@ export class AppModule implements NestModule {
         CartController,
         OrderController,
         { path: 'review', method: RequestMethod.POST },
-        { path: '/review', method: RequestMethod.PATCH },
-        { path: '/review', method: RequestMethod.DELETE },
+        { path: 'review', method: RequestMethod.PATCH },
+        { path: 'review', method: RequestMethod.DELETE },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)

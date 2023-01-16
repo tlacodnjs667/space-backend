@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { Lookbook } from 'src/entities/lookbook.entity';
 
 export const LookbookRepository = AppDataSource.getRepository(Lookbook).extend({

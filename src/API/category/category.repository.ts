@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { MainCategories } from 'src/entities/main_categories.entity';
 
 export const CategoryRepository = AppDataSource.getRepository(

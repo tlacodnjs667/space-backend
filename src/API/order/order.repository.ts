@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from '../../entities/order.entity';
 
