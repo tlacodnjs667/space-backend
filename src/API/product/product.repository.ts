@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { Product } from 'src/entities/products.entity';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({

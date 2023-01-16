@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Get, Headers } from '@nestjs/common';
+import { Controller, Post, Body, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -20,7 +20,7 @@ export class UserController {
   }
 
   @Post('login')
-  async name(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
+  async loginUser(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
     console.log(loginInfo);
     try {
       const a = await this.userService.checkUser(loginInfo);
@@ -32,8 +32,14 @@ export class UserController {
     }
   }
 
-  @Get('check-token') //JWT-VALIDATE 확인을 위해 만들어진 API => 삭제 무방
-  async checkAccessToken(@Headers('accesstoken') token: string): Promise<void> {
-    return this.userService.checkAccessToken(token);
-  }
+  @Post('google')
+  async getInfoOfkakaoUser(@Body('access_token') token: string) {}
 }
+
+// const {data} = responseByGoogle;
+// const {access_token} =data;
+
+// const urlToUserInfo = `https://www.googleapis.com/userinfo/v2/me?access_token=${access_token}`
+
+// const responseAboutUserInfo = await axios.get(urlToUserInfo)
+// console.log(responseAboutUserInfo.data);

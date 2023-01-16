@@ -1,7 +1,8 @@
 import 'dotenv/config';
+import { DataSource } from 'typeorm';
 import { DataSourceOptions } from 'typeorm';
 
-const databaseConfig: DataSourceOptions = {
+export const databaseConfig: DataSourceOptions = {
   type: 'mysql',
   host: process.env.TYPEORM_HOST,
   port: Number(process.env.TYPEORM_PORT),
@@ -15,4 +16,4 @@ const databaseConfig: DataSourceOptions = {
   migrationsRun: false,
 };
 
-export default databaseConfig;
+export const AppDataSource = new DataSource(databaseConfig);
