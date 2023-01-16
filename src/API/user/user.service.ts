@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { UserInfoForJWT } from './dto/make-user-jwt.dto';
+import axios from 'axios';
 dotenv.config();
 @Injectable()
 export class UserService {
@@ -71,5 +72,16 @@ export class UserService {
       { email: user.email, userId: user.id },
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
+  }
+  async kakaoLogin(token: string) {
+    return UserRepository.kakaoLogin(token);
+    const urlForUserInfo = 'https://kapi.kakao.com/v2/user/me';
+    const user_ifo = await axios.get(urlForUserInfo, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const idd: string = user_ifo.data;
+    console.log(idd);
   }
 }
