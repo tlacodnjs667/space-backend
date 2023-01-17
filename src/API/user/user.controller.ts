@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
+import { access } from 'fs';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -34,6 +35,11 @@ export class UserController {
 
   @Post('google')
   async getInfoOfkakaoUser(@Body('access_token') token: string) {}
+
+  @Post('kakao')
+  async kakaoLogin(@Body('access_token') token: string) {
+    return this.userService.kakaoLogin(token);
+  }
 }
 
 // const {data} = responseByGoogle;

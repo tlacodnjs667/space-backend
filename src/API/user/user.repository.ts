@@ -33,6 +33,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         WHERE id = '${userId} AND email = ${email}'
     `);
   },
+  async kakaoLogin(token: string) {},
 });
 
 interface ValidatedUser {
