@@ -1,26 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { LaunchingCalendarRepository } from './calendar.repository';
+import { CartRepository } from '../cart/cart.repository';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 
 @Injectable()
 export class CalendarService {
-  create(createCalendarDto: CreateCalendarDto) {
-    return 'This action adds a new calendar';
+  getCalendarList(offset: string) {
+    return LaunchingCalendarRepository.getCalendarList(offset);
   }
 
-  findAll() {
-    return `This action returns all calendar`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} calendar`;
-  }
-
-  update(id: number, updateCalendarDto: UpdateCalendarDto) {
-    return `This action updates a #${id} calendar`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} calendar`;
+  getCalendarDetail(calendar: string) {
+    return LaunchingCalendarRepository.getCalendarDetail(calendar);
   }
 }
