@@ -7,7 +7,7 @@ export class OrderService {
   async orderProducts(orderInfo: CreateOrderDto) {
     if (Array.isArray(orderInfo.products)) {
       orderInfo.products = orderInfo.products
-        .map((el: ) => `(${el.optionId}, ${el.quantity})`)
+        .map((el: any) => `(${el.optionId}, ${el.quantity})`)
         .join(', ');
     }
   }
