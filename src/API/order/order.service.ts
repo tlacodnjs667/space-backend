@@ -4,11 +4,11 @@ import { orderRepository } from './order.repository';
 
 @Injectable()
 export class OrderService {
-  // async orderProducts(orderInfo: CreateOrderDto) {
-  //   if (Array.isArray(orderInfo.products)) {
-  //     orderInfo.products = orderInfo.products
-  //       .map((el: ) => `(${el.optionId}, ${el.quantity})`)
-  //       .join(', ');
-  //   }
-  // }
+  async orderProducts(orderInfo: CreateOrderDto) {
+    if (Array.isArray(orderInfo.products)) {
+      orderInfo.products = orderInfo.products
+        .map((el: ) => `(${el.optionId}, ${el.quantity})`)
+        .join(', ');
+    }
+  }
 }

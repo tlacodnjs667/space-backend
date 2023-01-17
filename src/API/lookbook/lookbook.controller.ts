@@ -1,12 +1,16 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { query } from 'express';
 import { LookbookService } from './lookbook.service';
 
 @Controller('lookbook')
 export class LookbookController {
   constructor(private readonly lookbookService: LookbookService) {}
-  @Get('list')
+  @Get()
   getLookbookList(@Query('offset') offset: string) {
     return this.lookbookService.getLookbookList(+offset);
+  }
+
+  @Get('list')
+  getLookbookDetail(@Query('lookbookId') lookbookId: string) {
+    return this.lookbookService.getLookbookDetail(lookbookId);
   }
 }
