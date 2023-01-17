@@ -9,7 +9,7 @@ import { Admin } from './admin.entity';
 import { CalendarComment } from './calendar_comment.entity';
 import { CalendarLike } from './calendar_like.entity';
 
-@Entity({ name: 'launching_calendars' })
+@Entity({ name: 'launching_Calendars' })
 export class LaunchingCalendar {
   @PrimaryGeneratedColumn('increment')
   id: number;
