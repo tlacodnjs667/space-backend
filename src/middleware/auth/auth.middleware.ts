@@ -7,6 +7,7 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from 'src/API/user/user.repository';
+import 'dotenv/config';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

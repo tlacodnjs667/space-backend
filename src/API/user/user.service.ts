@@ -1,15 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto, ReturnCreated } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import axios from 'axios';
 import * as bcrypt from 'bcrypt';
-import * as dotenv from 'dotenv';
+
 import jwt_decode from 'jwt-decode';
 import { UserInfoForJWT } from './dto/make-user-jwt.dto';
+import axios from 'axios';
+import 'dotenv/config';
 import { GetGoogleUser } from './dto/get-google-user.dto';
-dotenv.config();
+import jwt_decode from 'jwt-decode';
+import { ReturnCreated } from '../order/orderInterface';
+
 @Injectable()
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
@@ -65,9 +68,7 @@ export class UserService {
   }
 
   async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {
-    const decodedInfo: GoogleUserInfo = jwt_decode(
-      credentialResponse.credential,
-    );
+    const decodedInfo: any = jwt_decode(credentialResponse.credential);
 
     const checkGoogleUserInDB = await UserRepository.checkUserInDB(
       decodedInfo.email,
@@ -134,10 +135,10 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await this.getAccessToken(UserInfoForToken),
+      access_token: await getAccessToken(UserInfoForToken),
     };
   }
-
+}
   /* 위에서 사용할 */
 
   async checkHash(password: string, hashedPassword: string) {
@@ -150,11 +151,4 @@ export class UserService {
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
   }
-}
 
-interface GoogleUserInfo {
-  iss: string;
-  email: string;
-  name: string;
-  picture: string;
-}

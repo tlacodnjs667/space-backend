@@ -1,6 +1,6 @@
 import { AppDataSource } from 'src/config/database-config';
 import { User } from 'src/entities/user.entity';
-import { ReturnCreated } from './dto/create-user.dto';
+import { ReturnCreated } from '../order/orderInterface';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
   async createUser(
@@ -30,9 +30,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     return UserRepository.query(`
         SELECT
           id,
-          gender
+          point
         FROM user
-        WHERE id = '${userId}'
+        WHERE id = ${userId}
     `);
   },
 
@@ -54,21 +54,13 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     `);
   },
 
-  async createShipmentInfo(
-    address: string,
-    detail_address: string,
-    zip_code: string,
-  ) {
+  async getUserPoint(userId: number) {
     return UserRepository.query(`
-      INSERT INTO shipment (
-        address,
-        detail_address,
-        zip_code
-      ) VALUES (
-        ${address},
-        ${detail_address},
-        ${zip_code}
-      )
+        SELECT
+          id,
+          points
+        FROM user
+        WHERE id = ${userId}
     `);
   },
 });

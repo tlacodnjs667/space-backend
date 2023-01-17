@@ -18,6 +18,8 @@ import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
 import { UserController } from './API/user/user.controller';
+import { LikeController } from './API/like/like.controller';
+import { OrderModule } from './API/order/order.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { UserController } from './API/user/user.controller';
     JwtModule,
     LookbookModule,
     CalendarModule,
+    OrderModule,
   ],
   exports: [JwtModule],
 })
@@ -39,14 +42,19 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         CartController,
-        OrderController,
+        LikeController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
         { path: '/review', method: RequestMethod.DELETE },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
-      .forRoutes({ path: '/order', method: RequestMethod.POST });
-    consumer.apply(FileUploaderMiddleware).forRoutes(UserController);
+      .forRoutes(
+        { path: '/order/by-cart', method: RequestMethod.POST },
+        { path: '/order/by-optionId', method: RequestMethod.POST },
+      );
+    consumer
+      .apply(FileUploaderMiddleware)
+      .forRoutes({ path: '/user/create', method: RequestMethod.POST });
   }
 }

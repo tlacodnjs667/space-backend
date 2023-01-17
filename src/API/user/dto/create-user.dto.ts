@@ -25,12 +25,3 @@ enum UserGender {
   '여자' = 'female',
   '남자' = 'male',
 }
-
-export interface ReturnCreated {
-  fieldCount: number;
-  affectedRows: number;
-  insertId: number;
-  info: string;
-  serverStatus: number;
-  warningStatus: number;
-}
