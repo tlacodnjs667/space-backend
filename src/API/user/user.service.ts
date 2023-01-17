@@ -4,13 +4,12 @@ import { UserRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-
 import jwt_decode from 'jwt-decode';
 import { UserInfoForJWT } from './dto/make-user-jwt.dto';
 import axios from 'axios';
 import 'dotenv/config';
 import { GetGoogleUser } from './dto/get-google-user.dto';
-import { ReturnCreated } from '../order/IOrderInterface';
+import { ReturnCreated } from '../order/orderInterface';
 
 @Injectable()
 export class UserService {
