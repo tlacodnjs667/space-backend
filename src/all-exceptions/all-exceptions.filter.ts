@@ -10,11 +10,10 @@ import { Request, Response } from 'express';
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    console.error(exception);
-
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
+
     const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -23,7 +22,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.message
         : 'INTERNAL_SERVER_ERROR';
-    res.status(httpStatus).json({
+
+    return res.status(httpStatus).json({
       message: resMessage,
       status: httpStatus,
       path: req.path,

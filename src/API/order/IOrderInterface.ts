@@ -12,6 +12,8 @@ export interface GetOrderInfoFilter {
     | 'PAYMENT_PROCEEDING'
     | 'PAID'
     | 'CANCLE_PAYMENT'
+    | 'PURCHASE_CONFIRMED'
+    | 'REFUND_REQUESTED'
     | 'REFUNDED'
     | 'PURCHASE_CONFIRMED';
 }

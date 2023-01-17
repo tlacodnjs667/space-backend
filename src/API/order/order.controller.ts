@@ -72,6 +72,11 @@ export class OrderController {
     return this.orderService.getMypageOrderInfo(userId);
   }
 
+  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
+  async getMypageOrderInfo(@Param('user') userId: number) {
+    return this.orderService.getMypageOrderInfo(userId);
+  }
+
   @Delete('all')
   async withdrawOrder(
     @Headers('user') userId: number,

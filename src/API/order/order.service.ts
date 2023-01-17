@@ -41,16 +41,25 @@ export class OrderService {
   }
 
   async getOrderHistory(userId: number, historyFilter: GetOrderInfoFilter) {
-    if (historyFilter.history_end_date && historyFilter.history_start_date) {
+    if (
+      historyFilter.history_end_date?.length &&
+      historyFilter.history_start_date?.length
+    ) {
       let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date} AND userId = ${userId}'`;
       if (historyFilter.order_status) {
         query += ` AND orderInfo.orderStatusId = ${
           ORDER_STATUS[historyFilter.order_status]
         }`;
       }
-      return OrderRepository.getOrderHistory(query);
+
+      const orderList = await OrderRepository.getOrderHistory(query);
+      const orderFilter = await OrderRepository.orderHistoryFilter();
+
+      return { orderFilter, orderList };
     }
+
     const now = new Date();
+
     let query = `${makeDateQuery(now)} AND userId = ${userId}`;
 
     if (historyFilter.order_status) {
@@ -60,6 +69,7 @@ export class OrderService {
     }
     const orderList = await OrderRepository.getOrderHistory(query);
     const orderFilter = await OrderRepository.orderHistoryFilter();
+
     return {
       orderList,
       orderFilter,
@@ -148,13 +158,12 @@ function makeDateQuery(now: Date): string {
   const endDateForm = `'${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()
     .padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}'`;
+
   now.setMonth(now.getMonth() - 1);
 
   const startDateForm = `'${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()
     .padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}'`;
 
-  console.log(startDateForm);
-  console.log(endDateForm);
   return `${startDateForm} AND ${endDateForm}`;
 }
