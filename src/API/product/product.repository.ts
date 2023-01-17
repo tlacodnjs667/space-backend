@@ -95,7 +95,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       GROUP BY p.id, sizes.size
 	`);
   },
-  getColorFilter: () => {
+  getColorFilter: (query: string) => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -112,11 +112,11 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     LEFT JOIN product p ON pc.productId = p.id
     LEFT JOIN items i ON p.itemId = i.id
     LEFT JOIN main_sub_categories ms ON i.mainSubCategoryId = ms.id
-    메인 아이템 컬러 아이디값 조건 
+    ${query}
   ) AS colorInfo ON colorInfo.colorId = c.id
   `);
   },
-  getItemFilter: () => {
+  getItemFilter: (itemMainQurey: string, colorQurey: string) => {
     return ProductRepository.query(`
           SELECT
 	          JSON_ARRAYAGG(
@@ -132,12 +132,12 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           		p.itemId
           	FROM product p
           	LEFT JOIN product_color pc ON pc.productId = p.id
-            컬러 아이디값 조건 
+           ${colorQurey}
           ) AS itemInfo ON itemInfo.itemId = i.id
-          메인 아이템 아이디값 조건 
+          ${itemMainQurey}
     `);
   },
-  getGenderFilter: () => {
+  getGenderFilter: (query: string) => {
     return ProductRepository.query(`
     SELECT
     JSON_ARRAYAGG(
@@ -154,8 +154,57 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     LEFT JOIN items i ON ms.id = i.mainSubCategoryId
     LEFT JOIN product p ON p.itemId = i.id
     LEFT JOIN product_color pc ON pc.productId = p.id
-    메인 아이템 컬러 아이디값 조건 
+    ${query}
     ) AS main ON mainCategoryId = m.id
+    `);
+  },
+  getProductDetail: (productId: string) => {
+    return ProductRepository.query(`
+    SELECT
+      p.id,
+      p.name,
+      p.thumbnail,
+      p.price, 	
+      JSON_ARRAYAGG(
+      	JSON_OBJECT(
+      		'imageId', pi.id,
+      		'image', pi.img_url
+      	)
+      ) AS productImages,
+      oo.color AS options
+    FROM product p
+    LEFT JOIN product_image pi ON p.id = pi.productId
+    LEFT JOIN (
+    	SELECT
+		    p.id AS productId,
+		      JSON_ARRAYAGG(
+		      	JSON_OBJECT(
+				      'colorId', c.id,
+				      'colorName', c.name,
+				      'options', productOption.options
+		  	) 
+	  	) AS color
+	  FROM product p
+	  LEFT JOIN product_color pc ON p.id = pc.productId
+	  LEFT JOIN colors c ON c.id = pc.colorId
+  	LEFT JOIN (
+	  	SELECT
+			  po.productColorId AS pcId,
+          JSON_ARRAYAGG(
+			    	JSON_OBJECT(
+					    'sizeId', size.id,
+					    'size', size.name,
+				    	'stock', stock
+			  	) 
+		  ) AS options 
+		  FROM product_options po
+		  LEFT JOIN size ON size.id = po.sizeId
+	  	GROUP BY pcId
+  	) AS productOption ON productOption.pcId = pc.id
+  	GROUP BY p.id	
+    ) AS oo ON oo.productId = p.id
+    WHERE p.id = ${productId}
+    GROUP BY p.id
     `);
   },
 });

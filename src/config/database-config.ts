@@ -12,7 +12,7 @@ export const databaseConfig: DataSourceOptions = {
   entities: [__dirname + '/../entities/*.entity.*'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
-  logging: true,
+  logging: false,
   migrationsRun: false,
 };
 

@@ -5,6 +5,6 @@ export class filterResultDTO {
 }
 
 export class filterElementDTO {
-  id: Array<number> | number;
+  id: any;
   name: string;
 }
