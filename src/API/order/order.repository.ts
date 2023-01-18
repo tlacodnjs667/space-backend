@@ -10,17 +10,6 @@ export const orderRepository = AppDataSource.getRepository(Order).extend({
     await queryRunner.startTransaction();
     try {
       queryRunner.commitTransaction();
-      const { inserId } = await queryRunner.query(`
-        INSERT INTO orders (
-            order_number,
-            userId,
-            total_price
-        ) VALUES (
-            ${orderInfo.orderNumber},
-            ${orderInfo.userId},
-            ${orderInfo.price}
-        );
-  `);
 
       //   await queryRunner.
     } catch (err) {

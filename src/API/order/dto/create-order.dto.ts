@@ -6,4 +6,7 @@ export class CreateOrderDto {
   products: (string | number)[] | string; //cart의 ID 값
   optionInfos?: string;
   quantity?: string;
+  address: string;
+  detail_address: string;
+  zip_code: string;
 }
