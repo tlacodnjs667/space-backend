@@ -8,3 +8,7 @@ export class FilterDtoForService {
   item?: Array<number>;
   color?: Array<number>;
 }
+
+export class ProductListDto extends FilterDtoForService {
+  sort?: string;
+}

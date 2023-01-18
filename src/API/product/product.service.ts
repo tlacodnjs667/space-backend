@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { FilterDto } from './dto/filter.dto';
-import { filterElementDTO, filterResultDTO } from './dto/get-filter.dto';
+import { FilterDto, ProductListDto } from './dto/filter.dto';
+import {
+  filterElementDTO,
+  filterResultDTO,
+  // orderFilterDto,
+} from './dto/get-filter.dto';
 import { ProductRepository } from './product.repository';
 
 @Injectable()
@@ -11,13 +15,43 @@ export class ProductService {
   getNewProduct() {
     return ProductRepository.getNewProduct();
   }
-  getProductList() {
-    return ProductRepository.getProductList();
+  async getProductList(ordering: ProductListDto, offset: number) {
+    const sort: any = {
+      best: `orderCount DESC`,
+      review: `reviewCount DESC`,
+      like: `likeCount DESC`,
+      new: `news ASC`,
+      low: `price ASC`,
+      high: `price DESC`,
+      name: `name ASC`,
+    };
+
+    let orderQuery = '';
+    if (typeof ordering.sort === 'string') {
+      orderQuery = `ORDER BY ${sort[ordering.sort]}`;
+    }
+    let whereQuery = '';
+    const conditionArray = [];
+    if (Array.isArray(ordering.color) && ordering.color.length) {
+      conditionArray.push(`pc.colorId in (${ordering.color.join(', ')})`);
+    }
+    if (ordering.item) conditionArray.push(`i.id in (${ordering.item})`);
+
+    conditionArray.push(`ms.mainCategoryId in (${ordering.mainCategory})`);
+
+    if (conditionArray.length) {
+      whereQuery = `WHERE ${conditionArray.join(' AND ')}`;
+    }
+
+    const sum = 18 * (offset - 1);
+
+    return ProductRepository.getProductList(whereQuery, orderQuery, sum);
   }
 
   getProductDetail(productId: string) {
     return ProductRepository.getProductDetail(productId);
   }
+
   async getFilters(criteria: FilterDto) {
     // 필터 가져오는 함수
     console.log(criteria);
@@ -99,6 +133,7 @@ export class ProductService {
       : ``;
     console.log(colorQurey);
     //이 밑에 세가지 필터 리스트는 각 필터링된 필터들 가져나오는 부분
+    // const getProductList = await ProductRepository.getProductList(ordering);
     const [colorFilterList] = await ProductRepository.getColorFilter(query);
     const [itemFilterList] = await ProductRepository.getItemFilter(
       itemMainQurey,
