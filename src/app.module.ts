@@ -18,6 +18,8 @@ import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
 import { UserController } from './API/user/user.controller';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { UserController } from './API/user/user.controller';
     CalendarModule,
   ],
   exports: [JwtModule],
+  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
