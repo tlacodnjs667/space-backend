@@ -37,3 +37,7 @@ export interface ProductsByOrder {
   priceByOption: number;
   quantity: number;
 }
+
+export interface OrderProductInfo {
+  cartIdList: number[];
+}

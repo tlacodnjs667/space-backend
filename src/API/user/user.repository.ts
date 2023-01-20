@@ -1,6 +1,7 @@
 import { AppDataSource } from 'src/config/database-config';
 import { User } from 'src/entities/user.entity';
-import { ReturnCreated } from '../order/orderInterface';
+import { ReturnCreated } from '../order/IOrderInterface';
+import { ValidatedUser } from './IUserInterface';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
   async createUser(
@@ -63,11 +64,19 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         WHERE id = ${userId}
     `);
   },
+  async getUserInfoForOrder(userId: number) {
+    return UserRepository.query(`
+        SELECT 
+          user.name,
+          user.email,
+          user.phone,
+          user.points,
+          s.address,
+          s.detail_address,
+          s.zip_code
+        FROM user
+        LEFT JOIN shipment s ON s.id = user.shipmentId
+        WHERE user.id = ${userId}
+    `);
+  },
 });
-
-interface ValidatedUser {
-  id: number;
-  email: string;
-  password: string;
-  gender?: string;
-}

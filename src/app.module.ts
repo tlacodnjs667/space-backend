@@ -43,7 +43,6 @@ export class AppModule implements NestModule {
       .forRoutes(
         CartController,
         LikeController,
-        OrderController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
         { path: '/review', method: RequestMethod.DELETE },

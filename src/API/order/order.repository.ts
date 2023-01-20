@@ -3,11 +3,11 @@ import {
   CreateOrderDtoByOption,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
-import { OrderHistoryFilter, ProductInfo } from './orderInterface';
+import { OrderHistoryFilter, ProductInfo } from './IOrderInterface';
 import { Order } from '../../entities/order.entity';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ProductsByOrder } from './orderInterface';
+import { ProductsByOrder } from './IOrderInterface';
 
 export const OrderRepository = AppDataSource.getRepository(Order).extend({
   async makeOrderProduct(
@@ -500,6 +500,25 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         UPDATE order_products
         SET shipmentStatusId = ${SHIPMENT_STATUS.REFUND_REQUESTED}
         WHERE id = ${orderProductId}
+    `);
+  },
+  async getOrderInfo(cartIdList: number[]) {
+    return OrderRepository.query(`
+        SELECT
+        	carts.id AS cartId,
+        	p.name,
+        	thumbnail,
+        	quantity * price AS priceByProduct,
+        	quantity,
+        	c.name AS color,
+        	s.name AS size
+        FROM carts
+        LEFT JOIN product_options po ON carts.optionId = po.id
+        LEFT JOIN size s ON po.sizeId = s.id
+        LEFT JOIN product_color pc ON po.productColorId = pc.id
+        LEFT JOIN colors c ON c.id = pc.colorId
+        LEFT JOIN product p ON pc.productId = p.id
+        WHERE carts.id IN (${cartIdList})
     `);
   },
 });

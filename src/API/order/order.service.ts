@@ -5,7 +5,7 @@ import {
 } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
 import { UserRepository } from '../user/user.repository';
-import { GetOrderInfoFilter } from './orderInterface';
+import { GetOrderInfoFilter, OrderProductInfo } from './IOrderInterface';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { ProductRepository } from '../product/product.repository';
 
@@ -17,6 +17,11 @@ export class OrderService {
       throw new HttpException('LACK_OF_USER_POINT', HttpStatus.BAD_REQUEST);
     }
     return OrderRepository.makeOrderProduct(orderInfo, userId);
+  }
+  async getOrderInfo(userId: number, cartIdList: number[]) {
+    const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
+    const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
+    return { userInfo, orderInfo };
   }
   async makeOrderProductByProduct(
     orderInfo: CreateOrderDtoByOption,
