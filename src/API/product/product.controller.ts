@@ -1,8 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FindProductDto } from './dto/find-product.dto';
-import { FilterDto } from './dto/filter.dto';
-import { stringify } from 'querystring';
+import { FilterDto, ProductListDto } from './dto/filter.dto';
+import { OffsetWithoutLimitNotSupportedError } from 'typeorm';
+
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -18,8 +19,11 @@ export class ProductController {
   }
 
   @Get('list')
-  getProductList() {
-    return this.productService.getProductList();
+  getProductList(
+    @Query() ordering: ProductListDto,
+    @Query('offset') offset: string,
+  ) {
+    return this.productService.getProductList(ordering, +offset);
   }
 
   @Get('detail')

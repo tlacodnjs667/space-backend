@@ -53,6 +53,24 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       )
     `);
   },
+
+  async createShipmentInfo(
+    address: string,
+    detail_address: string,
+    zip_code: string,
+  ) {
+    return UserRepository.query(`
+      INSERT INTO shipment (
+        address,
+        detail_address,
+        zip_code
+      ) VALUES (
+        ${address},
+        ${detail_address},
+        ${zip_code}
+      )
+    `);
+  },
 });
 
 interface ValidatedUser {

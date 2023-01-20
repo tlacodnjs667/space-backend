@@ -1,5 +1,7 @@
+import { off } from 'process';
 import { AppDataSource } from 'src/config/database-config';
 import { Product } from 'src/entities/products.entity';
+import { OffsetWithoutLimitNotSupportedError } from 'typeorm';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getWeeklyBestByCategory: (category: number) => {
@@ -61,21 +63,28 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       LIMIT 11 OFFSET 0
     `);
   },
-  getProductList: () => {
+  getProductList: (whereQuery: string, orderQuery: string, offset: number) => {
     return ProductRepository.query(`
-    	SELECT
+    SELECT
       	p.id,
-      	p.name,
+      	p.name AS name,
       	p.thumbnail,
-      	p.price,
+      	p.description,
+      	p.price AS price,
+      	p.created_at AS news,
       	JSON_ARRAYAGG(
       		JSON_OBJECT(
 		      	'colorId',IFNULL(c.id, ''),
 	      		'colorName',IFNULL(c.name, ''),
 	      		'size', sizes.size	
       		)
-      	) AS color
-      FROM product p
+      	) AS color,
+      	orderss.orderCount,
+      	likess.likeCount,
+		reviewss.reviewCount
+      FROM main_sub_categories ms
+      LEFT JOIN items i ON ms.id = i.mainSubCategoryId
+      LEFT JOIN product p ON p.itemId = i.id
       LEFT JOIN product_color pc ON pc.productId = p.id
       LEFT JOIN colors c ON pc.colorId = c.id
       LEFT JOIN (
@@ -92,7 +101,34 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       		LEFT JOIN size s ON s.id = po.sizeId
       		GROUP BY po.productColorId
       ) AS sizes ON sizes.productColorId = pc.id
-      GROUP BY p.id, sizes.size
+      LEFT JOIN (
+      	SELECT
+      		p.id AS productId,
+      		COUNT(op.id) AS orderCount
+      	FROM product p
+      	LEFT JOIN product_color pc ON p.id = pc.productId
+      	LEFT JOIN product_options po ON po.productColorId = pc.id
+      	LEFT JOIN order_products op ON op.productOptionId = po.id
+      	GROUP BY p.id
+      ) AS orderss ON orderss.productId = p.id
+      LEFT JOIN (
+      	SELECT
+      		l.productId,
+      		COUNT(l.id) AS likeCount
+      	FROM likes l
+      	GROUP BY l.productId
+      ) AS likess ON likess.productId = p.id
+          LEFT JOIN (
+			SELECT 
+				r.productId,
+				COUNT(r.id) AS reviewCount
+			FROM review r
+			GROUP BY r.productId
+		)  AS reviewss ON reviewss.productId = p.id
+      ${whereQuery}
+      GROUP BY p.id , orderss.orderCount, reviewss.reviewCount
+      ${orderQuery}
+      LIMIT 14 OFFSET ${offset}
 	`);
   },
   getColorFilter: (query: string) => {
