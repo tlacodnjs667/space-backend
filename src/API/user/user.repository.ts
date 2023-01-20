@@ -26,15 +26,13 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         WHERE email = '${email}'
     `);
   },
-  async checkValidation(
-    userId: number,
-    email: string,
-  ): Promise<Pick<ValidatedUser, 'id'>[]> {
+  async checkValidation(userId: number): Promise<ValidatedUser[]> {
     return UserRepository.query(`
         SELECT
-          id
+          id,
+          gender
         FROM user
-        WHERE id = '${userId} AND email = ${email}'
+        WHERE id = '${userId}'
     `);
   },
 
@@ -60,5 +58,6 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
 interface ValidatedUser {
   id: number;
   email: string;
-  password: string;
+  password?: string;
+  gender?: string;
 }
