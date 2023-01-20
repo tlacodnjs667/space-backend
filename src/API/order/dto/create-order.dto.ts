@@ -3,7 +3,6 @@ export class CreateOrderDto {
   detail_address: string;
   zip_code: string;
   orderNumber: string;
-  userId: number;
   trackingNumber: string[] | string;
 }
 

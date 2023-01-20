@@ -68,6 +68,6 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
 interface ValidatedUser {
   id: number;
   email: string;
-  password?: string;
+  password: string;
   gender?: string;
 }

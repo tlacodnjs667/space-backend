@@ -10,7 +10,6 @@ import { UserInfoForJWT } from './dto/make-user-jwt.dto';
 import axios from 'axios';
 import 'dotenv/config';
 import { GetGoogleUser } from './dto/get-google-user.dto';
-import jwt_decode from 'jwt-decode';
 import { ReturnCreated } from '../order/orderInterface';
 
 @Injectable()
@@ -135,10 +134,9 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await getAccessToken(UserInfoForToken),
+      access_token: await this.getAccessToken(UserInfoForToken),
     };
   }
-}
   /* 위에서 사용할 */
 
   async checkHash(password: string, hashedPassword: string) {
@@ -151,4 +149,4 @@ export class UserService {
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
   }
-
+}

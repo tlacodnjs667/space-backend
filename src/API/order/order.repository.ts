@@ -228,6 +228,8 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             LEFT JOIN colors ON pc.colorId = colors.id
             LEFT JOIN product ON product.id = pc.productId 
         ) AS productInfo ON productInfo.optionId = op.productOptionId
+        WHERE  DATE(created_at) between ${query}
+        GROUP BY o.id
     `);
   },
 

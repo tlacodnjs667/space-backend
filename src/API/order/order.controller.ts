@@ -21,32 +21,32 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post('by-cart')
-  async orderProducts(@Body() orderInfo: CreateOrderDtoByUser) {
-    const message = await this.orderService.orderProducts(
-      orderInfo,
-      orderInfo.userId,
-    );
+  async orderProducts(
+    @Headers('user') userId: number,
+    @Body() orderInfo: CreateOrderDtoByUser,
+  ) {
+    const message = await this.orderService.orderProducts(orderInfo, userId);
     return { message };
   }
   @Post('by-optionId')
-  async orderProductsByOption(@Body() orderInfo: CreateOrderDtoByOption) {
-    return this.orderService.makeOrderProductByProduct(
-      orderInfo,
-      orderInfo.userId,
-    );
+  async orderProductsByOption(
+    @Headers('user') userId: number,
+    @Body() orderInfo: CreateOrderDtoByOption,
+  ) {
+    return this.orderService.makeOrderProductByProduct(orderInfo, userId);
   }
 
-  @Get('history/:user')
+  @Get('history')
   async getOrderHistory(
-    @Param('user') userId: number,
+    @Headers('user') userId: number,
     @Query() dateFilter: GetOrderInfoFilter,
   ) {
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
 
-  @Delete('all/:user')
+  @Delete('all')
   async withdrawOrder(
-    @Param('user', ParseIntPipe) userId: number,
+    @Headers('user') userId: number,
     @Body('orderId') orderId: number,
   ) {
     const message = await this.orderService.withdrawOrder(userId, orderId);
@@ -57,7 +57,7 @@ export class OrderController {
   @Delete('/:orderProductId')
   async withdrawOrderByOption(
     @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
-    @Body('user') userId: number,
+    @Headers('user') userId: number,
   ) {
     const message = await this.orderService.withdrawOrderByOption(
       orderProductId,
