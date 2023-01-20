@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 
 @Catch()
@@ -20,11 +19,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-
+    const resMessage =
+      exception instanceof HttpException
+        ? exception.message
+        : 'INTERNAL_SERVER_ERROR';
     res.status(httpStatus).json({
-      statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
-      path: req.url,
+      message: resMessage,
+      status: httpStatus,
+      path: req.path,
     });
   }
 }

@@ -5,7 +5,7 @@ import {
 } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
 import { UserRepository } from '../user/user.repository';
-import { GetOrderInfoFilter, OrderProductInfo } from './IOrderInterface';
+import { GetOrderInfoFilter } from './IOrderInterface';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { ProductRepository } from '../product/product.repository';
 
@@ -18,11 +18,13 @@ export class OrderService {
     }
     return OrderRepository.makeOrderProduct(orderInfo, userId);
   }
+
   async getOrderInfo(userId: number, cartIdList: number[]) {
     const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
     const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
     return { userInfo, orderInfo };
   }
+
   async makeOrderProductByProduct(
     orderInfo: CreateOrderDtoByOption,
     userId: number,
@@ -37,6 +39,7 @@ export class OrderService {
     orderInfo.price = optionPrice.price * orderInfo.quantity;
     return OrderRepository.makeOrderProductByProduct(orderInfo, userId);
   }
+
   async getOrderHistory(userId: number, historyFilter: GetOrderInfoFilter) {
     if (historyFilter.history_end_date && historyFilter.history_start_date) {
       let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date} AND userId = ${userId}'`;
