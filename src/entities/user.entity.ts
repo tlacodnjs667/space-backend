@@ -1,7 +1,9 @@
 import {
   Column,
   Entity,
+  JoinTable,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -13,6 +15,7 @@ import { ProductLike } from './like.entity';
 import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { ReviewLike } from './review_like.entity';
+import { Shipment } from './shipment.entity';
 
 @Entity()
 @Unique(['kakao_id', 'email'])
@@ -35,6 +38,8 @@ export class User {
   gender: string;
   @Column({ length: 100, nullable: false })
   phone: string;
+  @Column({ type: 'decimal', nullable: false, default: 1000000 })
+  points: number;
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
   @OneToMany(() => EventComment, (event_comments) => event_comments.user)
@@ -54,4 +59,7 @@ export class User {
   calendar_comments: CalendarComment[];
   @OneToMany(() => CalendarLike, (calendar_likes) => calendar_likes.user)
   calendar_likes: CalendarLike[];
+  @OneToOne(() => Shipment, (shipment) => shipment.user)
+  @JoinTable()
+  shipment: Shipment;
 }

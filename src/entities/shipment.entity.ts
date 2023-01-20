@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from './order.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Shipment {
@@ -11,6 +12,12 @@ export class Shipment {
   address: string;
   @Column({ length: 100, type: 'varchar', nullable: false })
   detail_address: string;
-  @ManyToOne(() => Order, (order) => order.shipments, { nullable: false })
-  order: Order[];
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  name: string;
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  phone: string;
+  @OneToOne(() => Order, (order) => order.shipment)
+  order: Order;
+  @OneToOne(() => User, (user) => user.shipment)
+  user: User;
 }

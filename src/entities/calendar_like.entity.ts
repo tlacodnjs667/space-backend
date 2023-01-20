@@ -15,5 +15,5 @@ export class CalendarLike {
     (launching_calendar) => launching_calendar.calendar_likes,
     { nullable: false, onDelete: 'CASCADE' },
   )
-  launching_calendar: User;
+  launching_calendar: LaunchingCalendar;
 }

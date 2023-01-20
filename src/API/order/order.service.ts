@@ -18,13 +18,11 @@ export class OrderService {
     }
     return OrderRepository.makeOrderProduct(orderInfo, userId);
   }
-
   async getOrderInfo(userId: number, cartIdList: number[]) {
     const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
     const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
     return { userInfo, orderInfo };
   }
-
   async makeOrderProductByProduct(
     orderInfo: CreateOrderDtoByOption,
     userId: number,
