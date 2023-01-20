@@ -48,15 +48,11 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         INSERT INTO shipment (
           address,
           detail_address,
-          zip_code,
-          phone,
-          name
+          zip_code
         ) VALUES (
           '${orderInfo.address}',
           '${orderInfo.detail_address}',
-          '${orderInfo.zip_code}',
-          '${orderInfo.phone}',
-          '${orderInfo.name}'
+          '${orderInfo.zip_code}'
         )
       `);
       console.log('셋');
@@ -145,9 +141,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
     //         JSON_OBJECT(
     //           'address',address,
     //           'detail_address',detail_address,
-    //           'zip_code', zip_code,
-    //           'userName', name,
-    //           'phone', phone
+    //           'zip_code', zip_code
     //         ) AS addressInfo
     //     FROM orders o
     //     LEFT JOIN order_status ON o.orderStatusId = order_status.id
@@ -212,9 +206,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
                 JSON_OBJECT(
                   'address',shipment.address,
                   'detail_address',shipment.detail_address,
-                  'zip_code',shipment.zip_code,
-                  'userName', shipment.name,
-                  'phone', phone
+                  'zip_code',shipment.zip_code
                 ) AS shippingAddress,
                 os.name AS orderStatus
             FROM orders
