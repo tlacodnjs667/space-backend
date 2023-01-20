@@ -22,6 +22,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
 import { OrderModule } from './API/order/order.module';
+import { ReviewModule } from './API/review/review.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OrderModule } from './API/order/order.module';
     LookbookModule,
     CalendarModule,
     OrderModule,
+    ReviewModule,
   ],
   exports: [JwtModule],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
