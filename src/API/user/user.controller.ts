@@ -3,7 +3,8 @@ import { UserService } from './user.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
 import { GetGoogleUser } from './dto/get-google-user.dto';
-import { RequestForFormData, ReturnCreated } from './dto/create-user.dto';
+import { RequestForFormData } from './dto/create-user.dto';
+import { ReturnCreated } from '../order/orderInterface';
 
 @Controller('user')
 export class UserController {
@@ -12,9 +13,14 @@ export class UserController {
   @Post('create')
   async createUser(@Req() req: RequestForFormData): Promise<ReturnCreated> {
     try {
-      const { location } = req.file;
       const createUserDto = req.body;
-      createUserDto.thumbnail = location;
+
+      if (req.file) {
+        console.log(req.file);
+
+        const { location } = req.file;
+        createUserDto.thumbnail = location;
+      }
 
       return await this.userService.createUser(createUserDto);
     } catch (err) {

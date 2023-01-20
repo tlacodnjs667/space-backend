@@ -4,9 +4,10 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { NextFunction, Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from 'src/API/user/user.repository';
+import 'dotenv/config';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -23,8 +24,8 @@ export class AuthMiddleware implements NestMiddleware {
       secret: process.env.JWT_SECRETKEY,
     });
 
-    const [validatedUser] = await UserRepository.checkValidation(userId, email);
-    if (!validatedUser)
+    const [validatedUser] = await UserRepository.checkValidation(userId);
+    if (validatedUser.email !== email)
       throw new HttpException('UNVALID_TOKEN', HttpStatus.NOT_ACCEPTABLE);
 
     req.headers.user = userId;

@@ -243,4 +243,15 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     GROUP BY p.id
     `);
   },
+  async getProductPriceByOption(optionId: number) {
+    return ProductRepository.query(`
+      SELECT 
+        name,
+        price
+      FROM product_options po
+      LEFT JOIN product_color pc ON po.productColorId = pc.id
+      LEFT JOIN product p ON pc.productId = p.id
+      WHERE po.id = ${optionId}
+    `);
+  },
 });

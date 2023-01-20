@@ -20,6 +20,8 @@ import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader
 import { UserController } from './API/user/user.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
+import { LikeController } from './API/like/like.controller';
+import { OrderModule } from './API/order/order.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
     JwtModule,
     LookbookModule,
     CalendarModule,
+    OrderModule,
   ],
   exports: [JwtModule],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
@@ -42,6 +45,7 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         CartController,
+        LikeController,
         OrderController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
@@ -49,7 +53,12 @@ export class AppModule implements NestModule {
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
-      .forRoutes({ path: '/order', method: RequestMethod.POST });
-    consumer.apply(FileUploaderMiddleware).forRoutes(UserController);
+      .forRoutes(
+        { path: '/order/by-cart', method: RequestMethod.POST },
+        { path: '/order/by-optionId', method: RequestMethod.POST },
+      );
+    consumer
+      .apply(FileUploaderMiddleware)
+      .forRoutes({ path: '/user/create', method: RequestMethod.POST });
   }
 }
