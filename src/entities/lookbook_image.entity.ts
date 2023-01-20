@@ -7,7 +7,7 @@ export class LookbookImage {
   id: number;
   @Column({ length: 1000, nullable: false })
   image: string;
-  @ManyToOne(() => Lookbook, (lookbook) => lookbook.id, {
+  @ManyToOne(() => Lookbook, (lookbook) => lookbook.lookbook_images, {
     nullable: false,
     onDelete: 'CASCADE',
   })

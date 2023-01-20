@@ -3,10 +3,12 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderProducts } from './order_product.entity';
 import { OrderStatus } from './order_status.entity';
+import { Shipment } from './shipment.entity';
 import { User } from './user.entity';
 
 @Entity({ name: 'orders' })
@@ -19,10 +21,10 @@ export class Order {
   total_price: number;
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
   user: User;
-  @ManyToOne(() => OrderStatus, (order_status) => order_status.id, {
-    nullable: false,
-  })
+  @ManyToOne(() => OrderStatus, (order_status) => order_status.orders)
   order_status: OrderStatus;
-  @OneToMany(() => OrderProducts, (order_product) => order_product.id)
-  order_product: OrderProducts[];
+  @OneToMany(() => OrderProducts, (order_product) => order_product.order)
+  order_products: OrderProducts[];
+  @OneToOne(() => Shipment, (shipment) => shipment.order)
+  shipment: Shipment;
 }

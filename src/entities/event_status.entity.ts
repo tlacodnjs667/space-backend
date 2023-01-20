@@ -7,5 +7,5 @@ export class EventStatus {
   @Column({ length: 30, nullable: false })
   name: string;
   @OneToMany(() => Event, (event) => event.event_status)
-  event: Event[];
+  events: Event[];
 }

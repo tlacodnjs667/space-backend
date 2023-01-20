@@ -17,16 +17,16 @@ export class WeeklyCody {
   id: number;
   @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @ManyToOne(() => WeeklyStyle, (weekly_style) => weekly_style.id, {
+  @ManyToOne(() => WeeklyStyle, (weekly_style) => weekly_style.weekly_codies, {
     nullable: false,
   })
   weekly_style: WeeklyStyle;
-  @ManyToOne(() => Admin, (admin) => admin.id, { nullable: false })
+  @ManyToOne(() => Admin, (admin) => admin.weekly_codies, { nullable: false })
   admin: Admin;
-  @ManyToMany(() => Hashtag, (hashtag) => hashtag.id)
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.weekly_codies)
   @JoinTable({ name: 'cody_tag' })
-  hashtag: Hashtag[];
-  @ManyToMany(() => Product, (product) => product.weekly_cody)
+  hashtags: Hashtag[];
+  @ManyToMany(() => Product, (product) => product.weekly_codies)
   @JoinTable({ name: 'cody_product' })
-  product: Product[];
+  products: Product[];
 }

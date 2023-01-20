@@ -7,8 +7,8 @@ export class Hashtag {
   id: number;
   @Column({ length: 30, nullable: false })
   name: string;
-  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.id, {
+  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.hashtags, {
     onDelete: 'NO ACTION',
   })
-  weekly_cody: WeeklyCody[];
+  weekly_codies: WeeklyCody[];
 }

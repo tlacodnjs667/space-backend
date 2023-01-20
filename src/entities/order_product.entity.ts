@@ -11,19 +11,27 @@ export class OrderProducts {
   shippingCompany: string;
   @Column({ type: 'varchar', length: '500', nullable: false })
   tracking_number: string;
-  @ManyToOne(() => Order, (order) => order.id, {
+  @ManyToOne(() => Order, (order) => order.order_products, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   order: Order;
-  @ManyToOne(() => ShipmentStatus, (shipment_status) => shipment_status.id, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => ShipmentStatus,
+    (shipment_status) => shipment_status.order_products,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+    },
+  )
   shipment_status: ShipmentStatus;
-  @ManyToOne(() => ProductOptions, (product_options) => product_options.id, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  product_options: ProductOptions;
+  @ManyToOne(
+    () => ProductOptions,
+    (product_options) => product_options.order_products,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+    },
+  )
+  product_option: ProductOptions;
 }

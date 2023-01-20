@@ -9,7 +9,7 @@ import { Admin } from './admin.entity';
 import { CalendarComment } from './calendar_comment.entity';
 import { CalendarLike } from './calendar_like.entity';
 
-@Entity({ name: 'launching_calendars' })
+@Entity({ name: 'launching_Calendars' })
 export class LaunchingCalendar {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -25,16 +25,19 @@ export class LaunchingCalendar {
   image: string;
   @Column({ type: 'int', default: 0 })
   likeCounting: number;
-  @ManyToOne(() => Admin, (admin) => admin.launching_calendar, {
+  @ManyToOne(() => Admin, (admin) => admin.lookbooks, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   admin: Admin;
-  @OneToMany(() => CalendarComment, (comment) => comment.calendar)
-  calendar_comment: CalendarComment[];
+  @OneToMany(
+    () => CalendarComment,
+    (calendar_comments) => calendar_comments.calendar,
+  )
+  calendar_comments: CalendarComment[];
   @OneToMany(
     () => CalendarLike,
-    (calendar_like) => calendar_like.launching_calendar,
+    (calendar_likes) => calendar_likes.launching_calendar,
   )
-  calendar_like: CalendarLike[];
+  calendar_likes: CalendarComment[];
 }

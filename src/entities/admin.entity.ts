@@ -21,21 +21,21 @@ export class Admin {
   @Column({ length: 100, nullable: false })
   position: string;
   @OneToMany(() => Product, (product) => product.admin)
-  product: Product[];
+  products: Product[];
   @OneToMany(() => Lookbook, (lookbook) => lookbook.admin)
-  lookbook: Lookbook[];
+  lookbooks: Lookbook[];
   @OneToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.admin)
-  weekly_cody: WeeklyCody[];
+  weekly_codies: WeeklyCody[];
   @OneToMany(() => Snap, (snap) => snap.admin)
-  snap: Snap[];
+  snaps: Snap[];
   @OneToMany(
     () => LaunchingCalendar,
     (launching_calendar) => launching_calendar.admin,
   )
-  launching_calendar: LaunchingCalendar[];
+  launching_calendars: LaunchingCalendar[];
   @OneToMany(
     () => EventWinnerPost,
     (event_winner_post) => event_winner_post.admin,
   )
-  event_winner_post: EventWinnerPost[];
+  event_winner_posts: EventWinnerPost[];
 }

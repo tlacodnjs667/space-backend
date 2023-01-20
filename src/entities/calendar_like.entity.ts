@@ -5,14 +5,14 @@ import { User } from './user.entity';
 export class CalendarLike {
   @PrimaryGeneratedColumn('increment')
   id: number;
-  @ManyToOne(() => User, (user) => user.calendar_like, {
+  @ManyToOne(() => User, (user) => user.calendar_likes, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   user: User;
   @ManyToOne(
     () => LaunchingCalendar,
-    (launching_calendar) => launching_calendar.calendar_like,
+    (launching_calendar) => launching_calendar.calendar_likes,
     { nullable: false, onDelete: 'CASCADE' },
   )
   launching_calendar: LaunchingCalendar;

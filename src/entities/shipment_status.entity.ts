@@ -7,6 +7,9 @@ export class ShipmentStatus {
   id: number;
   @Column({ type: 'varchar', nullable: false, length: '40' })
   name: string;
-  @OneToMany(() => OrderProducts, (order_products) => order_products.id)
+  @OneToMany(
+    () => OrderProducts,
+    (order_products) => order_products.shipment_status,
+  )
   order_products: OrderProducts[];
 }

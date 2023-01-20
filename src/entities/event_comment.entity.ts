@@ -16,12 +16,12 @@ export class EventComment {
   comment: string;
   @CreateDateColumn({ type: 'timestamp', nullable: false })
   created_at: Date;
-  @ManyToOne(() => User, (user) => user.event_comment, {
+  @ManyToOne(() => User, (user) => user.event_comments, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   user: User;
-  @ManyToOne(() => Event, (event) => event.event_comment, {
+  @ManyToOne(() => Event, (event) => event.event_comments, {
     nullable: false,
     onDelete: 'CASCADE',
   })

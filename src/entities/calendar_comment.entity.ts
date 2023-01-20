@@ -7,12 +7,16 @@ export class CalendarComment {
   id: number;
   @Column({ length: 500, nullable: false })
   comment: string;
-  @ManyToOne(() => LaunchingCalendar, (calendar) => calendar.calendar_comment, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => LaunchingCalendar,
+    (calendar) => calendar.calendar_comments,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+    },
+  )
   calendar: LaunchingCalendar;
-  @ManyToOne(() => User, (user) => user.calendar_comment, {
+  @ManyToOne(() => User, (user) => user.calendar_comments, {
     nullable: false,
     onDelete: 'CASCADE',
   })

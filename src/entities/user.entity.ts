@@ -1,7 +1,9 @@
 import {
   Column,
   Entity,
+  JoinTable,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -13,6 +15,7 @@ import { ProductLike } from './like.entity';
 import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { ReviewLike } from './review_like.entity';
+import { Shipment } from './shipment.entity';
 
 @Entity()
 @Unique(['kakao_id', 'email'])
@@ -31,24 +34,32 @@ export class User {
   nickname: string;
   @Column({ length: 1000, nullable: false })
   thumbnail: string;
-  @Column({ length: 10, nullable: true })
+  @Column({ length: 10, nullable: true, enumName: 'femail' || 'male' })
   gender: string;
   @Column({ length: 100, nullable: false })
   phone: string;
+  @Column({ type: 'decimal', nullable: false, default: 1000000 })
+  points: number;
   @OneToMany(() => Review, (review) => review.user)
-  review: Review[];
-  @OneToMany(() => EventComment, (review) => review.user)
-  event_comment: EventComment[];
-  @OneToMany(() => CalendarComment, (review) => review.user)
-  calendar_comment: CalendarComment[];
-  @OneToMany(() => CalendarLike, (review) => review.user)
-  calendar_like: CalendarLike[];
+  reviews: Review[];
+  @OneToMany(() => EventComment, (event_comments) => event_comments.user)
+  event_comments: EventComment[];
   @OneToMany(() => ReviewLike, (review_like) => review_like.user)
-  review_like: ReviewLike[];
+  review_likes: ReviewLike[];
   @OneToMany(() => ProductLike, (product_like) => product_like.user)
-  product_like: ProductLike[];
+  product_likes: ProductLike[];
   @OneToMany(() => Cart, (cart) => cart.user)
-  cart: Cart[];
+  carts: Cart[];
   @OneToMany(() => Order, (order) => order.user)
-  order: Order[];
+  orders: Order[];
+  @OneToMany(
+    () => CalendarComment,
+    (calendar_comments) => calendar_comments.user,
+  )
+  calendar_comments: CalendarComment[];
+  @OneToMany(() => CalendarLike, (calendar_likes) => calendar_likes.user)
+  calendar_likes: CalendarLike[];
+  @OneToOne(() => Shipment, (shipment) => shipment.user)
+  @JoinTable()
+  shipment: Shipment;
 }

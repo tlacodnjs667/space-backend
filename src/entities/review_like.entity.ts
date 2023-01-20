@@ -8,8 +8,8 @@ export class ReviewLike {
   id: number;
   @Column()
   is_helpful: boolean;
-  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @ManyToOne(() => User, (user) => user.review_likes, { nullable: false })
   user: User;
-  @ManyToOne(() => Review, (review) => review.id, { nullable: false })
+  @ManyToOne(() => Review, (review) => review.review_likes, { nullable: false })
   review: Review;
 }

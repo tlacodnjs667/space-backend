@@ -1,4 +1,3 @@
-import { timeStamp } from 'console';
 import {
   Column,
   Entity,
@@ -30,13 +29,13 @@ export class Event {
   thumbnail: string;
   @Column({ length: 1000, nullable: true })
   template: string;
-  @ManyToOne(() => EventStatus, (event_status) => event_status.event, {
+  @ManyToOne(() => EventStatus, (event_status) => event_status.events, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   event_status: EventStatus;
-  @OneToMany(() => EventComment, (event_comment) => event_comment.event)
-  event_comment: EventComment[];
+  @OneToMany(() => EventComment, (event_comments) => event_comments.event)
+  event_comments: EventComment[];
   @Column('datetime')
   start_date: Date;
   @Column('datetime')
