@@ -5,7 +5,7 @@ import {
 } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
 import { UserRepository } from '../user/user.repository';
-import { GetOrderInfoFilter } from './IOrderInterface';
+import { GetOrderInfoFilter, OrderProductInfo } from './IOrderInterface';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { ProductRepository } from '../product/product.repository';
 
@@ -37,7 +37,6 @@ export class OrderService {
     orderInfo.price = optionPrice.price * orderInfo.quantity;
     return OrderRepository.makeOrderProductByProduct(orderInfo, userId);
   }
-
   async getOrderHistory(userId: number, historyFilter: GetOrderInfoFilter) {
     if (historyFilter.history_end_date && historyFilter.history_start_date) {
       let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date} AND userId = ${userId}'`;
