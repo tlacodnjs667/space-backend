@@ -3,6 +3,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderProducts } from './order_product.entity';
@@ -24,6 +25,6 @@ export class Order {
   order_status: OrderStatus;
   @OneToMany(() => OrderProducts, (order_product) => order_product.order)
   order_products: OrderProducts[];
-  @OneToMany(() => Shipment, (shipment) => shipment.order)
-  shipments: Shipment[];
+  @OneToOne(() => Shipment, (shipment) => shipment.order)
+  shipment: Shipment;
 }
