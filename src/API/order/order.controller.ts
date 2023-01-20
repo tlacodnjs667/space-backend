@@ -14,7 +14,7 @@ import {
   CreateOrderDtoByOption,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
-import { GetOrderInfoFilter, OrderProductInfo } from './IOrderInterface';
+import { GetOrderInfoFilter } from './IOrderInterface';
 
 @Controller('order')
 export class OrderController {
@@ -35,9 +35,9 @@ export class OrderController {
   ) {
     return this.orderService.makeOrderProductByProduct(orderInfo, userId);
   }
-  @Post('/:user')
+  @Post()
   getOrderInfo(
-    @Param('user', ParseIntPipe) userId: number,
+    @Headers('user') userId: number,
     @Body('cartIdList') cartIdList: number[],
   ) {
     return this.orderService.getOrderInfo(userId, cartIdList);
