@@ -4,7 +4,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
 import { GetGoogleUser } from './dto/get-google-user.dto';
 import { RequestForFormData } from './dto/create-user.dto';
-import { ReturnCreated } from '../order/IOrderInterface';
+import { ReturnCreated } from '../order/orderInterface';
 
 @Controller('user')
 export class UserController {
