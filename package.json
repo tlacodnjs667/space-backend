@@ -26,6 +26,7 @@
     "migration:revert": "yarn run typeorm:cli migration:revert"
   },
   "dependencies": {
+    "@nestjs/class-validator": "^0.13.4",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",

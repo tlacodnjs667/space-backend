@@ -31,7 +31,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     return UserRepository.query(`
         SELECT
           id,
-          point
+          email
         FROM user
         WHERE id = ${userId}
     `);

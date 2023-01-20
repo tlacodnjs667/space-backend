@@ -48,14 +48,17 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         INSERT INTO shipment (
           address,
           detail_address,
-          zip_code
+          zip_code,
+          phone,
+          name
         ) VALUES (
           '${orderInfo.address}',
           '${orderInfo.detail_address}',
-          '${orderInfo.zip_code}'
+          '${orderInfo.zip_code}',
+          '${orderInfo.phone}',
+          '${orderInfo.name}'
         )
       `);
-      console.log('셋');
 
       const { insertId: orderId } = await queryRunner.query(`
           INSERT INTO orders (
@@ -79,8 +82,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             `( ${el.optionId}, ${el.quantity}, ${orderId},  '${orderInfo.trackingNumber[index]}', ${SHIPMENT_STATUS.PREPARING_PRODUCT} )`,
         )
         .join(', ');
-      // ${orderInfo.trackingNumber[index]},
-      // trackingNumber,
+
       await queryRunner.query(`
           INSERT INTO order_products (
               productOptionId,
@@ -131,55 +133,60 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
     }
   },
   async getOrderHistory(query: string) {
-    // return OrderRepository.query(`
-    //     SELECT
-    //         o.id,
-    //         order_number,
-    //         o.created_at,
-    //         order_status.name AS orderStatus,
-    //         JSON_ARRAYAGG(opInfo) AS orderProductInfo,
-    //         JSON_OBJECT(
-    //           'address',address,
-    //           'detail_address',detail_address,
-    //           'zip_code', zip_code
-    //         ) AS addressInfo
-    //     FROM orders o
-    //     LEFT JOIN order_status ON o.orderStatusId = order_status.id
-    //     LEFT JOIN shipment ON o.shipmentId = shipment.id
-    //     LEFT JOIN (
-    //         SELECT
-    //             op.orderId,
-    //             JSON_OBJECT(
-    //                 'trackingNumber',tracking_number,
-    //                 'shippingCompany', shippingCompany,
-    //                 'shipment_status', shipment_status.name,
-    //                 'orderProductId', op.id,
-    //                 'quantity',quantity,
-    //                 'optionInfo', optionInfo,
-    //                 'productName', productName,
-    //                 'price', price * quantity
-    //             ) AS opInfo
-    //         FROM order_products op
-    //         LEFT JOIN shipment_status ON op.shipmentStatusId = shipment_status.id
-    //         LEFT JOIN (
-    //               SELECT
-    //                   po.id AS optionId,
-    //                   JSON_OBJECT(
-    //                       'size', s.name,
-    //                       'colorName', colors.name
-    //                   ) AS optionInfo,
-    //                   product.name AS productName,
-    //                   product.price AS price
-    //               FROM product_options po
-    //               LEFT JOIN size s ON po.sizeId = s.id
-    //               LEFT JOIN product_color pc ON pc.id = po.productColorId
-    //               LEFT JOIN colors ON pc.colorId = colors.id
-    //               LEFT JOIN product ON product.id = pc.productId
-    //         ) AS productInfo ON productInfo.optionId = op.productOptionId
-    //     ) AS productInfo ON productInfo.orderId = o.id
-    //     WHERE  DATE(created_at) between ${query}
-    //     GROUP BY o.id
-    // `);=> 오더별
+    return OrderRepository.query(`
+        SELECT
+            o.id,
+            order_number,
+            o.created_at,
+            order_status.name AS orderStatus,
+            JSON_ARRAYAGG(opInfo) AS orderProductInfo,
+            JSON_OBJECT(
+              'address',address,
+              'detail_address',detail_address,
+              'zip_code', zip_code,
+              'userName', shipment.name,
+              'phone', phone
+            ) AS addressInfo
+        FROM orders o
+        LEFT JOIN order_status ON o.orderStatusId = order_status.id
+        LEFT JOIN shipment ON o.shipmentId = shipment.id
+        LEFT JOIN (
+            SELECT
+                op.orderId,
+                JSON_OBJECT(
+                    'trackingNumber',tracking_number,
+                    'shippingCompany', shippingCompany,
+                    'shipment_status', shipment_status.name,
+                    'orderProductId', op.id,
+                    'quantity',quantity,
+                    'optionInfo', optionInfo,
+                    'productName', productName,
+                    'price', price * quantity,
+                    'thumbnail',thumbnail
+                ) AS opInfo
+            FROM order_products op
+            LEFT JOIN shipment_status ON op.shipmentStatusId = shipment_status.id
+            LEFT JOIN (
+                  SELECT
+                      po.id AS optionId,
+                      JSON_OBJECT(
+                          'size', s.name,
+                          'colorName', colors.name
+                      ) AS optionInfo,
+                      product.name AS productName,
+                      product.price AS price,
+                      thumbnail
+                  FROM product_options po
+                  LEFT JOIN size s ON po.sizeId = s.id
+                  LEFT JOIN product_color pc ON pc.id = po.productColorId
+                  LEFT JOIN colors ON pc.colorId = colors.id
+                  LEFT JOIN product ON product.id = pc.productId
+            ) AS productInfo ON productInfo.optionId = op.productOptionId
+        ) AS productInfo ON productInfo.orderId = o.id
+        WHERE DATE(created_at) between ${query}
+        GROUP BY o.id
+        ORDER BY o.id DESC
+    `); //=> 오더별
     return OrderRepository.query(`
         SELECT
             op.id AS orderProductId,
@@ -206,7 +213,9 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
                 JSON_OBJECT(
                   'address',shipment.address,
                   'detail_address',shipment.detail_address,
-                  'zip_code',shipment.zip_code
+                  'zip_code',shipment.zip_code,
+                  'userName', shipment.name,
+                  'phone', phone
                 ) AS shippingAddress,
                 os.name AS orderStatus
             FROM orders
@@ -229,7 +238,8 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             LEFT JOIN product ON product.id = pc.productId 
         ) AS productInfo ON productInfo.optionId = op.productOptionId
         WHERE  DATE(created_at) between ${query}
-        GROUP BY o.id
+        GROUP BY op.id
+        ORDER BY id DESC
     `);
   },
 
@@ -270,7 +280,6 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             ${ORDER_STATUS.BEFORE_PAYMENT}
           );
       `);
-      console.log(orderId);
 
       await queryRunner.query(`
           INSERT INTO order_products (
@@ -305,7 +314,6 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
       `);
       await queryRunner.commitTransaction();
       message = 'ORDER_SUCCESS';
-      console.log('dld');
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
@@ -319,6 +327,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
   async orderHistoryFilter(): Promise<OrderHistoryFilter[]> {
     return OrderRepository.query(`
         SELECT
+          id,
           name,
           filter
         FROM order_status
@@ -331,6 +340,27 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
           orderStatusId
         FROM orders
         WHERE id = ${orderId}
+    `);
+  },
+  async getOrderStatus() {
+    return OrderRepository.query(`
+        SELECT
+          id AS orderStatusId,
+          name AS orderStatusName
+        FROM order_status
+    `);
+  },
+  async getMypageOrderInfo(query: string) {
+    return OrderRepository.query(`
+        SELECT
+          orderStatusId,
+          os.name AS statusName,
+          COUNT(o.id) AS countStatus
+        FROM orders o
+        LEFT JOIN order_status os ON o.orderStatusId = os.id
+        WHERE DATE(created_at) BETWEEN ${query}
+        GROUP BY orderStatusId
+        ORDER BY orderStatusId
     `);
   },
   async withdrawOrder(orderId: number, userid: number) {

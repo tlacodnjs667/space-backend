@@ -17,7 +17,6 @@ import { OrderController } from './API/order/order.controller';
 import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
-import { UserController } from './API/user/user.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
@@ -48,7 +47,6 @@ export class AppModule implements NestModule {
       .forRoutes(
         CartController,
         LikeController,
-        OrderController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
         { path: '/review', method: RequestMethod.DELETE },

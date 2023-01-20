@@ -9,7 +9,7 @@ import { UserInfoForJWT } from './dto/make-user-jwt.dto';
 import axios from 'axios';
 import 'dotenv/config';
 import { GetGoogleUser } from './dto/get-google-user.dto';
-import { ReturnCreated } from '../order/orderInterface';
+import { ReturnCreated } from '../order/IOrderInterface';
 
 @Injectable()
 export class UserService {
@@ -53,7 +53,7 @@ export class UserService {
     const [userInfoFromDB] = await UserRepository.checkUserInDB(user.email);
     console.log(userInfoFromDB);
 
-    const checkForClient = await checkHash(
+    const checkForClient = await this.checkHash(
       user.password,
       userInfoFromDB.password,
     );
@@ -61,7 +61,7 @@ export class UserService {
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
-    const token = await getAccessToken(userInfoFromDB);
+    const token = await this.getAccessToken(userInfoFromDB);
     return token;
   }
 
@@ -77,7 +77,7 @@ export class UserService {
     if (checkGoogleUserInDB.length) {
       return {
         message: 'USER_LOGIN',
-        access_token: await getAccessToken(checkUser),
+        access_token: await this.getAccessToken(checkUser),
       };
     }
 
@@ -97,7 +97,7 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await getAccessToken(UserInfoForToken),
+      access_token: await this.getAccessToken(UserInfoForToken),
     };
   }
 
@@ -114,7 +114,7 @@ export class UserService {
     );
     if (checkKakaoUserInDB.length) {
       const [KakaoUserInDB] = checkKakaoUserInDB;
-      return { access_token: await getAccessToken(KakaoUserInDB) };
+      return { access_token: await this.getAccessToken(KakaoUserInDB) };
     }
 
     const user = {
@@ -133,19 +133,19 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await getAccessToken(UserInfoForToken),
+      access_token: await this.getAccessToken(UserInfoForToken),
     };
   }
-}
+  /* 위에서 사용할 */
 
-/* 위에서 사용할 */
-function checkHash(password: string, hashedPassword: string) {
-  return bcrypt.compare(password, hashedPassword);
-}
+  async checkHash(password: string, hashedPassword: string) {
+    return await bcrypt.compare(password, hashedPassword);
+  }
 
-function getAccessToken(user: UserInfoForJWT) {
-  return this.jwtService.sign(
-    { email: user.email, userId: user.id },
-    { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
-  );
+  async getAccessToken(user: UserInfoForJWT) {
+    return this.jwtService.sign(
+      { email: user.email, userId: user.id },
+      { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
+    );
+  }
 }
