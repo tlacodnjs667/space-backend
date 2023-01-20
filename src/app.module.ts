@@ -18,8 +18,11 @@ import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
 import { UserController } from './API/user/user.controller';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
 import { OrderModule } from './API/order/order.module';
+import { ReviewModule } from './API/review/review.module';
 
 @Module({
   imports: [
@@ -33,8 +36,10 @@ import { OrderModule } from './API/order/order.module';
     LookbookModule,
     CalendarModule,
     OrderModule,
+    ReviewModule,
   ],
   exports: [JwtModule],
+  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
