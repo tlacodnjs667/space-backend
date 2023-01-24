@@ -1,12 +1,46 @@
+import {
+  IReviewInfoToCreateOnFile,
+  IReviewInfoToCreateOnHeader,
+} from '../IReviewInterface';
+
 export class CreateReviewDto {
   productId: number;
-  userId: number;
-  title: string;
+  title?: string;
   content: string;
-  thumbnail: string;
-  start: number;
+  star: number;
+  thumbnail?: string;
 }
 
+export class CreateReviewReqDto {
+  body: CreateReviewDto;
+  header: IReviewInfoToCreateOnHeader;
+  file?: IReviewInfoToCreateOnFile;
+}
+
+export class CreateCalendarReviewDto {
+  calendarId: number;
+  comment: string;
+}
+export class CreateEventReviewDto {
+  eventId: number;
+  comment: string;
+}
+export class UpdateProductReviewDto {
+  reviewId: number;
+  title?: string;
+  content?: string;
+  star?: number;
+  thumbnail?: string;
+}
+export class UpdateProductReviewReqDto {
+  body: UpdateProductReviewDto;
+  header: IReviewInfoToCreateOnHeader;
+  file?: IReviewInfoToCreateOnFile;
+}
+export class UpdateEventReview {
+  commentId: number;
+  comment: string;
+}
 /* 
 리뷰 order-product table 내 해당 유저의 구매 내역이 있는지 확인 후, 
 해당 유저가 동일한 상품으로 리뷰를 작성한 적이 있는지 체크가 필요.

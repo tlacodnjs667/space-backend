@@ -17,17 +17,17 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     `);
   },
 
-  async checkUserInDB(email: string): Promise<ValidatedUser[]> {
+  async checkUserInDB(query: string): Promise<ValidatedUser[]> {
     return UserRepository.query(`
         SELECT
           id,
           email,
           password
         FROM user
-        WHERE email = '${email}'
+        WHERE ${query}
     `);
   },
-  async checkValidation(userId: number): Promise<ValidatedUser[]> {
+  async checkGender(userId: number): Promise<ValidatedUser[]> {
     return UserRepository.query(`
         SELECT
           id,
@@ -78,6 +78,26 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         FROM user
         LEFT JOIN shipment s ON s.id = user.shipmentId
         WHERE user.id = ${userId}
+    `);
+  },
+  getUserInfoToChange(userId: number) {
+    return UserRepository.query(`
+        SELECT 
+          email,
+          birthday,
+          nickname,
+          thumbnail,
+          gender,
+          phone
+        FROM user
+        WHERE user.id = ${userId}
+    `);
+  },
+  async updateUserInfo(userId: number, queryToChangeData: string[]) {
+    return UserRepository.query(`
+      UPDATE user
+      SET ${queryToChangeData.join(', ')}
+      WHERE id = ${userId}
     `);
   },
 });
