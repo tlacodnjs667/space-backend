@@ -4,6 +4,6 @@ import { SnapController } from './snap.controller';
 
 @Module({
   controllers: [SnapController],
-  providers: [SnapService]
+  providers: [SnapService],
 })
 export class SnapModule {}
