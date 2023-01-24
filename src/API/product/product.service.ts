@@ -9,9 +9,16 @@ import { ProductRepository } from './product.repository';
 
 @Injectable()
 export class ProductService {
-  getWeeklyBestByCategory(category: number) {
-    return ProductRepository.getWeeklyBestByCategory(category);
+  async getWeeklyBestByCategory(category: number) {
+    const weeklyBest = await ProductRepository.getWeeklyBestByCategory(
+      category,
+    );
+
+    const categories = await ProductRepository.getCategory();
+
+    return { weeklyBest, categories };
   }
+
   getNewProduct() {
     return ProductRepository.getNewProduct();
   }

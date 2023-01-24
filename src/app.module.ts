@@ -17,12 +17,12 @@ import { OrderController } from './API/order/order.controller';
 import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
-import { UserController } from './API/user/user.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
 import { OrderModule } from './API/order/order.module';
 import { ReviewModule } from './API/review/review.module';
+import { SnapModule } from './API/snap/snap.module';
 
 @Module({
   imports: [
@@ -37,6 +37,7 @@ import { ReviewModule } from './API/review/review.module';
     CalendarModule,
     OrderModule,
     ReviewModule,
+    SnapModule,
   ],
   exports: [JwtModule],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
