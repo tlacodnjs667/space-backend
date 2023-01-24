@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -17,7 +17,8 @@ export class UserService {
   async createUser(user: CreateUserDto): Promise<ReturnCreated> {
     if (!user.kakao_id || !user.google_id) {
       //구글 정보 확인 한번 더 해야할 듯
-      const checkForDuplicate = await UserRepository.checkUserInDB(user.email);
+      const query = `email = '${user.email}'`;
+      const checkForDuplicate = await UserRepository.checkUserInDB(query);
 
       if (checkForDuplicate.length) {
         throw new HttpException('DUPLICATED_EMAIL', HttpStatus.CONFLICT);
@@ -50,13 +51,15 @@ export class UserService {
   }
 
   async checkUser(user: LoginUserDto) {
-    const [userInfoFromDB] = await UserRepository.checkUserInDB(user.email);
-    console.log(userInfoFromDB);
+    const query = `email = '${user.email}'`;
+    const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
+    // console.log(user.password);
 
     const checkForClient = await this.checkHash(
       user.password,
       userInfoFromDB.password,
     );
+    // console.log('userInfoFromDB' + userInfoFromDB);
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
@@ -67,17 +70,15 @@ export class UserService {
 
   async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {
     const decodedInfo: any = jwt_decode(credentialResponse.credential);
-
-    const checkGoogleUserInDB = await UserRepository.checkUserInDB(
-      decodedInfo.email,
-    );
+    const query = `email = '${decodedInfo.email}'`;
+    const checkGoogleUserInDB = await UserRepository.checkUserInDB(query);
     console.log(decodedInfo);
     const [checkUser] = checkGoogleUserInDB;
 
     if (checkGoogleUserInDB.length) {
       return {
         message: 'USER_LOGIN',
-        access_token: await this.getAccessToken(checkUser),
+        access_token: this.getAccessToken(checkUser),
       };
     }
 
@@ -108,13 +109,11 @@ export class UserService {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    const checkKakaoUserInDB = await UserRepository.checkUserInDB(
-      data.kakao_account.email,
-    );
+    const query = `email = '${data.kakao_account.email}'`;
+    const checkKakaoUserInDB = await UserRepository.checkUserInDB(query);
     if (checkKakaoUserInDB.length) {
       const [KakaoUserInDB] = checkKakaoUserInDB;
-      return { access_token: await this.getAccessToken(KakaoUserInDB) };
+      return { access_token: this.getAccessToken(KakaoUserInDB) };
     }
 
     const user = {
@@ -133,19 +132,58 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await this.getAccessToken(UserInfoForToken),
+      access_token: this.getAccessToken(UserInfoForToken),
     };
   }
-  /* 위에서 사용할 */
+  async getUserInfoToChange(userId: number) {
+    return UserRepository.getUserInfoToChange(userId);
+  }
+  async updateUserInfo(userId: number, userInfoToChange: UpdateUserDto) {
+    const query = `id = ${userId}`;
+    const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
 
-  async checkHash(password: string, hashedPassword: string) {
-    return await bcrypt.compare(password, hashedPassword);
+    if (!userInfoToChange.userPassword) {
+      throw new HttpException('PASSWORD_REQUIRED', HttpStatus.UNAUTHORIZED);
+    }
+
+    const checkForClient = await this.checkHash(
+      userInfoToChange.userPassword,
+      userInfoFromDB.password,
+    );
+
+    if (!checkForClient) {
+      throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
+    }
+
+    userInfoToChange.userPassword = undefined;
+
+    const QueryForChange = [];
+
+    for (const [key, value] of Object.entries(userInfoToChange)) {
+      if (value) {
+        QueryForChange.push(`${key} = ${value}`);
+      }
+    }
+
+    if (!QueryForChange.length) {
+      throw new HttpException(
+        'CANNOT_FIND_INFO_FOR_CHANGE',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+  checkHash(password: string, hashedPassword: string) {
+    return bcrypt.compare(password, hashedPassword);
   }
 
-  async getAccessToken(user: UserInfoForJWT) {
-    return this.jwtService.sign(
+  getAccessToken(user: UserInfoForJWT) {
+    console.log(user);
+
+    const jwtt = this.jwtService.sign(
       { email: user.email, userId: user.id },
       { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
     );
+
+    return jwtt;
   }
 }
