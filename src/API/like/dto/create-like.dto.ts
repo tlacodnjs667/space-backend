@@ -1,4 +1,4 @@
 export class CreateLikeDto {
-  main: string;
-  category: string[];
+  is_helpful: string;
+  reviewId: string;
 }
