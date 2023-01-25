@@ -1,42 +1,26 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Post('product')
-  createReviewForProduct(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.createReviewForProduct(createReviewDto);
+  @Get('img')
+  findReviewImageForMain(@Query('offset') offset: number) {
+    if (!offset) offset = 0;
+    return this.reviewService.findReviewImageForMain(+offset);
   }
 
-  @Get()
-  findAll() {
-    return this.reviewService.findAll();
+  @Get('detail/:reviewId')
+  getReviewFromProductID(@Param('reviewId') reviewId: string) {
+    return this.reviewService.getReviewFromProductID(+reviewId);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  @Get('related/:productId')
+  getReviewImgRelated(
+    @Param('productId') productId: string,
+    @Query('page') page: string | number,
+  ) {
+    if (!page) page = 1;
+    return this.reviewService.getReviewImgRelated(+productId, +page);
   }
 }

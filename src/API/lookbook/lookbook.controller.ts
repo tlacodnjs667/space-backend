@@ -1,4 +1,5 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ILookbookForMain, ILookbookForMainDetail } from './ILookbook';
 import { LookbookService } from './lookbook.service';
 
 @Controller('lookbook')
@@ -8,9 +9,18 @@ export class LookbookController {
   getLookbookList(@Query('offset') offset: string) {
     return this.lookbookService.getLookbookList(+offset);
   }
-
   @Get('list')
   getLookbookDetail(@Query('lookbookId') lookbookId: string) {
     return this.lookbookService.getLookbookDetail(lookbookId);
+  }
+  @Get('main')
+  getLookbookForMain(): Promise<ILookbookForMain[]> {
+    return this.lookbookService.getLookbookForMain();
+  }
+  @Get('main/:lookbookId')
+  getLookbookDetailForMain(
+    @Param('lookbookId') lookbookId: string,
+  ): Promise<ILookbookForMainDetail[]> {
+    return this.lookbookService.getLookbookDetailForMain(+lookbookId);
   }
 }

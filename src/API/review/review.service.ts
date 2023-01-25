@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { ReviewRepository } from './review.repository';
 
 @Injectable()
 export class ReviewService {
-  createReviewForProduct(createReviewDto: CreateReviewDto) {
-    return ReviewRepository.createReviewForProduct(createReviewDto);
+  findReviewImageForMain(offset: number) {
+    return ReviewRepository.findReviewImageForMain(offset);
   }
 
-  findAll() {
-    return `This action returns all review`;
-  }
+  async getReviewFromProductID(reviewId: number) {
+    const [detailReview] = await ReviewRepository.findReviewDetailFromImg(
+      reviewId,
+    );
+    console.log(detailReview);
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
-  }
+    // detailReview.productId
+    const productInfo = await ReviewRepository.getProductInfoWithReview(
+      detailReview.productId,
+    );
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
+    return { detailReview, productInfo };
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  getReviewImgRelated(productId: number, page: number) {
+    const offset = 12 * (page - 1);
+    return ReviewRepository.getReviewImgRelated(productId, offset);
   }
 }
