@@ -1,1 +1,4 @@
-export class CreateWeeklyCodyDto {}
+export class WeeklyCodyListDto {
+  style: string;
+  offset: number;
+}

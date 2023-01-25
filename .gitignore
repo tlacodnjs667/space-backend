@@ -1,4 +1,5 @@
 /jsonFolder
+
 .env
 /src/migrations
 # compiled output

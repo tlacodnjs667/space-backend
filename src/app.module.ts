@@ -22,6 +22,9 @@ import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
 import { OrderModule } from './API/order/order.module';
 import { ReviewModule } from './API/review/review.module';
+import { EventModule } from './API/event/event.module';
+import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
+import { SnapModule } from './API/snap/snap.module';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { ReviewModule } from './API/review/review.module';
     CalendarModule,
     OrderModule,
     ReviewModule,
+    EventModule,
+    SnapModule,
+    WeeklyCodyModule,
   ],
   exports: [JwtModule],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],

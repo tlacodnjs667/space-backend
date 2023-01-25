@@ -1,26 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { EventRepository } from './event.repository';
 
 @Injectable()
 export class EventService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  getEventList(eventStatusId: string) {
+    return EventRepository.getEventList(eventStatusId);
   }
-
-  findAll() {
-    return `This action returns all event`;
+  getEventDetail(eventId: string) {
+    return EventRepository.getEventDetail(eventId);
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  getEventWinnerList() {
+    return EventRepository.getEventWinnerList();
   }
-
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  getEventWinner(id: string) {
+    return EventRepository.getEventWinner(id);
   }
 }

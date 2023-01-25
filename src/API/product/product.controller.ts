@@ -2,7 +2,6 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FindProductDto } from './dto/find-product.dto';
 import { FilterDto, ProductListDto } from './dto/filter.dto';
-import { OffsetWithoutLimitNotSupportedError } from 'typeorm';
 
 @Controller('product')
 export class ProductController {
@@ -37,11 +36,5 @@ export class ProductController {
     // criteria.item = makeMainCategoryStructure(criteria.item);
     console.log(criteria.item); //삭제될 수도 있는 부분
     return this.productService.getFilters(criteria);
-  }
-}
-
-function makeMainCategoryStructure(item: string | undefined) {
-  if (item) {
-    return item?.split('[').join('').split(']').join('').split(',');
   }
 }
