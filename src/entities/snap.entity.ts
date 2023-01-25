@@ -22,12 +22,12 @@ export class Snap {
   cloth_color: string;
   @Column({ length: 100, nullable: false })
   cloth_size: string;
-  @ManyToOne(() => Items, (item) => item.id, {
+  @ManyToOne(() => Items, (item) => item.snaps, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   item: Items;
-  @ManyToOne(() => Product, (product) => product.id, {
+  @ManyToOne(() => Product, (product) => product.snaps, {
     nullable: false,
     onDelete: 'CASCADE',
   })

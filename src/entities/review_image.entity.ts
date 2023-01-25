@@ -5,7 +5,7 @@ import { Review } from './review.entity';
 export class ReviewImg {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => Review, (review) => review.id, { nullable: false })
+  @ManyToOne(() => Review, (review) => review.review_images, { nullable: true })
   review: number;
   @Column({ length: 1000 })
   thumbnail: string;

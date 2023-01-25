@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import 'dotenv/config';
 import axios from 'axios';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 @Injectable()
 export class UserService {

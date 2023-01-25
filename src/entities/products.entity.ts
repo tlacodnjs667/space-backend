@@ -9,11 +9,12 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Admin } from './admin.entity';
-import { Cart } from './cart.entity';
 import { Items } from './items.entity';
 import { ProductLike } from './like.entity';
 import { Lookbook } from './lookbook.entity';
+import { ProductColor } from './product_color.entity';
 import { ProductImage } from './product_img.entity';
+import { Review } from './review.entity';
 import { Snap } from './snap.entity';
 import { WeeklyCody } from './weekly_cody.entity';
 
@@ -27,26 +28,28 @@ export class Product {
   thumbnail: string;
   @Column({ length: 1000, nullable: false })
   description: string;
-  @Column({nullable: false})
+  @Column({ nullable: false })
   price: number;
-  @CreateDateColumn({type: 'timestamp', nullable: false})
+  @CreateDateColumn({ type: 'timestamp', nullable: false })
   created_at: Date;
-  @UpdateDateColumn({type: 'timestamp', nullable: false})
+  @UpdateDateColumn({ type: 'timestamp', nullable: false })
   updated_at: Date;
-  @ManyToOne(() => Admin, (admin) => admin.id)
+  @ManyToOne(() => Admin, (admin) => admin.products)
   admin: number;
-  @ManyToOne(() => Items, (item) => item.id)
+  @ManyToOne(() => Items, (item) => item.products)
   item: number;
   @OneToMany(() => ProductImage, (product_img) => product_img.id)
-  product_img: Product[];
+  product_imgs: Product[];
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
   @OneToMany(() => ProductLike, (product_like) => product_like.id)
-  product_like: ProductLike[];
+  product_likes: ProductLike[];
   @OneToMany(() => Snap, (snap) => snap.id)
-  snap: Snap[];
-  @OneToMany(() => Cart, (cart) => cart.id)
-  cart: Cart[];
+  snaps: Snap[];
+  @OneToMany(() => ProductColor, (product_color) => product_color.product)
+  product_colors: ProductColor[];
   @ManyToMany(() => Lookbook, (lookbook) => lookbook.product)
-  lookbook: Lookbook[];
-  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.product)
-  weekly_cody: WeeklyCody[];
+  lookbooks: Lookbook[];
+  @ManyToMany(() => WeeklyCody, (weekly_cody) => weekly_cody.products)
+  weekly_codies: WeeklyCody[];
 }

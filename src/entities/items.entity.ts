@@ -24,8 +24,8 @@ export class Items {
     },
   )
   main_sub_category: MainSubCategories;
-  @OneToMany(() => Product, (product) => product.id)
-  product: Product[];
-  @OneToMany(() => Snap, (snap) => snap.id)
-  snap: Snap[];
+  @OneToMany(() => Product, (product) => product.item)
+  products: Product[];
+  @OneToMany(() => Snap, (snap) => snap.item)
+  snaps: Snap[];
 }

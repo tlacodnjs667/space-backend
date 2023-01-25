@@ -1,5 +1,7 @@
-.env
+/jsonFolder
 
+.env
+/src/migrations
 # compiled output
 /dist
 /node_modules
