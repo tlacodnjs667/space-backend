@@ -5,6 +5,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { typeOrmAsyncConfig } from './config/typeorm.config';
+import { MainModule } from './main/main.module';
+import { ProductModule } from './product/product.module';
+dotenv.config();
 import { CategoryModule } from './API/category/category.module';
 import { ProductModule } from './API/product/product.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -31,6 +35,9 @@ import { LikeModule } from './API/like/like.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
+    MainModule,
+    ProductModule,
     JwtModule,
     CategoryModule,
     ProductModule,

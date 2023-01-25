@@ -18,7 +18,7 @@ import { Review } from './review.entity';
 import { Snap } from './snap.entity';
 import { WeeklyCody } from './weekly_cody.entity';
 
-@Entity()
+@Entity({name:'products'})
 export class Product {
   @PrimaryGeneratedColumn('increment')
   id: number;
