@@ -20,11 +20,12 @@ import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { LikeController } from './API/like/like.controller';
-import { OrderModule } from './API/order/order.module';
+
 import { ReviewModule } from './API/review/review.module';
 import { EventModule } from './API/event/event.module';
 import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
 import { SnapModule } from './API/snap/snap.module';
+import { OrderModule } from './API/order/order.module';
 
 @Module({
   imports: [
