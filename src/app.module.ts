@@ -24,7 +24,7 @@ import { OrderModule } from './API/order/order.module';
 import { ReviewModule } from './API/review/review.module';
 import { EventModule } from './API/event/event.module';
 import { SnapModule } from './API/snap/snap.module';
-
+import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ import { SnapModule } from './API/snap/snap.module';
     ReviewModule,
     EventModule,
     SnapModule,
-
+    WeeklyCodyModule,
   ],
   exports: [JwtModule],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
