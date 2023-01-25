@@ -1,1 +1,4 @@
-export class CreateSnapDto {}
+export class SnapDto {
+  hashtag: string;
+  snapId: string;
+}

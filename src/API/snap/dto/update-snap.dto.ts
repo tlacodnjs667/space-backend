@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateSnapDto } from './create-snap.dto';
+import { SnapDto } from './create-snap.dto';
 
-export class UpdateSnapDto extends PartialType(CreateSnapDto) {}
+export class UpdateSnapDto extends PartialType(SnapDto) {}

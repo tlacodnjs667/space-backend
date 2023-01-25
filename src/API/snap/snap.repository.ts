@@ -1,21 +1,46 @@
 import { AppDataSource } from 'src/config/database-config';
 import { Snap } from 'src/entities/snap.entity';
-import { ISnapForMain } from './snapInterface';
 
 export const SnapRepository = AppDataSource.getRepository(Snap).extend({
-  getSnapsForAdv(): Promise<ISnapForMain[]> {
+  getSnapList: async (hashtag: string) => {
     return SnapRepository.query(`
-        SELECT
-	        s.id AS snapId,
-	        s.thumbnail,
-	        hashtag,
-	        i.name AS itemName,
-	        p.name AS productName
-        FROM snaps s
-        LEFT JOIN product p ON s.productId = p.id
-        LEFT JOIN items i ON i.id = s.id
-        ORDER BY s.id DESC
-        LIMIT 10 OFFSET 0
-    `);
+    SELECT
+		id,
+		model_name AS modelName,
+		model_height AS height,
+		cloth_color AS color,
+		cloth_size	AS size,
+		thumbnail,
+		hashtag
+	FROM snaps 
+	WHERE hashtag = ${hashtag}
+  `);
+  },
+  getCountSnap: async (hashtag: string) => {
+    return SnapRepository.query(`
+	SELECT
+		COUNT(hashtag)
+  	FROM snaps 
+ 	WHERE hashtag = ${hashtag}
+	`);
+  },
+  getSnapDetail: async (snapId: string) => {
+    return SnapRepository.query(`
+	SELECT
+		s.id,
+		model_name AS modelName,
+		model_height AS height,
+		model_weight AS weight,
+		cloth_color AS color,
+		cloth_size	AS size,
+		s.thumbnail,
+		hashtag,
+		p.id,
+		p.name,
+		p.thumbnail AS productImage
+	FROM snaps s
+	LEFT JOIN product p ON s.productId = p.id
+	WHERE s.id = ${snapId}
+	`);
   },
 });
