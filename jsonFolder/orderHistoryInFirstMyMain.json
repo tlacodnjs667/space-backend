@@ -1,0 +1,134 @@
+{
+    "orderStatus": [
+        {
+            "orderStatusId": 1,
+            "orderStatusName": "결제대기중"
+        },
+        {
+            "orderStatusId": 2,
+            "orderStatusName": "결제중"
+        },
+        {
+            "orderStatusId": 3,
+            "orderStatusName": "결제완료"
+        },
+        {
+            "orderStatusId": 4,
+            "orderStatusName": "구매확정"
+        },
+        {
+            "orderStatusId": 5,
+            "orderStatusName": "환불 요청"
+        },
+        {
+            "orderStatusId": 6,
+            "orderStatusName": "환불완료"
+        },
+        {
+            "orderStatusId": 7,
+            "orderStatusName": "결제취소"
+        },
+        {
+            "orderStatusId": 8,
+            "orderStatusName": "부분취소"
+        }
+    ],
+    "orderCountByStatus": [
+        {
+            "orderStatusId": 3,
+            "statusName": "결제완료",
+            "countStatus": "2"
+        },
+        {
+            "orderStatusId": 7,
+            "statusName": "결제취소",
+            "countStatus": "1"
+        }
+    ],
+    "orderHistory": [
+        {
+            "id": 44,
+            "order_number": "202301201430318",
+            "created_at": "2023-01-20T05:30:45.000Z",
+            "orderStatus": "결제완료",
+            "orderProductInfo": [
+                {
+                    "price": 175200,
+                    "quantity": 2,
+                    "optionInfo": {
+                        "size": "S(085)",
+                        "colorName": "black"
+                    },
+                    "productName": "멋짐을 뽐내고 싶을 때 입는 가죽 자켓",
+                    "orderProductId": 24,
+                    "trackingNumber": "5932359675430501",
+                    "shipment_status": "배송준비중",
+                    "shippingCompany": "대학통운"
+                }
+            ],
+            "addressInfo": {
+                "phone": "000-0000-0000",
+                "address": "광명시",
+                "userName": "홍길동",
+                "zip_code": "12345",
+                "detail_address": "철산동"
+            }
+        },
+        {
+            "id": 43,
+            "order_number": "202301200949624",
+            "created_at": "2023-01-20T00:49:30.000Z",
+            "orderStatus": "결제취소",
+            "orderProductInfo": [
+                {
+                    "price": 175200,
+                    "quantity": 2,
+                    "optionInfo": {
+                        "size": "S(085)",
+                        "colorName": "black"
+                    },
+                    "productName": "멋짐을 뽐내고 싶을 때 입는 가죽 자켓",
+                    "orderProductId": 23,
+                    "trackingNumber": "5572095858878678",
+                    "shipment_status": "환불완료",
+                    "shippingCompany": "대학통운"
+                }
+            ],
+            "addressInfo": {
+                "phone": "000-0000-0000",
+                "address": "광명시",
+                "userName": "홍길동",
+                "zip_code": "12345",
+                "detail_address": "철산동"
+            }
+        },
+        {
+            "id": 26,
+            "order_number": "undefined",
+            "created_at": "2023-01-19T16:14:03.000Z",
+            "orderStatus": "결제완료",
+            "orderProductInfo": [
+                {
+                    "price": 175200,
+                    "quantity": 2,
+                    "optionInfo": {
+                        "size": "S(085)",
+                        "colorName": "black"
+                    },
+                    "productName": "멋짐을 뽐내고 싶을 때 입는 가죽 자켓",
+                    "orderProductId": 20,
+                    "trackingNumber": "undefined",
+                    "shipment_status": "배송준비중",
+                    "shippingCompany": "대학통운"
+                }
+            ],
+            "addressInfo": {
+                "phone": "000-0000-0000",
+                "address": "광명시",
+                "userName": "홍길동",
+                "zip_code": "12345",
+                "detail_address": "철산동"
+            }
+        }
+    ]
+}

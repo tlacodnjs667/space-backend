@@ -4,27 +4,15 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+
 import { ConfigModule } from '@nestjs/config';
-import { typeOrmAsyncConfig } from './config/typeorm.config';
-import { MainModule } from './main/main.module';
-import { ProductModule } from './product/product.module';
-dotenv.config();
 import { CategoryModule } from './API/category/category.module';
 import { ProductModule } from './API/product/product.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CartModule } from './API/cart/cart.module';
 import { UserModule } from './API/user/user.module';
-import { AuthMiddleware } from './middleware/auth/auth.middleware';
-import { CartController } from './API/cart/cart.controller';
-import { MakeOrderNumsMiddleware } from './middleware/make-order-nums.middleware';
-import { OrderController } from './API/order/order.controller';
 import { LookbookModule } from './API/lookbook/lookbook.module';
 import { CalendarModule } from './API/calendar/calendar.module';
-import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
-import { UserController } from './API/user/user.controller';
-import { APP_FILTER } from '@nestjs/core';
-import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
-import { LikeController } from './API/like/like.controller';
 import { ReviewModule } from './API/review/review.module';
 import { EventModule } from './API/event/event.module';
 import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
@@ -32,11 +20,19 @@ import { SnapModule } from './API/snap/snap.module';
 import { OrderModule } from './API/order/order.module';
 import { LikeModule } from './API/like/like.module';
 
+import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
+import { AuthMiddleware } from './middleware/auth/auth.middleware';
+import { MakeOrderNumsMiddleware } from './middleware/make-order-nums.middleware';
+
+import { CartController } from './API/cart/cart.controller';
+import { LikeController } from './API/like/like.controller';
+
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-    MainModule,
     ProductModule,
     JwtModule,
     CategoryModule,

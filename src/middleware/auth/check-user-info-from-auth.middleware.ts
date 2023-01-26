@@ -13,7 +13,7 @@ export class CheckUserInfoFromAuthMiddleware implements NestMiddleware {
         secret: process.env.JWT_SECRETKEY,
       });
 
-      const [checkUserGender] = await UserRepository.checkValidation(userId);
+      const [checkUserGender] = await UserRepository.checkUserInDB(userId);
 
       req.headers.user = userId;
       req.body.gender = checkUserGender.gender;

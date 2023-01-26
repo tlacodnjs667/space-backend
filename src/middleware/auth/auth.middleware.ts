@@ -22,9 +22,9 @@ export class AuthMiddleware implements NestMiddleware {
     const { userId, email } = this.jwtService.verify(authorization, {
       secret: process.env.JWT_SECRETKEY,
     });
-
-    const [validatedUser] = await UserRepository.checkValidation(email);
-    if (!validatedUser)
+    const query = `id = ${userId}`;
+    const [validatedUser] = await UserRepository.checkUserInDB(query);
+    if (validatedUser.email !== email)
       throw new HttpException('UNVALID_TOKEN', HttpStatus.NOT_ACCEPTABLE);
 
     req.headers.user = userId;
