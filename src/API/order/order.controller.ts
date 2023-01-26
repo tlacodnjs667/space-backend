@@ -61,18 +61,12 @@ export class OrderController {
 
   @Get('history/:user')
   async getOrderHistory(
-    //유저 오더 히스토리 (나의 쇼핑 정보)
     @Param('user') userId: number,
     @Query() dateFilter: GetOrderInfoFilter,
   ) {
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
-  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
-  async getMypageOrderInfo(@Param('user') userId: number) {
-    return this.orderService.getMypageOrderInfo(userId);
-  }
-
-  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
+  @Get('mypage/:user')
   async getMypageOrderInfo(@Param('user') userId: number) {
     return this.orderService.getMypageOrderInfo(userId);
   }
