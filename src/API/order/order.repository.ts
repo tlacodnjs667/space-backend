@@ -158,11 +158,11 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
                     'shippingCompany', shippingCompany,
                     'shipment_status', shipment_status.name,
                     'orderProductId', op.id,
-                    'quantity',quantity,
+                    'quantity', quantity,
                     'optionInfo', optionInfo,
                     'productName', productName,
                     'price', price * quantity,
-                    'thumbnail',thumbnail
+                    'thumbnail', thumbnail
                 ) AS opInfo
             FROM order_products op
             LEFT JOIN shipment_status ON op.shipmentStatusId = shipment_status.id
@@ -183,7 +183,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
                   LEFT JOIN product ON product.id = pc.productId
             ) AS productInfo ON productInfo.optionId = op.productOptionId
         ) AS productInfo ON productInfo.orderId = o.id
-        WHERE DATE(created_at) between ${query}
+        WHERE DATE(o.created_at) between ${query} AND productInfo.opInfo IS NOT NULL
         GROUP BY o.id
         ORDER BY o.id DESC
     `); //=> 오더별
