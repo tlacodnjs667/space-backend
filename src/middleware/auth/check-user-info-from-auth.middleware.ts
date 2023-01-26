@@ -15,7 +15,8 @@ export class CheckUserInfoFromAuthMiddleware implements NestMiddleware {
 
       const [checkUserGender] = await UserRepository.checkValidation(userId);
 
-      req.body.user = checkUserGender.gender;
+      req.headers.user = userId;
+      req.body.gender = checkUserGender.gender;
     }
 
     next();
