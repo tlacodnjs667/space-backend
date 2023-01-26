@@ -187,60 +187,6 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         GROUP BY o.id
         ORDER BY o.id DESC
     `); //=> 오더별
-    return OrderRepository.query(`
-        SELECT
-            op.id AS orderProductId,
-            quantity,
-            order_number,
-            JSON_OBJECT(
-                'trackingNumber',tracking_number,
-                'shippingCompany', shippingCompany
-            ) AS shippingInfo,
-            shippingAddress,
-            orderStatus,
-            orderInfo.created_at,
-            productInfo.optionInfo,
-            productInfo.price * quantity AS pricePerProduct,
-            productName,
-            op.orderId
-        FROM order_products op
-        LEFT JOIN (
-            SELECT
-                orders.id AS orderId,
-                userId,
-                orders.order_number,
-                orders.created_at,
-                JSON_OBJECT(
-                  'address',shipment.address,
-                  'detail_address',shipment.detail_address,
-                  'zip_code',shipment.zip_code,
-                  'userName', shipment.name,
-                  'phone', phone
-                ) AS shippingAddress,
-                os.name AS orderStatus
-            FROM orders
-            LEFT JOIN order_status os ON os.id = orders.orderStatusId
-            LEFT JOIN shipment ON shipment.id = orders.shipmentId
-        ) AS orderInfo ON orderInfo.orderId = op.orderId
-        LEFT JOIN (
-            SELECT
-                po.id AS optionId,
-                JSON_OBJECT(
-                  'size', s.name,
-                  'colorName', colors.name
-                ) AS optionInfo,
-                product.name AS productName,
-                product.price AS price
-            FROM product_options po
-            LEFT JOIN size s ON po.sizeId = s.id
-            LEFT JOIN product_color pc ON pc.id = po.productColorId
-            LEFT JOIN colors ON pc.colorId = colors.id
-            LEFT JOIN product ON product.id = pc.productId 
-        ) AS productInfo ON productInfo.optionId = op.productOptionId
-        WHERE  DATE(created_at) between ${query}
-        GROUP BY op.id
-        ORDER BY id DESC
-    `);
   },
 
   async makeOrderProductByProduct(
