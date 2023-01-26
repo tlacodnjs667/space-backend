@@ -1,16 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLikeDto } from './dto/create-like.dto';
+import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
 import { LikeRepository } from './like.repository';
 
 @Injectable()
 export class LikeService {
-  async addWishlist(userId: number, productId: string) {
-    const checkWishlist = await LikeRepository.checkWishlist(userId, productId);
+  async addWishlist(userId: number, likeOption: CreateLikeDto) {
+    const checkWishlist = await LikeRepository.checkWishlist(
+      userId,
+      likeOption.productId,
+      likeOption.optionId,
+    );
     if (!checkWishlist.length) {
-      return await LikeRepository.addWishlist(userId, productId);
+      return await LikeRepository.addWishlist(
+        userId,
+        likeOption.productId,
+        likeOption.optionId,
+      );
     } else {
-      return await LikeRepository.checkDeleteWishlist(userId, productId);
+      return await LikeRepository.checkDeleteWishlist(
+        userId,
+        likeOption.productId,
+        likeOption.optionId,
+      );
     }
   }
 
@@ -18,21 +30,21 @@ export class LikeService {
     return LikeRepository.getWishlist(userId);
   }
 
-  deleteWishlist(userId: number, productId: string | string[]) {
-    const query = productId
-      ? `WHERE userId = ${userId} AND id IN (${productId})`
+  deleteWishlist(userId: number, likeId: number | number[]) {
+    const query = likeId
+      ? `WHERE userId = ${userId} AND id IN (${likeId})`
       : `WHERE userId = ${userId}`;
-    return LikeRepository.deleteWishlist(query);
+    return LikeRepository.deleteWishlist(+query);
   }
 
   updateWishlist(userId: number, item: UpdateLikeDto) {
     return LikeRepository.updateWishlist(userId, item.optionId, item.productId);
   }
-  addCalendarLike(userId: number, calendarId: string) {
+  addCalendarLike(userId: number, calendarId: number) {
     return LikeRepository.addCalendarLike(userId, calendarId);
   }
 
-  async addReviewLike(userId: number, review: CreateLikeDto) {
+  async addReviewLike(userId: number, review: CreateReviewLikeDto) {
     const checkReviewLike = await LikeRepository.checkReviewLike(
       userId,
       review.is_helpful,
