@@ -2,6 +2,7 @@ export class filterResultDTO {
   color: filterElementDTO[] | undefined;
   item: filterElementDTO[] | undefined;
   gender: filterElementDTO[] | undefined;
+  // products: filterElementDTO[] | undefined;
 }
 
 export class filterElementDTO {

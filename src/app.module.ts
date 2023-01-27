@@ -19,6 +19,8 @@ import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
 import { SnapModule } from './API/snap/snap.module';
 import { OrderModule } from './API/order/order.module';
 import { LikeModule } from './API/like/like.module';
+import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
+import { ProductController } from './API/product/product.controller';
 
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
 import { AuthMiddleware } from './middleware/auth/auth.middleware';
@@ -72,5 +74,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(FileUploaderMiddleware)
       .forRoutes({ path: '/user/create', method: RequestMethod.POST });
+    consumer
+      .apply(CheckUserInfoFromAuthMiddleware)
+      .forRoutes(ProductController);
   }
 }

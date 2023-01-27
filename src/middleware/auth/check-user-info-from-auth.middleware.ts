@@ -17,6 +17,7 @@ export class CheckUserInfoFromAuthMiddleware implements NestMiddleware {
 
       req.headers.user = userId;
       req.body.gender = checkUserGender.gender;
+      console.log(req.headers.user);
     }
 
     next();
