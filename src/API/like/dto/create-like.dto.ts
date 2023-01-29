@@ -1,4 +1,9 @@
+export class CreateReviewLikeDto {
+  is_helpful: number;
+  reviewId: number;
+}
+
 export class CreateLikeDto {
-  is_helpful: string;
-  reviewId: string;
+  productId: number;
+  optionId: number;
 }

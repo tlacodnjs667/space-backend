@@ -9,7 +9,7 @@ import {
   Headers,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { CreateLikeDto } from './dto/create-like.dto';
+import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
 
 @Controller('like')
@@ -19,9 +19,9 @@ export class LikeController {
   @Post()
   addWishlist(
     @Headers('user') userId: number,
-    @Body('productId') productId: string,
+    @Body() likeOption: CreateLikeDto,
   ) {
-    return this.likeService.addWishlist(userId, productId);
+    return this.likeService.addWishlist(userId, likeOption);
   }
 
   @Get()
@@ -37,15 +37,15 @@ export class LikeController {
   @Delete()
   deleteWishlist(
     @Headers('user') userId: number,
-    @Query('productId') productId: string,
+    @Query('likeId') likeId: number,
   ) {
-    return this.likeService.deleteWishlist(userId, productId);
+    return this.likeService.deleteWishlist(userId, likeId);
   }
 
   @Post('calendar')
   addCalendarLike(
     @Headers('user') userId: number,
-    @Body('calendarId') calendarId: string,
+    @Body('calendarId') calendarId: number,
   ) {
     return this.likeService.addCalendarLike(userId, calendarId);
   }
@@ -53,7 +53,7 @@ export class LikeController {
   @Post('review')
   addReviewLike(
     @Headers('user') userId: number,
-    @Body() review: CreateLikeDto,
+    @Body() review: CreateReviewLikeDto,
   ) {
     return this.likeService.addReviewLike(userId, review);
   }
