@@ -72,9 +72,6 @@ export class UserController {
     //유저정보 업데이트 하기
     @Req() req: RequestForFormDataToUpdate,
   ) {
-    console.log(req.body);
-    console.log(req.file);
-
     const createUserDto = req.body;
 
     if (req.file) {
@@ -87,8 +84,6 @@ export class UserController {
       req.headers.user,
       createUserDto,
     );
-
-    console.log(result);
 
     return { message: 'UPDATE_SUCCESS', result };
   }

@@ -95,13 +95,21 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         		p.id AS productId,
             p.thumbnail,
             p.name,
+	          rrr.userId AS rrruser
+        FROM order_products op
+        LEFT JOIN orders o ON op.orderId = o.id
+        LEFT JOIN product_options po ON po.id = op.productOptionId
+        LEFT JOIN product_color pc ON po.productColorId = pc.id
+        LEFT JOIN (
+        	SELECT
+        		p.id AS productId,
         		r.id AS reviewId,
         		r.userId,
         		r.content
         	FROM product p
         	LEFT JOIN review r ON r.productId = p.id
         ) AS rrr ON rrr.productId = pc.productId AND rrr.userId = o.userId
-        WHERE rrr.productId IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
+        WHERE rrr.id IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
     `);
   },
 

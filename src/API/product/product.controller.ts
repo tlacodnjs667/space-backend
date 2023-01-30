@@ -27,15 +27,44 @@ export class ProductController {
   getProductList(
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
+    @Query() criteria: FilterDto,
+    @Headers('user') userId: string,
   ) {
-    return this.productService.getProductList(ordering, +offset);
+    return this.productService.getProductList(
+      ordering,
+      +offset,
+      criteria,
+      userId,
+    );
+  }
+  @Get('recommend')
+  getRecommendReview(@Query('offset') offset: string) {
+    return this.productService.getRecommendReview(+offset);
   }
 
   @Get('detail')
   getProductDetail(@Query('productId') productId: string) {
     return this.productService.getProductDetail(productId);
   }
+  @Get('search')
+  getProductSearch() {
+    return this.productService.getProductSearch();
+  }
 
+  @Get('searchList')
+  getProductSearchList(
+    @Query() ordering: ProductListDto,
+    @Query('offset') offset: string,
+    @Query() criteria: FilterDto,
+    @Headers('user') userId: string,
+  ) {
+    return this.productService.getProductSearchList(
+      ordering,
+      +offset,
+      criteria,
+      userId,
+    );
+  }
   @Get('filter')
   getFilters(@Query() criteria: FilterDto) {
     console.log(criteria);

@@ -31,7 +31,6 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
 import { ProductController } from './API/product/product.controller';
-import { OrderProducts } from './entities/order_product.entity';
 import { OrderController } from './API/order/order.controller';
 
 @Module({

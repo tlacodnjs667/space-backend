@@ -68,7 +68,7 @@ export class OrderController {
 
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
-  @Get('mypage')
+  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
   async getMypageOrderInfo(@Headers('user') userId: number) {
     return this.orderService.getMypageOrderInfo(userId);
   }
