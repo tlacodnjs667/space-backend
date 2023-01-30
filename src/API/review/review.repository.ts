@@ -79,7 +79,23 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         SELECT DISTINCT
 	        pc.productId,
 	        o.userId AS orderuser,
-	        rrr.userId AS rrruser
+          p.name,
+          p.thumbnail,
+          s.name AS sizeName,
+          c.name AS colorName
+        FROM order_products op
+        LEFT JOIN orders o ON op.orderId = o.id
+        LEFT JOIN product_options po ON po.id = op.productOptionId
+        LEFT JOIN size s ON po.sizeId = s.id
+        LEFT JOIN product_color pc ON po.productColorId = pc.id
+        LEFT JOIN colors c ON pc.colorId = c.id
+        LEFT JOIN product p ON pc.productId = p.id
+        LEFT JOIN (
+        	SELECT
+        		p.id AS productId,
+            p.thumbnail,
+            p.name,
+	          rrr.userId AS rrruser
         FROM order_products op
         LEFT JOIN orders o ON op.orderId = o.id
         LEFT JOIN product_options po ON po.id = op.productOptionId

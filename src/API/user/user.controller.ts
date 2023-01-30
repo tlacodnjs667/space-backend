@@ -63,7 +63,8 @@ export class UserController {
 
   @Get('info') //유저정보 수정 시 필요한 데이터 GET
   async getUserInfoToChange(@Headers('user') userId: number) {
-    return this.userService.getUserInfoToChange(+userId);
+    const data = await this.userService.getUserInfoToChange(+userId);
+    return data[0];
   }
 
   @Patch('info')
@@ -77,6 +78,7 @@ export class UserController {
       const { location } = req.file;
       createUserDto.thumbnail = location;
     }
+    console.log(createUserDto);
 
     const result = await this.userService.updateUserInfo(
       req.headers.user,

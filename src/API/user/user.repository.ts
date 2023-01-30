@@ -1,7 +1,7 @@
 import { AppDataSource } from 'src/config/database-config';
 import { User } from 'src/entities/user.entity';
 import { ReturnCreated } from '../order/IOrderInterface';
-import { ValidatedUser } from './IUserInterface';
+import { IUserInfoToChange, ValidatedUser } from './IUserInterface';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
   async createUser(
@@ -80,10 +80,11 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         WHERE user.id = ${userId}
     `);
   },
-  getUserInfoToChange(userId: number) {
+  getUserInfoToChange(userId: number): Promise<IUserInfoToChange[]> {
     return UserRepository.query(`
         SELECT 
           email,
+          name,
           birthday,
           nickname,
           thumbnail,

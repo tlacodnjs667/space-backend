@@ -8,13 +8,19 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('best')
-  getWeeklyBestByCategory(@Query('category') categoryId: FindProductDto) {
-    return this.productService.getWeeklyBestByCategory(Number(categoryId));
+  getWeeklyBestByCategory(
+    @Headers('user') userId: number,
+    @Query('category') categoryId: number,
+  ) {
+    return this.productService.getWeeklyBestByCategory(
+      userId,
+      Number(categoryId),
+    );
   }
 
   @Get('new')
-  getNewProduct() {
-    return this.productService.getNewProduct();
+  getNewProduct(@Headers('user') userId: number) {
+    return this.productService.getNewProduct(userId);
   }
 
   @Get('list')

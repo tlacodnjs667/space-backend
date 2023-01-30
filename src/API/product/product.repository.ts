@@ -1,5 +1,6 @@
 import { AppDataSource } from 'src/config/database-config';
 import { Product } from 'src/entities/products.entity';
+import { ILikeInter } from './IProductIn';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getCategory: () => {
@@ -12,75 +13,77 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     `);
   },
 
-  getWeeklyBestByCategory: (category: number) => {
+  getWeeklyBestByCategory: (obj: ILikeInter, category: number) => {
     return ProductRepository.query(`
-      SELECT
-        p.id, 
-        p.name, 
-        p.thumbnail, 
-        p.price, 
-        c.productColor,
-        COUNT(r.id) AS review,
-        AVG(star) AS point,
-        options.stockCheck
-      FROM product p
-      LEFT JOIN review r ON r.productId = p.id
-      LEFT JOIN items i ON p.itemId = i.id
-      LEFT JOIN main_sub_categories ms ON ms.id = i.mainSubCategoryId
-      LEFT JOIN (
-        SELECT 
-        	pc.productId as productId,
-        	JSON_ARRAYAGG(
-        	  c.name
-        	) AS productColor
-        FROM product_color pc
-        LEFT JOIN colors c ON c.id = pc.colorId
-        GROUP BY pc.productId
-      ) AS c ON  c.productId = p.id
-      LEFT JOIN (
         SELECT
-          pc.productId,
-          JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'colorId',pc.colorId,
-              'colorName',c.name,
-              'opt', opt.opt
-            )
-          )	AS stockCheck
-        FROM product_color pc
-        LEFT JOIN colors c ON pc.colorId = c.id
+        	  p.id, 
+            p.name, 
+            p.thumbnail, 
+            p.price, 
+            c.productColor,
+            COUNT(r.id) AS review,
+            AVG(star) AS point,
+            options.stockCheck
+            ${obj.columnDefinition}
+        FROM product p
+        LEFT JOIN review r ON r.productId = p.id
+        LEFT JOIN items i ON p.itemId = i.id
+        LEFT JOIN main_sub_categories ms ON ms.id = i.mainSubCategoryId
         LEFT JOIN (
-          SELECT 
-            po.productColorId,
-            JSON_ARRAYAGG(
-              JSON_OBJECT(
-                'sizeId', po.sizeId,
-                'sizeName', s.name,
-                'stock', po.stock
-              ) )AS opt
-          FROM product_options po
-          LEFT JOIN size s ON po.sizeId = s.id
-          GROUP BY productColorId
-        ) AS opt ON opt.productColorId = pc.id
-        GROUP BY productId
-      ) AS options ON options.productId = p.id
-      WHERE mainCategoryId = ${category}
-      GROUP BY p.id, c.productColor, options.stockCheck
-      ORDER BY review DESC, point DESC
-      LIMIT 8 OFFSET 0
+        	SELECT 
+        		pc.productId as productId,
+        		JSON_ARRAYAGG(
+        			c.name
+        		) AS productColor
+        	FROM product_color pc
+        	LEFT JOIN colors c ON c.id = pc.colorId
+        	GROUP BY pc.productId
+        ) AS c ON  c.productId = p.id
+        LEFT JOIN (
+          SELECT
+              pc.productId,
+              JSON_ARRAYAGG(
+                JSON_OBJECT(
+                  'colorId',pc.colorId,
+                  'colorName',c.name,
+                  'opt', opt.opt
+                )
+              )	AS stockCheck
+            FROM product_color pc
+            LEFT JOIN colors c ON pc.colorId = c.id
+            LEFT JOIN (
+              SELECT 
+                po.productColorId,
+                JSON_ARRAYAGG(JSON_OBJECT(
+                  'sizeId', po.sizeId,
+                  'sizeName', s.name,
+                  'stock', po.stock
+                ) )AS opt
+              FROM product_options po
+              LEFT JOIN size s ON po.sizeId = s.id
+              GROUP BY productColorId
+            ) AS opt ON opt.productColorId = pc.id
+            GROUP BY productId
+          ) AS options ON options.productId = p.id
+          ${obj.joinQuery}
+        WHERE mainCategoryId = ${category}
+        GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
+        ORDER BY review DESC, point DESC
+        LIMIT 8 OFFSET 0
     `);
   },
-  getNewProduct: () => {
+  getNewProduct: (obj: ILikeInter) => {
     return ProductRepository.query(`
       SELECT
-        p.id, 
-        p.name, 
-        p.thumbnail, 
-        p.price, 
-        c.productColor,
-        p.created_at,
-        COUNT(r.id) AS review,
-        options.stockCheck
+          p.id, 
+          p.name, 
+          p.thumbnail, 
+          p.price, 
+          c.productColor,
+          p.created_at,
+          COUNT(r.id) AS review,
+          options.stockCheck
+          ${obj.columnDefinition}
       FROM product p
       LEFT JOIN review r ON r.productId = p.id
       LEFT JOIN items i ON p.itemId = i.id
@@ -122,8 +125,9 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           GROUP BY productColorId
         ) AS opt ON opt.productColorId = pc.id
           GROUP BY productId
-      ) AS options ON options.productId = p.id
-      GROUP BY p.id, c.productColor, options.stockCheck
+        ) AS options ON options.productId = p.id
+        ${obj.joinQuery}
+      GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
       ORDER BY p.created_at DESC
       LIMIT 11 OFFSET 0
     `);

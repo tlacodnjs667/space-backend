@@ -47,13 +47,16 @@ export class OrderService {
     ) {
       let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date} AND userId = ${userId}'`;
       if (historyFilter.order_status) {
-        query += ` AND orderInfo.orderStatusId = ${
+        query += ` AND orderStatusId = ${
           ORDER_STATUS[historyFilter.order_status]
         }`;
       }
 
+      console.log('날짜 있는 거');
       const orderList = await OrderRepository.getOrderHistory(query);
       const orderFilter = await OrderRepository.orderHistoryFilter();
+
+      console.log(orderList);
 
       return { orderFilter, orderList };
     }
@@ -62,11 +65,14 @@ export class OrderService {
 
     let query = `${makeDateQuery(now)} AND userId = ${userId}`;
 
-    if (historyFilter.order_status) {
-      query += ` AND orderInfo.orderStatusId = ${
+    if (historyFilter.order_status && !historyFilter.order_status.length) {
+      query += ` AND orderStatusId = ${
         ORDER_STATUS[historyFilter.order_status]
       }`;
     }
+
+    console.log('날짜 없는 거');
+
     const orderList = await OrderRepository.getOrderHistory(query);
     const orderFilter = await OrderRepository.orderHistoryFilter();
 

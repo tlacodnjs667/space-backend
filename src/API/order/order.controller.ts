@@ -59,15 +59,17 @@ export class OrderController {
     return this.orderService.getOrderInfo(userId, cartIdList);
   }
 
-  @Get('history/:user')
+  @Get('history')
   async getOrderHistory(
-    @Param('user') userId: number,
+    @Headers('user') userId: number,
     @Query() dateFilter: GetOrderInfoFilter,
   ) {
+    console.log(dateFilter);
+
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
-  @Get('mypage/:user')
-  async getMypageOrderInfo(@Param('user') userId: number) {
+  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
+  async getMypageOrderInfo(@Headers('user') userId: number) {
     return this.orderService.getMypageOrderInfo(userId);
   }
 

@@ -14,3 +14,13 @@ export interface ValidatedUser {
   password: string;
   gender?: string;
 }
+
+export interface IUserInfoToChange {
+  email: string;
+  name: string;
+  birthday: string;
+  nickname: string;
+  thumbnail: string;
+  gender: string;
+  phon: string;
+}

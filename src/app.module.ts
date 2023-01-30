@@ -19,8 +19,6 @@ import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
 import { SnapModule } from './API/snap/snap.module';
 import { OrderModule } from './API/order/order.module';
 import { LikeModule } from './API/like/like.module';
-import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
-import { ProductController } from './API/product/product.controller';
 
 import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
 import { AuthMiddleware } from './middleware/auth/auth.middleware';
@@ -31,6 +29,9 @@ import { LikeController } from './API/like/like.controller';
 
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
+import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
+import { ProductController } from './API/product/product.controller';
+import { OrderController } from './API/order/order.controller';
 
 @Module({
   imports: [
@@ -60,10 +61,14 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         CartController,
+        OrderController,
         LikeController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
         { path: '/review', method: RequestMethod.DELETE },
+        { path: '/review/creation', method: RequestMethod.GET },
+        { path: '/user/info', method: RequestMethod.PATCH },
+        { path: '/user/info', method: RequestMethod.GET },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
@@ -73,7 +78,10 @@ export class AppModule implements NestModule {
       );
     consumer
       .apply(FileUploaderMiddleware)
-      .forRoutes({ path: '/user/create', method: RequestMethod.POST });
+      .forRoutes(
+        { path: '/user/create', method: RequestMethod.POST },
+        { path: '/user/info', method: RequestMethod.PATCH },
+      );
     consumer
       .apply(CheckUserInfoFromAuthMiddleware)
       .forRoutes(ProductController);
