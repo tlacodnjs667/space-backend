@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Query } from '@nestjs/common';
+import { Controller, Get, Headers, Param, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FindProductDto } from './dto/find-product.dto';
 import { FilterDto, ProductListDto } from './dto/filter.dto';
@@ -25,10 +25,10 @@ export class ProductController {
 
   @Get('list')
   getProductList(
+    @Headers('user') userId: string,
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
-    @Headers('user') userId: string,
   ) {
     return this.productService.getProductList(
       ordering,
@@ -37,26 +37,28 @@ export class ProductController {
       userId,
     );
   }
+
   @Get('recommend')
   getRecommendReview(@Query('offset') offset: string) {
     return this.productService.getRecommendReview(+offset);
   }
 
-  @Get('detail')
-  getProductDetail(@Query('productId') productId: string) {
+  @Get('detail/:productId') //user Like 정보 추가
+  getProductDetail(@Param('productId') productId: string) {
     return this.productService.getProductDetail(productId);
   }
+
   @Get('search')
   getProductSearch() {
     return this.productService.getProductSearch();
   }
 
-  @Get('searchList')
+  @Get('search-list')
   getProductSearchList(
+    @Headers('user') userId: string,
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
-    @Headers('user') userId: string,
   ) {
     return this.productService.getProductSearchList(
       ordering,

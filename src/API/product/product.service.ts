@@ -210,7 +210,6 @@ export class ProductService {
     console.log(whereQuery);
 
     const Query: string = userId ? `WHERE l.userId = ${userId}` : ``;
-    console.log(left);
 
     const result = await ProductRepository.getProductList(
       whereQuery,

@@ -9,15 +9,15 @@ export class CheckUserInfoFromAuthMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     if (req.headers.authorization) {
       const { authorization } = req.headers;
+
       const { userId } = this.jwtService.verify(authorization, {
         secret: process.env.JWT_SECRETKEY,
       });
-
-      const [checkUserGender] = await UserRepository.checkUserInDB(userId);
+      const query = ` id = ${userId}`;
+      const [checkUserGender] = await UserRepository.checkUserInDB(query);
 
       req.headers.user = userId;
       req.body.gender = checkUserGender.gender;
-      console.log(req.headers.user);
     }
 
     next();

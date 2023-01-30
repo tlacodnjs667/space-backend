@@ -9,8 +9,8 @@ export class LookbookController {
   getLookbookList(@Query('offset') offset: string) {
     return this.lookbookService.getLookbookList(+offset);
   }
-  @Get('list')
-  getLookbookDetail(@Query('lookbookId') lookbookId: string) {
+  @Get('list/:lookbookId')
+  getLookbookDetail(@Param('lookbookId') lookbookId: string) {
     return this.lookbookService.getLookbookDetail(lookbookId);
   }
   @Get('main')
