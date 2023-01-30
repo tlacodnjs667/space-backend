@@ -136,10 +136,49 @@ export class UserService {
       access_token: this.getAccessToken(UserInfoForToken),
     };
   }
-  /* 위에서 사용할 */
+  async getUserInfoToChange(userId: number): Promise<IUserInfoToChange[]> {
+    return UserRepository.getUserInfoToChange(userId);
+  }
+  async updateUserInfo(userId: number, userInfoToChange: UpdateUserDto) {
+    const query = `id = ${userId}`;
+    const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
 
-  async checkHash(password: string, hashedPassword: string) {
-    return await bcrypt.compare(password, hashedPassword);
+    if (!userInfoToChange.userPassword) {
+      throw new HttpException('PASSWORD_REQUIRED', HttpStatus.UNAUTHORIZED);
+    }
+
+    const checkForClient = await this.checkHash(
+      userInfoToChange.userPassword,
+      userInfoFromDB.password,
+    );
+    console.log('hi');
+
+    if (!checkForClient) {
+      throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
+    }
+
+    userInfoToChange.userPassword = undefined;
+
+    const QueryForChange = [];
+
+    for (const [key, value] of Object.entries(userInfoToChange)) {
+      if (value) {
+        QueryForChange.push(`${key} = '${value}'`);
+      }
+    }
+    console.log(QueryForChange);
+
+    if (!QueryForChange.length) {
+      throw new HttpException(
+        'CANNOT_FIND_INFO_FOR_CHANGE',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return UserRepository.updateUserInfo(userId, QueryForChange);
+  }
+  checkHash(password: string, hashedPassword: string) {
+    return bcrypt.compare(password, hashedPassword);
   }
 
   getAccessToken(user: UserInfoForJWT) {
