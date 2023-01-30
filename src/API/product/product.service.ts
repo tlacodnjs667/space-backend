@@ -9,8 +9,23 @@ import { ProductRepository } from './product.repository';
 
 @Injectable()
 export class ProductService {
-  async getWeeklyBestByCategory(category: number) {
+  async getWeeklyBestByCategory(userId: number, category: number) {
+    const obj = {
+      joinQuery: userId
+        ? `LEFT join (
+        SELECT
+        id AS isLike,
+        productId,
+        userId
+        from likes
+        WHERE userId = ${userId}
+        ) AS ll ON ll.productId = p.id`
+        : '',
+      columnDefinition: userId ? `, ll.isLike` : '',
+    };
+
     const weeklyBest = await ProductRepository.getWeeklyBestByCategory(
+      obj,
       category,
     );
 
@@ -19,8 +34,22 @@ export class ProductService {
     return { weeklyBest, categories };
   }
 
-  getNewProduct() {
-    return ProductRepository.getNewProduct();
+  getNewProduct(userId: number) {
+    const obj = {
+      joinQuery: userId
+        ? `LEFT join (
+        SELECT
+        id AS isLike,
+        productId,
+        userId
+        from likes
+        WHERE userId = ${userId}
+        ) AS ll ON ll.productId = p.id`
+        : '',
+      columnDefinition: userId ? `, ll.isLike` : '',
+    };
+
+    return ProductRepository.getNewProduct(obj);
   }
   async getProductList(ordering: ProductListDto, offset: number) {
     const sort: any = {

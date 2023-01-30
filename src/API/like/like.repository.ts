@@ -45,7 +45,6 @@ export const LikeRepository = AppDataSource.getRepository(ProductLike).extend({
       	aalll.price,
         l.productId,
         l.userId,
-        l.optionId,
         aalll.color
       FROM likes l
       LEFT JOIN( 

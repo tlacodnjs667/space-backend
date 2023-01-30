@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   Headers,
+  Param,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
@@ -24,9 +25,11 @@ export class LikeController {
     return this.likeService.addWishlist(userId, productId);
   }
 
-  @Get()
-  getWishlist(@Headers('user') userId: number) {
-    return this.likeService.getWishlist(userId);
+  @Get(':user')
+  getWishlist(@Param('user') userId: number) {
+    console.log('hell');
+
+    return this.likeService.getWishlist(+userId);
   }
 
   @Patch()

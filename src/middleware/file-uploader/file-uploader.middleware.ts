@@ -24,6 +24,8 @@ export class FileUploaderMiddleware implements NestMiddleware {
         acl: 'public-read',
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key: async (req, file, cb) => {
+          console.log(req);
+
           file.originalname = file.originalname.split('').join('');
           cb(null, `${uploadDirectory}/${Date.now()}_${file.originalname}`);
         },

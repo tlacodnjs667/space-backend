@@ -28,6 +28,7 @@ export class LikeService {
   updateWishlist(userId: number, item: UpdateLikeDto) {
     return LikeRepository.updateWishlist(userId, item.optionId, item.productId);
   }
+
   addCalendarLike(userId: number, calendarId: string) {
     return LikeRepository.addCalendarLike(userId, calendarId);
   }

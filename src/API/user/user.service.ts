@@ -10,6 +10,7 @@ import axios from 'axios';
 import 'dotenv/config';
 import { GetGoogleUser } from './dto/get-google-user.dto';
 import { ReturnCreated } from '../order/IOrderInterface';
+import { IUserInfoToChange } from './IUserInterface';
 
 @Injectable()
 export class UserService {
@@ -135,7 +136,7 @@ export class UserService {
       access_token: this.getAccessToken(UserInfoForToken),
     };
   }
-  async getUserInfoToChange(userId: number) {
+  async getUserInfoToChange(userId: number): Promise<IUserInfoToChange[]> {
     return UserRepository.getUserInfoToChange(userId);
   }
   async updateUserInfo(userId: number, userInfoToChange: UpdateUserDto) {
@@ -150,6 +151,7 @@ export class UserService {
       userInfoToChange.userPassword,
       userInfoFromDB.password,
     );
+    console.log('hi');
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
@@ -161,9 +163,10 @@ export class UserService {
 
     for (const [key, value] of Object.entries(userInfoToChange)) {
       if (value) {
-        QueryForChange.push(`${key} = ${value}`);
+        QueryForChange.push(`${key} = '${value}'`);
       }
     }
+    console.log(QueryForChange);
 
     if (!QueryForChange.length) {
       throw new HttpException(
@@ -171,6 +174,8 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    return UserRepository.updateUserInfo(userId, QueryForChange);
   }
   checkHash(password: string, hashedPassword: string) {
     return bcrypt.compare(password, hashedPassword);
@@ -181,7 +186,7 @@ export class UserService {
 
     const jwtt = this.jwtService.sign(
       { email: user.email, userId: user.id },
-      { secret: process.env.JWT_SECRETKEY, expiresIn: '1h' },
+      { secret: process.env.JWT_SECRETKEY, expiresIn: '2h' },
     );
 
     return jwtt;

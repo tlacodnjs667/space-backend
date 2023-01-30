@@ -29,6 +29,10 @@ import { LikeController } from './API/like/like.controller';
 
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
+import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
+import { ProductController } from './API/product/product.controller';
+import { OrderProducts } from './entities/order_product.entity';
+import { OrderController } from './API/order/order.controller';
 
 @Module({
   imports: [
@@ -58,10 +62,14 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         CartController,
+        OrderController,
         LikeController,
         { path: '/review', method: RequestMethod.POST },
         { path: '/review', method: RequestMethod.PATCH },
         { path: '/review', method: RequestMethod.DELETE },
+        { path: '/review/creation', method: RequestMethod.GET },
+        { path: '/user/info', method: RequestMethod.PATCH },
+        { path: '/user/info', method: RequestMethod.GET },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
@@ -71,6 +79,12 @@ export class AppModule implements NestModule {
       );
     consumer
       .apply(FileUploaderMiddleware)
-      .forRoutes({ path: '/user/create', method: RequestMethod.POST });
+      .forRoutes(
+        { path: '/user/create', method: RequestMethod.POST },
+        { path: '/user/info', method: RequestMethod.PATCH },
+      );
+    consumer
+      .apply(CheckUserInfoFromAuthMiddleware)
+      .forRoutes(ProductController);
   }
 }

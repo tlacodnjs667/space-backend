@@ -1,5 +1,6 @@
 import { AppDataSource } from 'src/config/database-config';
 import { Product } from 'src/entities/products.entity';
+import { ILikeInter } from './IProductIn';
 
 export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getCategory() {
@@ -12,7 +13,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     `);
   },
 
-  getWeeklyBestByCategory: (category: number) => {
+  getWeeklyBestByCategory: (obj: ILikeInter, category: number) => {
     return ProductRepository.query(`
         SELECT
         	  p.id, 
@@ -23,6 +24,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             COUNT(r.id) AS review,
             AVG(star) AS point,
             options.stockCheck
+            ${obj.columnDefinition}
         FROM product p
         LEFT JOIN review r ON r.productId = p.id
         LEFT JOIN items i ON p.itemId = i.id
@@ -63,13 +65,14 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             ) AS opt ON opt.productColorId = pc.id
             GROUP BY productId
           ) AS options ON options.productId = p.id
+          ${obj.joinQuery}
         WHERE mainCategoryId = ${category}
-        GROUP BY p.id, c.productColor, options.stockCheck
+        GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
         ORDER BY review DESC, point DESC
         LIMIT 8 OFFSET 0
     `);
   },
-  getNewProduct: () => {
+  getNewProduct: (obj: ILikeInter) => {
     return ProductRepository.query(`
       SELECT
           p.id, 
@@ -80,6 +83,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           p.created_at,
           COUNT(r.id) AS review,
           options.stockCheck
+          ${obj.columnDefinition}
       FROM product p
       LEFT JOIN review r ON r.productId = p.id
       LEFT JOIN items i ON p.itemId = i.id
@@ -120,7 +124,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           ) AS opt ON opt.productColorId = pc.id
           GROUP BY productId
         ) AS options ON options.productId = p.id
-      GROUP BY p.id, c.productColor, options.stockCheck
+        ${obj.joinQuery}
+      GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
       ORDER BY p.created_at DESC
       LIMIT 11 OFFSET 0
     `);
