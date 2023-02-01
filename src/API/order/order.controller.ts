@@ -34,6 +34,7 @@ export class OrderController {
     const message = await this.orderService.orderProducts(orderInfo, userId);
     return { message };
   }
+
   @Post('by-optionId')
   async orderProductsByOption(
     @Headers('user') userId: number,
@@ -47,6 +48,7 @@ export class OrderController {
 
     return this.orderService.makeOrderProductByProduct(orderInfo, userId);
   }
+
   @Post()
   getOrderInfo(
     //구매하기 페이지
@@ -64,10 +66,9 @@ export class OrderController {
     @Headers('user') userId: number,
     @Query() dateFilter: GetOrderInfoFilter,
   ) {
-    console.log(dateFilter);
-
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
+
   @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
   async getMypageOrderInfo(@Headers('user') userId: number) {
     return this.orderService.getMypageOrderInfo(userId);
@@ -88,8 +89,8 @@ export class OrderController {
 
   @Delete('/:orderProductId')
   async withdrawOrderByOption(
-    @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
     @Headers('user') userId: number,
+    @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
   ) {
     if (!orderProductId)
       throw new HttpException('INVALID_', HttpStatus.BAD_REQUEST);

@@ -78,7 +78,6 @@ export class UserController {
       const { location } = req.file;
       createUserDto.thumbnail = location;
     }
-    console.log(createUserDto);
 
     const result = await this.userService.updateUserInfo(
       req.headers.user,

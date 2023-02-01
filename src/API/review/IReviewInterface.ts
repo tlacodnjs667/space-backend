@@ -22,3 +22,9 @@ export interface IReviewInfoToCreateOnFile {
 export interface IReviewInfoToCreate extends CreateReviewDto {
   thumbnail: string;
 }
+
+export interface IReviewCanCreate {
+  productId: number;
+  productName: string;
+  thumbnail: string;
+}

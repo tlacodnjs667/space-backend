@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WeeklyCodyService } from './weekly_cody.service';
 import { WeeklyCodyListDto } from './dto/create-weekly_cody.dto';
 
@@ -10,8 +10,8 @@ export class WeeklyCodyController {
   getweeklyCodyList(@Query() weekly: WeeklyCodyListDto) {
     return this.weeklyCodyService.getweeklyCodyList(weekly);
   }
-  @Get('detail')
-  getweeklyCodyDetail(@Query('codyId') codyId: string) {
+  @Get('detail/:codyId')
+  getweeklyCodyDetail(@Param('codyId') codyId: string) {
     return this.weeklyCodyService.getweeklyCodyDetail(codyId);
   }
 }

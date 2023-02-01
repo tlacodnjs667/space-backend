@@ -6,6 +6,7 @@ import {
   UpdateEventReview,
   UpdateProductReviewDto,
 } from './dto/create-review.dto';
+import { IReviewCanCreate } from './IReviewInterface';
 import { ReviewRepository } from './review.repository';
 
 @Injectable()
@@ -72,7 +73,9 @@ export class ReviewService {
     return ReviewRepository.createReviewForEvent(userId, createReviewDto);
   }
 
-  async getWhichReviewUserCanWriteReview(userId: number) {
+  async getWhichReviewUserCanWriteReview(
+    userId: number,
+  ): Promise<IReviewCanCreate[]> {
     return ReviewRepository.getWhichReviewUserCanWriteReview(userId);
   }
 

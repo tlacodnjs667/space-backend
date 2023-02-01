@@ -20,6 +20,7 @@ import {
   CreateReviewReqDto,
   UpdateProductReviewReqDto,
 } from './dto/create-review.dto';
+import { IReviewCanCreate } from './IReviewInterface';
 
 @Controller('review')
 export class ReviewController {
@@ -66,7 +67,9 @@ export class ReviewController {
   }
 
   @Get('creation') //마이페이지 => 작성 가능한 리뷰
-  getWhichReviewUserCanWriteReview(@Headers('user') userId: number) {
+  async getWhichReviewUserCanWriteReview(
+    @Headers('user') userId: number,
+  ): Promise<IReviewCanCreate[]> {
     return this.reviewService.getWhichReviewUserCanWriteReview(userId);
   }
 

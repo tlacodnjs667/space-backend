@@ -32,6 +32,7 @@ import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
 import { ProductController } from './API/product/product.controller';
 import { OrderController } from './API/order/order.controller';
+import { ReviewController } from './API/review/review.controller';
 
 @Module({
   imports: [
@@ -59,16 +60,17 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
+      .exclude(
+        { path: 'review/score', method: RequestMethod.GET },
+        { path: 'review/product', method: RequestMethod.GET },
+        { path: 'review/calendar', method: RequestMethod.GET },
+        { path: 'review/event', method: RequestMethod.GET },
+      )
       .forRoutes(
         CartController,
         OrderController,
         LikeController,
-        { path: '/review', method: RequestMethod.POST },
-        { path: '/review', method: RequestMethod.PATCH },
-        { path: '/review', method: RequestMethod.DELETE },
-        { path: '/review/creation', method: RequestMethod.GET },
-        { path: '/user/info', method: RequestMethod.PATCH },
-        { path: '/user/info', method: RequestMethod.GET },
+        ReviewController,
       );
     consumer
       .apply(MakeOrderNumsMiddleware)

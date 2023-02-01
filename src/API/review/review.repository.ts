@@ -6,7 +6,7 @@ import {
   CreateEventReviewDto,
   UpdateEventReview,
 } from './dto/create-review.dto';
-import { IReviewInfo } from './IReviewInterface';
+import { IReviewCanCreate, IReviewInfo } from './IReviewInterface';
 
 export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   checkReviewDuplication: (userId: number, productId: number) => {
@@ -74,42 +74,32 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
     `);
   },
 
-  getWhichReviewUserCanWriteReview(userId: number) {
+  getWhichReviewUserCanWriteReview(
+    userId: number,
+  ): Promise<IReviewCanCreate[]> {
     return ReviewRepository.query(`
         SELECT DISTINCT
-	        pc.productId,
-	        o.userId AS orderuser,
-          p.name,
-          p.thumbnail,
-          s.name AS sizeName,
-          c.name AS colorName
+          reviewCheck.thumbnail,
+          reviewCheck.productName,
+          reviewCheck.productId
         FROM order_products op
         LEFT JOIN orders o ON op.orderId = o.id
-        LEFT JOIN product_options po ON po.id = op.productOptionId
-        LEFT JOIN size s ON po.sizeId = s.id
-        LEFT JOIN product_color pc ON po.productColorId = pc.id
-        LEFT JOIN colors c ON pc.colorId = c.id
-        LEFT JOIN product p ON pc.productId = p.id
         LEFT JOIN (
-        	SELECT
-        		p.id AS productId,
-            p.thumbnail,
-            p.name,
-	          rrr.userId AS rrruser
-        FROM order_products op
-        LEFT JOIN orders o ON op.orderId = o.id
-        LEFT JOIN product_options po ON po.id = op.productOptionId
-        LEFT JOIN product_color pc ON po.productColorId = pc.id
-        LEFT JOIN (
-        	SELECT
-        		p.id AS productId,
-        		r.id AS reviewId,
-        		r.userId,
-        		r.content
-        	FROM product p
-        	LEFT JOIN review r ON r.productId = p.id
-        ) AS rrr ON rrr.productId = pc.productId AND rrr.userId = o.userId
-        WHERE rrr.id IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
+           SELECT
+             po.id AS optionId,
+             r.id AS reviewId,
+             p.name AS productName,
+             p.id AS productId,
+             p.thumbnail
+           FROM product_options po 
+           LEFT JOIN size s ON po.sizeId = s.id
+           LEFT JOIN product_color pc ON po.productColorId = pc.id
+           LEFT JOIN colors c ON pc.colorId = c.id
+           LEFT JOIN product p ON pc.productId = p.id
+           LEFT JOIN review r ON r.productId = p.id
+        ) AS reviewCheck ON reviewCheck.optionId = op.productOptionId
+        WHERE reviewCheck.reviewId IS NULL AND o.userId = ${userId}
+
     `);
   },
 
