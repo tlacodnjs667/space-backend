@@ -163,8 +163,7 @@ export class ProductService {
   async getRecommendReview(offset: number) {
     const sum = 4 * (offset - 1);
     const recommend = await ProductRepository.getRecommendReview(sum);
-    const recommendCount = await ProductRepository.getRecommendCount(sum);
-    return { recommend, recommendCount };
+    return recommend;
   }
   async getProductList(
     ordering: ProductListDto,
