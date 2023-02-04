@@ -140,23 +140,22 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
   ) => {
     return ProductRepository.query(`
       SELECT DISTINCT
-      	p.id,
-      	p.name AS name,
-      	p.thumbnail,
-      	p.description,
-      	p.price AS price,
-      	p.created_at AS news,
-      	ppp.likeId,
-      	JSON_ARRAYAGG(
-      		JSON_OBJECT(
-		      	'colorId',IFNULL(c.id, ''),
-	      		'colorName',IFNULL(c.name, ''),
-	      		'size', sizes.size	
-      		)
-      	) AS color,
-      	orderss.orderCount,
-      	likess.likeCount,
-		    reviewss.reviewCount
+        p.id,
+        p.name AS name,
+        p.thumbnail,
+        p.price AS price,
+        p.created_at AS news,
+        ppp.likeId,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'colorId',IFNULL(c.id, ''),
+            'colorName',IFNULL(c.name, ''),
+            'size', sizes.size	
+          )
+        ) AS color,
+        orderss.orderCount,
+        likess.likeCount,
+        reviewss.reviewCount
       FROM main_sub_categories ms
       LEFT JOIN items i ON ms.id = i.mainSubCategoryId
       LEFT JOIN product p ON p.itemId = i.id
@@ -164,54 +163,54 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       LEFT JOIN colors c ON pc.colorId = c.id
       LEFT JOIN (
         SELECT 
-      	  l.productId,
-      		l.productId AS likeid
+          l.productId,
+          l.productId AS likeid
         FROM likes l 
         ${userId}
         GROUP BY l.productId
       ) AS ppp ON ppp.productId = p.id
       LEFT JOIN (
         SELECT
-      		po.productColorId,
-      		JSON_ARRAYAGG(
-      			JSON_OBJECT(
-      			  'sizeId',IFNULL(s.id, ''),
-      				'sizeName',IFNULL(s.name, ''),
-      				'stock',IFNULL(po.stock, '')		
-      			) 
-      		) AS size
-      	FROM product_options po
-      	LEFT JOIN size s ON s.id = po.sizeId
-      	GROUP BY po.productColorId
+          po.productColorId,
+          JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'sizeId',IFNULL(s.id, ''),
+              'sizeName',IFNULL(s.name, ''),
+              'stock',IFNULL(po.stock, '')		
+            ) 
+          ) AS size
+        FROM product_options po
+        LEFT JOIN size s ON s.id = po.sizeId
+        GROUP BY po.productColorId
       ) AS sizes ON sizes.productColorId = pc.id
       LEFT JOIN (
         SELECT
-      		p.id AS productId,
-      		COUNT(op.id) AS orderCount
-      	FROM product p
-      	LEFT JOIN product_color pc ON p.id = pc.productId
-      	LEFT JOIN product_options po ON po.productColorId = pc.id
-      	LEFT JOIN order_products op ON op.productOptionId = po.id
-      	GROUP BY p.id
+          p.id AS productId,
+          COUNT(op.id) AS orderCount
+        FROM product p
+        LEFT JOIN product_color pc ON p.id = pc.productId
+        LEFT JOIN product_options po ON po.productColorId = pc.id
+        LEFT JOIN order_products op ON op.productOptionId = po.id
+        GROUP BY p.id
       ) AS orderss ON orderss.productId = p.id
       LEFT JOIN (
-      	SELECT
-      		l.productId,
-      		COUNT(l.id) AS likeCount
-      	FROM likes l
-      	GROUP BY l.productId
-      ) AS likess ON likess.productId = p.id
-      LEFT JOIN (
-			  SELECT 
-				  r.productId,
-				  COUNT(r.id) AS reviewCount
-			  FROM review r
-			  GROUP BY r.productId
-		  ) AS reviewss ON reviewss.productId = p.id
-      ${whereQuery}
-      GROUP BY p.id , orderss.orderCount, reviewss.reviewCount
-      ${orderQuery}
-      LIMIT 14 OFFSET ${offset}
+        SELECT
+          l.productId,
+          COUNT(l.id) AS likeCount
+        FROM likes l
+    GROUP BY l.productId
+  ) AS likess ON likess.productId = p.id
+  LEFT JOIN (
+    SELECT 
+      r.productId,
+      COUNT(r.id) AS reviewCount
+    FROM review r
+    GROUP BY r.productId
+  ) AS reviewss ON reviewss.productId = p.id
+  ${whereQuery}
+  GROUP BY p.id , orderss.orderCount, reviewss.reviewCount
+  ${orderQuery}
+  LIMIT 14 OFFSET ${offset}
 	`);
   },
   getCountOrder: (left: string, colorsQuery: string, itemQuery: string) => {
@@ -302,47 +301,56 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         p.id,
         p.name,
         p.thumbnail,
+        p.description,
         p.price, 	
+        ppp.likeid,
         JSON_ARRAYAGG(
-      	  JSON_OBJECT(
-      		  'imageId', pi.id,
-      		  'image', pi.img_url
-       	  )
+          JSON_OBJECT(
+            'imageId', pi.id,
+            'image', pi.img_url
+          )
         ) AS productImages,
         oo.color AS options
-      FROM product p
-      LEFT JOIN product_image pi ON p.id = pi.productId
-      LEFT JOIN (
-    	  SELECT
-		      p.id AS productId,
-		      JSON_ARRAYAGG(
-		      	JSON_OBJECT(
-				      'colorId', c.id,
-				      'colorName', c.name,
-				      'options', productOption.options
-		  	    ) 
-	  	    ) AS color
-	      FROM product p
-	      LEFT JOIN product_color pc ON p.id = pc.productId
-	      LEFT JOIN colors c ON c.id = pc.colorId
-  	    LEFT JOIN (
-	  	    SELECT
-			      po.productColorId AS pcId,
+        FROM product p
+        LEFT JOIN product_image pi ON p.id = pi.productId
+        LEFT JOIN (
+          SELECT 
+            l.productId,
+            l.id AS likeid
+          FROM likes l 
+          GROUP BY l.productId, l.id
+        ) AS ppp ON ppp.productId = p.id
+        LEFT JOIN (
+          SELECT
+            p.id AS productId,
             JSON_ARRAYAGG(
-			    	  JSON_OBJECT(
-					      'sizeId', size.id,
-					      'size', size.name,
-				    	  'stock', stock
-			  	    ) 
-		        ) AS options 
-		      FROM product_options po
-		      LEFT JOIN size ON size.id = po.sizeId
-	  	    GROUP BY pcId
-  	    ) AS productOption ON productOption.pcId = pc.id
-  	    GROUP BY p.id	
-      ) AS oo ON oo.productId = p.id
-      WHERE p.id = ${productId}
-      GROUP BY p.id
+              JSON_OBJECT(
+                'colorId', c.id,
+                'colorName', c.name,
+                'options', productOption.options
+              ) 
+        ) AS color
+        FROM product p
+        LEFT JOIN product_color pc ON p.id = pc.productId
+        LEFT JOIN colors c ON c.id = pc.colorId
+        LEFT JOIN (
+          SELECT
+            po.productColorId AS pcId,
+            JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'sizeId', size.id,
+                'size', size.name,
+                'stock', stock
+              ) 
+            ) AS options 
+          FROM product_options po
+          LEFT JOIN size ON size.id = po.sizeId
+          GROUP BY pcId
+        ) AS productOption ON productOption.pcId = pc.id
+        GROUP BY p.id	
+    ) AS oo ON oo.productId = p.id
+    WHERE p.id = ${productId}
+    GROUP BY p.id,ppp.likeid
     `);
   },
   getProductPriceByOption: async (optionId: number) => {
@@ -358,53 +366,40 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
   },
   getRecommendReview: (offset: number) => {
     return ProductRepository.query(`
-      SELECT
-	      p.id,
-	      p.thumbnail,
-	      p.name,
-	      p.price,
-	      mss.mainCategoryId,
-	      mss.subCategoryId,
-	      pp.reviews
-	    FROM product p
-	    LEFT JOIN(
-		    SELECT
-			    i.id,
-			    ms.mainCategoryId,
-			    ms.subCategoryId
-	      FROM main_sub_categories ms
-	      LEFT JOIN items i ON i.mainSubCategoryId = ms.id
-	    ) AS mss ON mss.id = p.itemId
-      LEFT JOIN(
-	      SELECT
-	        r.productId,
-	        JSON_ARRAYAGG(
-		        JSON_OBJECT(
-			        'star',r.star,
-			        'content',r.content,
-			        'image',r.thumbnail
-		        )
-	        ) AS reviews
-        FROM review r
-        GROUP BY r.productId
-      ) AS pp ON pp.productId = p.id
-      LIMIT 4 OFFSET ${offset}
-    `);
-  },
-  getRecommendCount: (offset: number) => {
-    return ProductRepository.query(`
-      SELECT
-        p.id AS productId,
-        dd.reviewCount
-      FROM product p
-      LEFT JOIN(
-        SELECT
-          r.productId,
-          COUNT(r.id) AS reviewCount
-        FROM review r
-        GROUP BY r.productId
-      ) AS dd ON dd.productId = p.id
-      LIMIT 4 OFFSET ${offset}
+    SELECT DISTINCT
+      p.id,
+      p.name,
+      p.thumbnail,
+      p.price,
+      AVG(r.star) AS star,
+      COUNT(r.id) AS reviewCount,
+      JSON_OBJECT(
+    	  'reviewId', reviewInfo.reviewId,
+    	  'content', reviewInfo.content,
+    	  'thumbnail', reviewInfo.thumbnail,
+    	  'star', reviewInfo.star
+      ) AS reviewInform,
+    ranking
+    FROM product p
+    LEFT JOIN review r ON r.productId = p.id
+    LEFT JOIN (
+  	  SELECT
+  		  *
+  	  FROM (
+  		  SELECT
+  			  r.productId,
+	  		  r.id AS reviewId,
+	  		  r.content,
+	  		  r.thumbnail,
+	  		  r.star,
+	  		  RANK() OVER (PARTITION BY r.productId ORDER BY r.star, r.id ASC) AS ranking
+	  	  FROM review r
+	  ) AS reviewInfo
+	  HAVING ranking <= 1
+    ) AS reviewInfo ON reviewInfo.productId = p.id
+    GROUP by p.id, reviewInform
+    ORDER BY star DESC 
+    LIMIT 4 OFFSET ${offset}
     `);
   },
 

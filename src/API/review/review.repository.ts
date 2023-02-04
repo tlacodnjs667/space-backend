@@ -79,26 +79,39 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   ): Promise<IReviewCanCreate[]> {
     return ReviewRepository.query(`
         SELECT DISTINCT
-          pc.productId,
-          o.userId AS orderuser,
-          productName,
-          rrr.thumbnail
+	        pc.productId,
+	        o.userId AS orderuser,
+          p.name,
+          p.thumbnail,
+          s.name AS sizeName,
+          c.name AS colorName
+        FROM order_products op
+        LEFT JOIN orders o ON op.orderId = o.id
+        LEFT JOIN product_options po ON po.id = op.productOptionId
+        LEFT JOIN size s ON po.sizeId = s.id
+        LEFT JOIN product_color pc ON po.productColorId = pc.id
+        LEFT JOIN colors c ON pc.colorId = c.id
+        LEFT JOIN product p ON pc.productId = p.id
+        LEFT JOIN (
+        	SELECT
+        		p.id AS productId,
+            p.thumbnail,
+            p.name,
+	          rrr.userId AS rrruser
         FROM order_products op
         LEFT JOIN orders o ON op.orderId = o.id
         LEFT JOIN product_options po ON po.id = op.productOptionId
         LEFT JOIN product_color pc ON po.productColorId = pc.id
         LEFT JOIN (
-          SELECT
-            p.id AS productId,
-            p.name AS productName,
-            p.thumbnail,
-            r.id AS reviewId,
-            r.userId,
-            r.content
-          FROM product p
-          LEFT JOIN review r ON r.productId = p.id
-        ) AS rrr ON rrr.productId = pc.productId
-        WHERE rrr.reviewId IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}    
+        	SELECT
+        		p.id AS productId,
+        		r.id AS reviewId,
+        		r.userId,
+        		r.content
+        	FROM product p
+        	LEFT JOIN review r ON r.productId = p.id
+        ) AS rrr ON rrr.productId = pc.productId AND rrr.userId = o.userId
+        WHERE rrr.id IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
     `);
   },
 
