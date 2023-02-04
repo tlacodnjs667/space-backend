@@ -61,10 +61,10 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        { path: 'review/score', method: RequestMethod.GET },
-        { path: 'review/product', method: RequestMethod.GET },
-        { path: 'review/calendar', method: RequestMethod.GET },
-        { path: 'review/event', method: RequestMethod.GET },
+        { path: 'review/product/:productId', method: RequestMethod.GET },
+        { path: 'review/score/:productId', method: RequestMethod.GET },
+        { path: 'review/calendar/:calendarId', method: RequestMethod.GET },
+        { path: 'review/event/:eventId', method: RequestMethod.GET },
       )
       .forRoutes(
         CartController,

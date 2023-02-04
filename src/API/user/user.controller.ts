@@ -28,8 +28,6 @@ export class UserController {
       const createUserDto = req.body;
 
       if (req.file) {
-        console.log(req.file);
-
         const { location } = req.file;
         createUserDto.thumbnail = location;
       }
@@ -43,9 +41,9 @@ export class UserController {
 
   @Post('login')
   async loginUser(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
-    console.log('login' + loginInfo);
-    const data = await this.userService.checkUser(loginInfo);
-    return res.status(200).send({ data });
+    console.log(loginInfo);
+    const access_token = await this.userService.checkUser(loginInfo);
+    return res.status(200).send({ access_token, message: 'LOGIN_SUCCESS' });
   }
 
   @Post('google')

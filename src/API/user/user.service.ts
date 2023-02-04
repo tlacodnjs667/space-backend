@@ -55,18 +55,21 @@ export class UserService {
     const query = `email = '${user.email}'`;
     const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
     // console.log(user.password);
+    console.log('HELLO');
+    console.log(userInfoFromDB);
 
     const checkForClient = await this.checkHash(
       user.password,
       userInfoFromDB.password,
     );
+    console.log('checkForClient');
+    console.log(checkForClient);
     // console.log('userInfoFromDB' + userInfoFromDB);
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
-    const token = await this.getAccessToken(userInfoFromDB);
-    return token;
+    return this.getAccessToken(userInfoFromDB);
   }
 
   async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {
@@ -188,6 +191,8 @@ export class UserService {
       { email: user.email, userId: user.id },
       { secret: process.env.JWT_SECRETKEY, expiresIn: '2h' },
     );
+
+    console.log(jwtt);
 
     return jwtt;
   }

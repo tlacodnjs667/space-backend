@@ -79,27 +79,26 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   ): Promise<IReviewCanCreate[]> {
     return ReviewRepository.query(`
         SELECT DISTINCT
-          reviewCheck.thumbnail,
-          reviewCheck.productName,
-          reviewCheck.productId
+          pc.productId,
+          o.userId AS orderuser,
+          productName,
+          rrr.thumbnail
         FROM order_products op
         LEFT JOIN orders o ON op.orderId = o.id
+        LEFT JOIN product_options po ON po.id = op.productOptionId
+        LEFT JOIN product_color pc ON po.productColorId = pc.id
         LEFT JOIN (
-           SELECT
-             po.id AS optionId,
-             r.id AS reviewId,
-             p.name AS productName,
-             p.id AS productId,
-             p.thumbnail
-           FROM product_options po 
-           LEFT JOIN size s ON po.sizeId = s.id
-           LEFT JOIN product_color pc ON po.productColorId = pc.id
-           LEFT JOIN colors c ON pc.colorId = c.id
-           LEFT JOIN product p ON pc.productId = p.id
-           LEFT JOIN review r ON r.productId = p.id
-        ) AS reviewCheck ON reviewCheck.optionId = op.productOptionId
-        WHERE reviewCheck.reviewId IS NULL AND o.userId = ${userId}
-
+          SELECT
+            p.id AS productId,
+            p.name AS productName,
+            p.thumbnail,
+            r.id AS reviewId,
+            r.userId,
+            r.content
+          FROM product p
+          LEFT JOIN review r ON r.productId = p.id
+        ) AS rrr ON rrr.productId = pc.productId
+        WHERE rrr.reviewId IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}    
     `);
   },
 
@@ -117,7 +116,7 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   getScoreAvgById: async (productId: number) => {
     return ReviewRepository.query(`
         SELECT 
-          AVG(star) 
+          AVG(star) AS starAvg 
         FROM review 
         WHERE productId = ${productId}
     `);
@@ -159,9 +158,9 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         	GROUP BY rl.reviewId
         ) AS unhelpful ON unhelpful.reviewId = r.id
         WHERE productId = ${productId} ${conditionQuery}
-        ORDER BY ${ordering}
-        LIMIT 10 OFFSET ${offset}
-    `);
+        `);
+    // ORDER BY ${ordering}
+    // LIMIT 10 OFFSET ${offset}
   },
 
   getReviewByUserId(userId: number, offset: number): Promise<IReviewInfo[]> {
