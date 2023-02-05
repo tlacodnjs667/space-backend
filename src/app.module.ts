@@ -69,7 +69,7 @@ export class AppModule implements NestModule {
       .forRoutes(
         CartController,
         OrderController,
-        LikeController,
+        // LikeController,
         ReviewController,
       );
     consumer
