@@ -65,6 +65,7 @@ export class AppModule implements NestModule {
         { path: 'review/score/:productId', method: RequestMethod.GET },
         { path: 'review/calendar/:calendarId', method: RequestMethod.GET },
         { path: 'review/event/:eventId', method: RequestMethod.GET },
+        { path: 'review/main', method: RequestMethod.GET },
       )
       .forRoutes(
         CartController,

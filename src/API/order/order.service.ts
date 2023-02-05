@@ -45,18 +45,19 @@ export class OrderService {
       historyFilter.history_end_date?.length &&
       historyFilter.history_start_date?.length
     ) {
-      let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date} AND userId = ${userId}'`;
+      console.log(userId);
+      let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date}' AND o.userId = ${userId}`;
       if (historyFilter.order_status) {
         query += ` AND orderStatusId = ${
           ORDER_STATUS[historyFilter.order_status]
         }`;
       }
 
-      console.log('날짜 있는 거');
+      // console.log('날짜 있는 거');
       const orderList = await OrderRepository.getOrderHistory(query);
       const orderFilter = await OrderRepository.orderHistoryFilter();
 
-      console.log(orderList);
+      // console.log(orderList);
 
       return { orderFilter, orderList };
     }
@@ -131,13 +132,8 @@ export class OrderService {
       orderProductId,
     );
 
-    if (checkStatus.shipmentStatusId === SHIPMENT_STATUS.PURCHASE_CONFIRMED) {
-      throw new HttpException(
-        'CANNOT_WITHDRAW_CONFIRMED_ORDER',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
     if (
+      checkStatus.shipmentStatusId === SHIPMENT_STATUS.PURCHASE_CONFIRMED ||
       checkStatus.shipmentStatusId === SHIPMENT_STATUS.REFUND_REQUESTED ||
       checkStatus.shipmentStatusId === SHIPMENT_STATUS.REFUND_COMPLETED ||
       checkStatus.shipmentStatusId === SHIPMENT_STATUS.ORDER_CANCLED

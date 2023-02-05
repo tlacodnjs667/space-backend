@@ -72,6 +72,9 @@ export class ReviewService {
 
     return ReviewRepository.createReviewForEvent(userId, createReviewDto);
   }
+  async getReviewAtMain() {
+    return ReviewRepository.getReviewAtMain();
+  }
 
   async getWhichReviewUserCanWriteReview(
     userId: number,

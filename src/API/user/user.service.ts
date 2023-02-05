@@ -102,7 +102,7 @@ export class UserService {
     return {
       insertId,
       message: 'USER_CREATED',
-      access_token: await this.getAccessToken(UserInfoForToken),
+      access_token: this.getAccessToken(UserInfoForToken),
     };
   }
 
@@ -117,7 +117,10 @@ export class UserService {
     const checkKakaoUserInDB = await UserRepository.checkUserInDB(query);
     if (checkKakaoUserInDB.length) {
       const [KakaoUserInDB] = checkKakaoUserInDB;
-      return { access_token: this.getAccessToken(KakaoUserInDB) };
+      return {
+        access_token: this.getAccessToken(KakaoUserInDB),
+        message: 'LOGIN_SUCCESS',
+      };
     }
 
     const user = {
@@ -134,9 +137,9 @@ export class UserService {
     };
 
     return {
-      insertId,
-      message: 'USER_CREATED',
       access_token: this.getAccessToken(UserInfoForToken),
+      message: 'USER_CREATED',
+      insertId,
     };
   }
   async getUserInfoToChange(userId: number): Promise<IUserInfoToChange[]> {

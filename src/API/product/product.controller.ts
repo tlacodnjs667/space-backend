@@ -25,7 +25,8 @@ export class ProductController {
 
   @Get('list')
   getProductList(
-    @Headers('user') userId: string,
+    // @Headers('user') userId: string,
+    @Query('user') userId: string,
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,

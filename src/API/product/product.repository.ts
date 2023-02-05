@@ -66,7 +66,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             GROUP BY productId
           ) AS options ON options.productId = p.id
           ${obj.joinQuery}
-        WHERE mainCategoryId = ${category}
+        WHERE mainCategoryId = ${category ? category : 2}
         GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
         ORDER BY review DESC, point DESC
         LIMIT 8 OFFSET 0

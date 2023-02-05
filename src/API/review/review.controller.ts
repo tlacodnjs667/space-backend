@@ -111,6 +111,12 @@ export class ReviewController {
     return this.reviewService.getReviewByEvent(+eventId);
   }
 
+  @Get('main')
+  getReviewAtMain() {
+    console.log('hihi');
+    return this.reviewService.getReviewAtMain();
+  }
+
   @Patch('product')
   async updateProductReview(@Req() req: UpdateProductReviewReqDto) {
     const updateReviewInfo = req.body;

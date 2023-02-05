@@ -226,6 +226,16 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         ${queryToCount}
     `);
   },
+  getReviewAtMain() {
+    return ReviewRepository.query(`
+      SELECT 
+        id AS reviewId,
+        thumbnail
+      from review 
+      ORDER BY rand()
+      LIMIT 11 OFFSET 0;
+    `);
+  },
 
   updateEventReview(userId: number, infoToUpdate: UpdateEventReview) {
     return ReviewRepository.query(`
