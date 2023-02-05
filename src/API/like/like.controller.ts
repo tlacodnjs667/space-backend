@@ -17,10 +17,7 @@ export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  addWishlist(
-    @Headers('user') userId: number,
-    @Body() likeOption: CreateLikeDto,
-  ) {
+  addWishlist(@Body('user') userId: number, @Body() likeOption: CreateLikeDto) {
     return this.likeService.addWishlist(userId, likeOption);
   }
 

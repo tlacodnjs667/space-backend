@@ -376,7 +376,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       JSON_OBJECT(
     	  'reviewId', reviewInfo.reviewId,
     	  'content', reviewInfo.content,
-    	  'thumbnail', reviewInfo.thumbnail,
+    	  'image', reviewInfo.thumbnail,
     	  'star', reviewInfo.star
       ) AS reviewInform,
     ranking
