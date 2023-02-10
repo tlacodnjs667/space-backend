@@ -43,9 +43,12 @@ export class ProductController {
     return this.productService.getRecommendReview(+offset);
   }
 
-  @Get('detail/:productId') //user Like 정보 추가
-  getProductDetail(@Param('productId') productId: string) {
-    return this.productService.getProductDetail(productId);
+  @Get('detail/:productId')
+  getProductDetail(
+    @Param('productId') productId: string,
+    @Headers('user') userId: number,
+  ) {
+    return this.productService.getProductDetail(productId, +userId);
   }
 
   @Get('search')

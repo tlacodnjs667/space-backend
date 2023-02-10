@@ -297,7 +297,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       ) AS main ON mainCategoryId = m.id
     `);
   },
-  getProductDetail: (productId: string) => {
+  getProductDetail: (productId: string, query: string) => {
     return ProductRepository.query(`
       SELECT
         p.id,
@@ -353,7 +353,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         ) AS productOption ON productOption.pcId = pc.id
         GROUP BY p.id	
     ) AS oo ON oo.productId = p.id
-    WHERE p.id = ${productId}
+    WHERE p.id = ${productId} ${query} 
     GROUP BY p.id,ppp.likeid
     `);
   },
