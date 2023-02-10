@@ -22,18 +22,13 @@ export class LikeController {
     @Headers('user') userId: number,
     @Body() likeOption: CreateLikeDto,
   ) {
-    console.log('userID' + userId);
-    console.log('likeOption');
-    console.log(likeOption);
-
-    const aa = await this.likeService.addWishlist(userId, likeOption);
-    console.log(aa);
+    await this.likeService.addWishlist(userId, likeOption);
     const message = 'SUCCESS';
     return { message };
   }
 
   @Get()
-  getWishlist(@Headers('user') userId: number) {
+  getWishlist(@Query('user') userId: number) {
     return this.likeService.getWishlist(+userId);
   }
 

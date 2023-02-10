@@ -4,8 +4,8 @@ export class CreateCartDto {
 }
 
 export class UpdateCartDto {
-  cartId: string;
-  quantity: string;
+  cartId: number;
+  quantity: number;
 }
 
 export class UpdateItemDto {
