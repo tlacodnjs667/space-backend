@@ -7,6 +7,8 @@ import {
   Patch,
   Headers,
   Get,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -17,6 +19,7 @@ import {
   RequestForFormData,
 } from './dto/create-user.dto';
 import { ReturnCreated } from '../order/IOrderInterface';
+import { Console } from 'console';
 
 @Controller('user')
 export class UserController {
@@ -28,8 +31,6 @@ export class UserController {
       const createUserDto = req.body;
 
       if (req.file) {
-        console.log(req.file);
-
         const { location } = req.file;
         createUserDto.thumbnail = location;
       }
@@ -37,15 +38,14 @@ export class UserController {
       return await this.userService.createUser(createUserDto);
     } catch (err) {
       console.error(err);
-      return err;
+      throw err;
     }
   }
 
   @Post('login')
   async loginUser(@Body() loginInfo: LoginUserDto, @Res() res: Response) {
-    console.log('login' + loginInfo);
-    const data = await this.userService.checkUser(loginInfo);
-    return res.status(200).send({ data });
+    const access_token = await this.userService.checkUser(loginInfo);
+    return res.status(200).send({ access_token, message: 'LOGIN_SUCCESS' });
   }
 
   @Post('google')
@@ -63,8 +63,7 @@ export class UserController {
 
   @Get('info') //유저정보 수정 시 필요한 데이터 GET
   async getUserInfoToChange(@Headers('user') userId: number) {
-    const data = await this.userService.getUserInfoToChange(+userId);
-    return data[0];
+    return this.userService.getUserInfoToChange(+userId);
   }
 
   @Patch('info')
@@ -72,6 +71,9 @@ export class UserController {
     //유저정보 업데이트 하기
     @Req() req: RequestForFormDataToUpdate,
   ) {
+    if (!req.headers.user) {
+      throw new HttpException('CANNOT_FOUND_USERID', HttpStatus.BAD_REQUEST);
+    }
     const createUserDto = req.body;
 
     if (req.file) {

@@ -15,4 +15,10 @@ export class SnapService {
     const detail = await SnapRepository.getSnapDetail(snap.snapId);
     return { list, counts, detail };
   }
+  async getSnapForMain() {
+    const result = await SnapRepository.getSnapForMain();
+    console.log(result);
+
+    return result;
+  }
 }

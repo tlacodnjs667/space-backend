@@ -13,6 +13,8 @@ export interface ValidatedUser {
   email: string;
   password: string;
   gender?: string;
+  google_id?: string;
+  kakao_id?: string;
 }
 
 export interface IUserInfoToChange {
@@ -22,5 +24,8 @@ export interface IUserInfoToChange {
   nickname: string;
   thumbnail: string;
   gender: string;
-  phon: string;
+  phone: string;
+  google_id?: string;
+  kakao_id?: string;
+  is_social?: boolean;
 }

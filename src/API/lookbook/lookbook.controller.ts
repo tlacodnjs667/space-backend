@@ -5,10 +5,6 @@ import { LookbookService } from './lookbook.service';
 @Controller('lookbook')
 export class LookbookController {
   constructor(private readonly lookbookService: LookbookService) {}
-  @Get()
-  getLookbookList(@Query('offset') offset: string) {
-    return this.lookbookService.getLookbookList(+offset);
-  }
   @Get('list/:lookbookId')
   getLookbookDetail(@Param('lookbookId') lookbookId: string) {
     return this.lookbookService.getLookbookDetail(lookbookId);
@@ -22,5 +18,9 @@ export class LookbookController {
     @Param('lookbookId') lookbookId: string,
   ): Promise<ILookbookForMainDetail[]> {
     return this.lookbookService.getLookbookDetailForMain(+lookbookId);
+  }
+  @Get()
+  getLookbookList(@Query('offset') offset: string) {
+    return this.lookbookService.getLookbookList(+offset);
   }
 }

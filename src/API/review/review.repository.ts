@@ -98,8 +98,7 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
            LEFT JOIN product p ON pc.productId = p.id
            LEFT JOIN review r ON r.productId = p.id
         ) AS reviewCheck ON reviewCheck.optionId = op.productOptionId
-        WHERE reviewCheck.reviewId IS NULL AND o.userId = ${userId}
-
+        WHERE reviewCheck.reviewId IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
     `);
   },
 
@@ -117,7 +116,7 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   getScoreAvgById: async (productId: number) => {
     return ReviewRepository.query(`
         SELECT 
-          AVG(star) 
+          AVG(star) AS starAvg 
         FROM review 
         WHERE productId = ${productId}
     `);
@@ -159,9 +158,9 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         	GROUP BY rl.reviewId
         ) AS unhelpful ON unhelpful.reviewId = r.id
         WHERE productId = ${productId} ${conditionQuery}
-        ORDER BY ${ordering}
-        LIMIT 10 OFFSET ${offset}
-    `);
+        `);
+    // ORDER BY ${ordering}
+    // LIMIT 10 OFFSET ${offset}
   },
 
   getReviewByUserId(userId: number, offset: number): Promise<IReviewInfo[]> {
@@ -212,6 +211,72 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
         SELECT 
           COUNT(*) as count
         ${queryToCount}
+    `);
+  },
+  async getReviewDetailAtMain(reviewId: number) {
+    return ReviewRepository.query(`
+      SELECT 
+        JSON_OBJECT(
+          'reviewId',r.id,
+          'star', r.star,
+          'created_at',r.created_at,
+          'thumbnail', r.thumbnail,
+          'nickname',u.nickname,
+          'content',content,
+          'photos', JSON_ARRAYAGG(reviewImg.reviewImg),
+          'helpful', reviewLike.helpful,
+          'unhelpful', reviewLike.unhelpful
+        ) AS detailReview,
+        JSON_OBJECT(   
+            'productId', productInfo.id,
+            'name', productInfo.name,
+            'thumbnail', productInfo.thumbnail,
+            'reviewCount', productInfo.count,
+            'starAverage', productInfo.star
+        ) AS productInfo
+      FROM review r
+      LEFT JOIN user u ON r.userId = u.id
+      LEFT JOIN (
+        SELECT
+          productId,
+          JSON_OBJECT (
+          'reviewId',id,
+          'reviewThumbnail', thumbnail
+          ) AS reviewImg
+        FROM review
+        WHERE NOT id=${reviewId}
+      ) AS reviewImg ON reviewImg.productId = r.productId
+      LEFT JOIN (
+        SELECT
+          reviewId,
+          COUNT(case when rl.is_helpful = 1 then 1 END) AS helpful,
+          COUNT(case when rl.is_helpful = 0 then 1 END) AS unhelpful
+        FROM review_likes rl
+        GROUP BY reviewId
+      ) AS reviewLike ON reviewLike.reviewId=r.id
+      LEFT JOIN (
+        SELECT 
+          p.id,
+          p.name,
+          p.thumbnail,
+          COUNT(r.id) AS count,
+          AVG(r.star) AS star
+        FROM product p
+        LEFT JOIN review r ON r.productId = p.id
+        GROUP BY p.id
+      ) AS productInfo ON productInfo.id = r.productId
+      WHERE r.id = ${reviewId}
+      GROUP BY r.id
+    `);
+  },
+  getReviewAtMain() {
+    return ReviewRepository.query(`
+      SELECT 
+        id AS reviewId,
+        thumbnail
+      from review 
+      ORDER BY rand()
+      LIMIT 11 OFFSET 0;
     `);
   },
 

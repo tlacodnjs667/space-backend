@@ -18,6 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     const { authorization } = req.headers;
     const { userId, email } = this.jwtService.verify(authorization, {
       secret: process.env.JWT_SECRETKEY,

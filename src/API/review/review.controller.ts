@@ -111,6 +111,17 @@ export class ReviewController {
     return this.reviewService.getReviewByEvent(+eventId);
   }
 
+  @Get('img/:reviewId')
+  async getReviewDetailAtMain(@Param('reviewId') reviewId: string) {
+    const [result] = await this.reviewService.getReviewDetailAtMain(+reviewId);
+    return result;
+  }
+
+  @Get('main')
+  getReviewAtMain() {
+    return this.reviewService.getReviewAtMain();
+  }
+
   @Patch('product')
   async updateProductReview(@Req() req: UpdateProductReviewReqDto) {
     const updateReviewInfo = req.body;

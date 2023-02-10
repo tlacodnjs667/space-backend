@@ -43,4 +43,17 @@ export const SnapRepository = AppDataSource.getRepository(Snap).extend({
 	WHERE s.id = ${snapId}
 	`);
   },
+  getSnapForMain() {
+    return SnapRepository.query(`
+		SELECT
+			s.id AS snapId,
+			thumbnail,
+			hashtag,
+			i.name AS itemName
+		FROM snaps s
+		LEFT JOIN items i ON i.id = s.itemId
+		ORDER BY RAND()
+		LIMIT 4 OFFSET 0;
+	`);
+  },
 });

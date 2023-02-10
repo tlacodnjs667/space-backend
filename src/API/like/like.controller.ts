@@ -21,10 +21,8 @@ export class LikeController {
     return this.likeService.addWishlist(userId, likeOption);
   }
 
-  @Get(':user')
+  @Get()
   getWishlist(@Headers('user') userId: number) {
-    console.log('hell');
-
     return this.likeService.getWishlist(+userId);
   }
 

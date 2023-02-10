@@ -69,7 +69,7 @@ export class OrderController {
     return this.orderService.getOrderHistory(userId, dateFilter);
   }
 
-  @Get('mypage/:user') // 마이페이지 오더 인포 (my 페이지 default)
+  @Get('mypage') // 마이페이지 오더 인포 (my 페이지 default)
   async getMypageOrderInfo(@Headers('user') userId: number) {
     return this.orderService.getMypageOrderInfo(userId);
   }
@@ -77,12 +77,12 @@ export class OrderController {
   @Delete('all')
   async withdrawOrder(
     @Headers('user') userId: number,
-    @Body('orderId') orderId: number,
+    @Param('orderId') orderId: string,
   ) {
     if (!orderId)
       throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
 
-    const message = await this.orderService.withdrawOrder(userId, orderId);
+    const message = await this.orderService.withdrawOrder(userId, +orderId);
 
     return { message };
   }
@@ -93,7 +93,7 @@ export class OrderController {
     @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
   ) {
     if (!orderProductId)
-      throw new HttpException('INVALID_', HttpStatus.BAD_REQUEST);
+      throw new HttpException('INVALID_REQUEST', HttpStatus.BAD_REQUEST);
 
     const message = await this.orderService.withdrawOrderByOption(
       orderProductId,

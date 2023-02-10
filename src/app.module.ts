@@ -33,6 +33,7 @@ import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-in
 import { ProductController } from './API/product/product.controller';
 import { OrderController } from './API/order/order.controller';
 import { ReviewController } from './API/review/review.controller';
+import { UserController } from './API/user/user.controller';
 
 @Module({
   imports: [
@@ -61,16 +62,20 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        { path: 'review/score', method: RequestMethod.GET },
-        { path: 'review/product', method: RequestMethod.GET },
-        { path: 'review/calendar', method: RequestMethod.GET },
-        { path: 'review/event', method: RequestMethod.GET },
+        { path: 'review/product/:productId', method: RequestMethod.GET },
+        { path: 'review/score/:productId', method: RequestMethod.GET },
+        { path: 'review/calendar/:calendarId', method: RequestMethod.GET },
+        { path: 'review/event/:eventId', method: RequestMethod.GET },
+        { path: 'review/main', method: RequestMethod.GET },
+        { path: 'review/img/:reviewId', method: RequestMethod.GET },
       )
       .forRoutes(
         CartController,
         OrderController,
-        // LikeController,
+        LikeController,
         ReviewController,
+        { path: 'user/info', method: RequestMethod.GET },
+        { path: 'user/info', method: RequestMethod.PATCH },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)

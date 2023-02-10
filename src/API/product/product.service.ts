@@ -8,7 +8,7 @@ import { ProductRepository } from './product.repository';
 export class ProductService {
   async getWeeklyBestByCategory(userId: number, category: number) {
     const obj = {
-      joinQuery: userId
+      joinQueryForLikeCheck: userId
         ? `LEFT join (
         SELECT
         id AS isLike,
@@ -18,7 +18,7 @@ export class ProductService {
         WHERE userId = ${userId}
         ) AS ll ON ll.productId = p.id`
         : '',
-      columnDefinition: userId ? `, ll.isLike` : '',
+      columnDefinitionForLikeCheck: userId ? `, ll.isLike` : '',
     };
 
     const weeklyBest = await ProductRepository.getWeeklyBestByCategory(
@@ -33,7 +33,7 @@ export class ProductService {
 
   getNewProduct(userId: number) {
     const obj = {
-      joinQuery: userId
+      joinQueryForLikeCheck: userId
         ? `LEFT join (
         SELECT
         id AS isLike,
@@ -43,7 +43,7 @@ export class ProductService {
         WHERE userId = ${userId}
         ) AS ll ON ll.productId = p.id`
         : '',
-      columnDefinition: userId ? `, ll.isLike` : '',
+      columnDefinitionForLikeCheck: userId ? `, ll.isLike` : '',
     };
 
     return ProductRepository.getNewProduct(obj);
@@ -169,7 +169,7 @@ export class ProductService {
     ordering: ProductListDto,
     offset: number,
     criteria: FilterDto,
-    userId: string,
+    userId: number,
   ) {
     const sort: any = {
       best: `orderCount DESC`,

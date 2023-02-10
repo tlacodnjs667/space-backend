@@ -19,14 +19,14 @@ export class CreateUserDto {
   file?: any;
   name?: string;
   password?: string | undefined;
-  kakao_id?: string;
-  google_id?: string;
   email: string;
   birthday?: string;
   nickname?: string;
   thumbnail: string;
   gender?: UserGender;
   phone?: string;
+  google_id?: string;
+  kakao_id?: string;
 }
 
 enum UserGender {

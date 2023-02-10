@@ -4,13 +4,17 @@ import { SnapDto } from './dto/create-snap.dto';
 @Controller('snap')
 export class SnapController {
   constructor(private readonly snapService: SnapService) {}
-
-  @Get()
-  getSnapList(@Query('hashtag') hashtag: string) {
-    return this.snapService.getSnapList(hashtag);
+  @Get('main')
+  getSnapForMain() {
+    return this.snapService.getSnapForMain();
   }
+
   @Get('detail')
   getSnapDetail(@Query() snap: SnapDto) {
     return this.snapService.getSnapDetail(snap);
+  }
+  @Get()
+  getSnapList(@Query('hashtag') hashtag: string) {
+    return this.snapService.getSnapList(hashtag);
   }
 }

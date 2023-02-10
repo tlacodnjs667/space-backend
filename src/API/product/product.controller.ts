@@ -1,6 +1,5 @@
 import { Controller, Get, Headers, Param, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { FindProductDto } from './dto/find-product.dto';
 import { FilterDto, ProductListDto } from './dto/filter.dto';
 
 @Controller('product')
@@ -25,7 +24,7 @@ export class ProductController {
 
   @Get('list')
   getProductList(
-    @Query('user') userId: string,
+    @Headers('user') userId: number,
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
