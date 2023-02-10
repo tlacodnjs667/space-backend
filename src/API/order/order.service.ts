@@ -45,7 +45,6 @@ export class OrderService {
       historyFilter.history_end_date?.length &&
       historyFilter.history_start_date?.length
     ) {
-      console.log(userId);
       let query = `'${historyFilter.history_start_date}' AND '${historyFilter.history_end_date}' AND o.userId = ${userId}`;
       if (historyFilter.order_status) {
         query += ` AND orderStatusId = ${
@@ -56,8 +55,6 @@ export class OrderService {
       // console.log('날짜 있는 거');
       const orderList = await OrderRepository.getOrderHistory(query);
       const orderFilter = await OrderRepository.orderHistoryFilter();
-
-      // console.log(orderList);
 
       return { orderFilter, orderList };
     }

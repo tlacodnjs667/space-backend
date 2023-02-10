@@ -16,7 +16,7 @@ import { IUserInfoToChange } from './IUserInterface';
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
   async createUser(user: CreateUserDto): Promise<ReturnCreated> {
-    if (!user.kakao_id || !user.google_id) {
+    if (!user.kakao_id && !user.google_id) {
       //구글 정보 확인 한번 더 해야할 듯
       const query = `email = '${user.email}'`;
       const checkForDuplicate = await UserRepository.checkUserInDB(query);
@@ -42,8 +42,6 @@ export class UserService {
         queryForValues.push("'" + value + "'");
       }
     }
-
-    console.log('이게 될까?');
 
     return UserRepository.createUser(
       queryForKeys.join(', '),
@@ -142,28 +140,45 @@ export class UserService {
       insertId,
     };
   }
-  async getUserInfoToChange(userId: number): Promise<IUserInfoToChange[]> {
-    return UserRepository.getUserInfoToChange(userId);
+  async getUserInfoToChange(userId: number): Promise<IUserInfoToChange> {
+    const [result] = await UserRepository.getUserInfoToChange(userId);
+
+    result.is_social = Boolean(
+      result.google_id?.length || result.kakao_id?.length,
+    );
+    delete result.google_id;
+    delete result.kakao_id;
+
+    return result;
   }
   async updateUserInfo(userId: number, userInfoToChange: UpdateUserDto) {
     const query = `id = ${userId}`;
     const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
-
-    if (!userInfoToChange.userPassword) {
+    //DB 내에 비밀번호가 없을 때는 들어온 비밀번호를 넣어줘야하고,
+    // DB 내에 비밀 번호가 있는데 userPassword가 있으면 페크 해주어야 함
+    console.log(userInfoToChange);
+    if (
+      !userInfoFromDB.kakao_id &&
+      !userInfoFromDB.google_id &&
+      !userInfoToChange.userPassword
+    ) {
       throw new HttpException('PASSWORD_REQUIRED', HttpStatus.UNAUTHORIZED);
     }
+    if (userInfoToChange.userPassword) {
+      const checkForClient = await this.checkHash(
+        userInfoToChange.userPassword,
+        userInfoFromDB.password,
+      );
 
-    const checkForClient = await this.checkHash(
-      userInfoToChange.userPassword,
-      userInfoFromDB.password,
-    );
-    console.log('hi');
-
-    if (!checkForClient) {
-      throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
+      if (!checkForClient) {
+        throw new HttpException(
+          "PASSWORD_ISN'T_VALID",
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
     }
 
-    userInfoToChange.userPassword = undefined;
+    delete userInfoToChange.userPassword;
 
     const QueryForChange = [];
 
@@ -172,6 +187,7 @@ export class UserService {
         QueryForChange.push(`${key} = '${value}'`);
       }
     }
+
     console.log(QueryForChange);
 
     if (!QueryForChange.length) {

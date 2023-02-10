@@ -22,7 +22,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         SELECT
           id,
           email,
-          password
+          password,
+          google_id,
+          kakao_id
         FROM user
         WHERE ${query}
     `);
@@ -89,7 +91,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
           nickname,
           thumbnail,
           gender,
-          phone
+          phone,
+          google_id,
+          kakao_id
         FROM user
         WHERE user.id = ${userId}
     `);

@@ -169,7 +169,7 @@ export class ProductService {
     ordering: ProductListDto,
     offset: number,
     criteria: FilterDto,
-    userId: string,
+    userId: number,
   ) {
     const sort: any = {
       best: `orderCount DESC`,
