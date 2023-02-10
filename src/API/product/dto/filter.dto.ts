@@ -1,18 +1,18 @@
 export class FilterDto {
   mainCategory?: Array<number>;
-  item?: any;
+  item?: Array<number>;
   color?: Array<number>;
   left?: string;
   name?: string;
 }
 export class FilterDtoForService {
-  mainCategory?: any;
+  mainCategory?: Array<number>;
   item?: Array<number>;
   color?: Array<number>;
 }
 
 export class ProductListDto extends FilterDtoForService {
-  sort?: string;
+  sort?: any;
   count?: any;
   name?: string;
 }

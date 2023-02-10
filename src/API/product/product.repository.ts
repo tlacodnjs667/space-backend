@@ -306,6 +306,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         p.description,
         p.price, 	
         ppp.likeid,
+        ppp.userId,
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'imageId', pi.id,
@@ -318,7 +319,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         LEFT JOIN (
           SELECT 
             l.productId,
-            l.id AS likeid
+            l.id AS likeid,
+            l.userId AS userId
           FROM likes l 
           GROUP BY l.productId, l.id
         ) AS ppp ON ppp.productId = p.id
