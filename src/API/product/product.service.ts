@@ -74,9 +74,16 @@ export class ProductService {
     const left: string = count ? `${count[ordering.count]}` : ``;
     console.log(left);
 
+    // let orderQuery = '';
+    // if (typeof ordering.sort === 'string') {
+    //   orderQuery = `ORDER BY ${sort[ordering.sort]}`;
+    // }
     let orderQuery = '';
     if (typeof ordering.sort === 'string') {
       orderQuery = `ORDER BY ${sort[ordering.sort]}`;
+    }
+    if (ordering.sort === 'null') {
+      orderQuery = ``;
     }
     let whereQuery = '';
     const conditionArray = [];
@@ -93,6 +100,9 @@ export class ProductService {
     if (conditionArray.length) {
       whereQuery = `WHERE ${conditionArray.join(' AND ')}`;
     }
+    // if (conditionArray.length) {
+    //   whereQuery = ``;
+    // }
 
     const sum = 18 * (offset - 1);
     console.log(whereQuery);
@@ -191,11 +201,17 @@ export class ProductService {
     if (typeof ordering.sort === 'string') {
       orderQuery = `ORDER BY ${sort[ordering.sort]}`;
     }
+    if (ordering.sort === 'null') {
+      orderQuery = ``;
+    }
+    console.log(orderQuery);
+
     let whereQuery = '';
     const conditionArray = [];
     if (ordering.color) {
       conditionArray.push(`pc.colorId in (${ordering.color})`);
     }
+
     if (ordering.item) conditionArray.push(`i.id in (${ordering.item})`);
 
     if (ordering.mainCategory)
