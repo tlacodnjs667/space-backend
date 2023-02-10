@@ -52,17 +52,11 @@ export class UserService {
   async checkUser(user: LoginUserDto) {
     const query = `email = '${user.email}'`;
     const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
-    // console.log(user.password);
-    console.log('HELLO');
-    console.log(userInfoFromDB);
 
     const checkForClient = await this.checkHash(
       user.password,
       userInfoFromDB.password,
     );
-    console.log('checkForClient');
-    console.log(checkForClient);
-    // console.log('userInfoFromDB' + userInfoFromDB);
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
@@ -74,7 +68,7 @@ export class UserService {
     const decodedInfo: any = jwt_decode(credentialResponse.credential);
     const query = `email = '${decodedInfo.email}'`;
     const checkGoogleUserInDB = await UserRepository.checkUserInDB(query);
-    console.log(decodedInfo);
+
     const [checkUser] = checkGoogleUserInDB;
 
     if (checkGoogleUserInDB.length) {

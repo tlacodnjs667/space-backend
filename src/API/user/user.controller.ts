@@ -19,7 +19,6 @@ import {
   RequestForFormData,
 } from './dto/create-user.dto';
 import { ReturnCreated } from '../order/IOrderInterface';
-import { Console } from 'console';
 
 @Controller('user')
 export class UserController {
@@ -28,8 +27,21 @@ export class UserController {
   @Post('create')
   async createUser(@Req() req: RequestForFormData): Promise<ReturnCreated> {
     try {
-      const createUserDto = req.body;
+      const emailValidReg =
+        /^[0-9a-zA-Z]([-_|.]?[0-9a-zA-Z])*@[a-z]([-_|.]?[0-9a-z])*|.[a-zA-Z]{2,3}$/;
+      const passwordValidReg =
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$^!%*?&]{8,}$/;
 
+      if (!emailValidReg.test(req.body.email))
+        throw new HttpException('EMAIL_REG_UNMATCHED', HttpStatus.BAD_REQUEST);
+
+      if (req.body.password && !passwordValidReg.test(req.body.password))
+        throw new HttpException(
+          'PASSWORD_REG_UNMATCHED',
+          HttpStatus.BAD_REQUEST,
+        );
+
+      const createUserDto = req.body;
       if (req.file) {
         const { location } = req.file;
         createUserDto.thumbnail = location;
@@ -57,7 +69,6 @@ export class UserController {
 
   @Post('kakao')
   async kakaoLogin(@Body('access_token') access_token: string) {
-    console.log(access_token);
     return this.userService.kakaoLogin(access_token);
   }
 

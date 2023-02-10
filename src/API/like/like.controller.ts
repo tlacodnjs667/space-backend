@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   Headers,
+  Param,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
@@ -17,8 +18,18 @@ export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  addWishlist(@Body('user') userId: number, @Body() likeOption: CreateLikeDto) {
-    return this.likeService.addWishlist(userId, likeOption);
+  async addWishlist(
+    @Headers('user') userId: number,
+    @Body() likeOption: CreateLikeDto,
+  ) {
+    console.log('userID' + userId);
+    console.log('likeOption');
+    console.log(likeOption);
+
+    const aa = await this.likeService.addWishlist(userId, likeOption);
+    console.log(aa);
+    const message = 'SUCCESS';
+    return { message };
   }
 
   @Get()
@@ -39,12 +50,17 @@ export class LikeController {
     return this.likeService.deleteWishlist(userId, likeId);
   }
 
-  @Post('calendar')
-  addCalendarLike(
+  @Post('calendar/:calendarId')
+  async addCalendarLike(
     @Headers('user') userId: number,
-    @Body('calendarId') calendarId: number,
+    @Param('calendarId') calendarId: string,
   ) {
-    return this.likeService.addCalendarLike(userId, calendarId);
+    const { insertId } = await this.likeService.addCalendarLike(
+      userId,
+      +calendarId,
+    );
+
+    return { insertId, message: 'LIKE_CLICKED' };
   }
 
   @Post('review')

@@ -33,10 +33,12 @@ export class ReviewService {
       }
     }
 
-    return ReviewRepository.createReviewOfProduct(
+    const { insertId } = await ReviewRepository.createReviewOfProduct(
       keys.join(', '),
       values.join(', '),
     );
+
+    return { insertId, message: 'MESSAGE_CREATED' };
   }
 
   async createReviewForCalendar(
@@ -50,7 +52,7 @@ export class ReviewService {
       query,
     );
 
-    if (!commentDuplication.length)
+    if (commentDuplication.length)
       throw new HttpException('UNAUTHORIZED_AUTHOR', HttpStatus.FORBIDDEN);
 
     return ReviewRepository.createReviewForCalendar(userId, createReviewDto);
@@ -67,7 +69,7 @@ export class ReviewService {
       query,
     );
 
-    if (!commentDuplication.length)
+    if (commentDuplication.length)
       throw new HttpException('UNAUTHORIZED_AUTHOR', HttpStatus.FORBIDDEN);
 
     return ReviewRepository.createReviewForEvent(userId, createReviewDto);
@@ -127,7 +129,7 @@ export class ReviewService {
   async getReviewByCalendar(calendarId: number) {
     const reviews = await ReviewRepository.getReviewByCalendar(calendarId);
     const queryToCount = `FROM calendar_comments WHERE calendarId = ${calendarId}`;
-    const count = await ReviewRepository.getReviewCount(queryToCount);
+    const [count] = await ReviewRepository.getReviewCount(queryToCount);
 
     return { reviews, count };
   }
@@ -135,7 +137,7 @@ export class ReviewService {
   async getReviewByEvent(eventId: number) {
     const reviews = await ReviewRepository.getReviewByEvent(eventId);
     const queryToCount = `FROM event_comments WHERE eventId = ${eventId}`;
-    const count = await ReviewRepository.getReviewCount(queryToCount);
+    const [count] = await ReviewRepository.getReviewCount(queryToCount);
 
     return { reviews, count };
   }

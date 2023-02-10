@@ -119,10 +119,9 @@ export const LikeRepository = AppDataSource.getRepository(ProductLike).extend({
 
   addCalendarLike: async (userId: number, calendarId: number) => {
     return LikeRepository.query(`
-      INSERT INTO calendar_likes (
-        userid, 
-        launchingCalendarId
-      ) VALUES (${userId},${calendarId} )
+      UPDATE launching_calendars
+      SET likeCounting = likeCounting + 1
+      WHERE id = ${calendarId}
     `);
   },
 

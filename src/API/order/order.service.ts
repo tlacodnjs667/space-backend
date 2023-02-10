@@ -52,7 +52,6 @@ export class OrderService {
         }`;
       }
 
-      // console.log('날짜 있는 거');
       const orderList = await OrderRepository.getOrderHistory(query);
       const orderFilter = await OrderRepository.orderHistoryFilter();
 
@@ -68,8 +67,6 @@ export class OrderService {
         ORDER_STATUS[historyFilter.order_status]
       }`;
     }
-
-    console.log('날짜 없는 거');
 
     const orderList = await OrderRepository.getOrderHistory(query);
     const orderFilter = await OrderRepository.orderHistoryFilter();

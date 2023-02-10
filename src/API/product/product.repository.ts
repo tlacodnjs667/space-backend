@@ -147,7 +147,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         p.thumbnail,
         p.price AS price,
         p.created_at AS news,
-        ppp.likeId,
+        good.likeId,
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'colorId',IFNULL(c.id, ''),
@@ -166,11 +166,11 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       LEFT JOIN (
         SELECT 
           l.productId,
-          l.productId AS likeid
+          JSON_ARRAYAGG(l.id) AS likeId
         FROM likes l 
         ${userId}
-        GROUP BY l.productId
-      ) AS ppp ON ppp.productId = p.id
+        GROUP BY productId
+      ) AS good ON good.productId = p.id
       LEFT JOIN (
         SELECT
           po.productColorId,
@@ -209,8 +209,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     FROM review r
     GROUP BY r.productId
   ) AS reviewss ON reviewss.productId = p.id
-  ${whereQuery}
-  GROUP BY p.id , orderss.orderCount, reviewss.reviewCount
+  ${whereQuery} 
+  GROUP BY p.id, orderss.orderCount, reviewss.reviewCount, ppp.likeId
   ${orderQuery}
   LIMIT 14 OFFSET ${offset}
 	`);
@@ -218,7 +218,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
   getCountOrder: (left: string, colorsQuery: string, itemQuery: string) => {
     return ProductRepository.query(`
       SELECT
-        COUNT(p.id)
+        COUNT(p.id) AS count
       FROM product p
       LEFT JOIN items i ON p.itemId = i.id
       LEFT JOIN main_sub_categories ms ON ms.id = i.mainSubCategoryId
@@ -297,7 +297,12 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       ) AS main ON mainCategoryId = m.id
     `);
   },
-  getProductDetail: (productId: string, query: string) => {
+  getProductDetail: (
+    productId: string,
+    userCheck: string,
+    likeCols: string,
+    groutByCondition: string,
+  ) => {
     return ProductRepository.query(`
       SELECT
         p.id,
@@ -305,8 +310,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         p.thumbnail,
         p.description,
         p.price, 	
-        ppp.likeid,
-        ppp.userId,
+        ${likeCols}
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'imageId', pi.id,
@@ -316,14 +320,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         oo.color AS options
         FROM product p
         LEFT JOIN product_image pi ON p.id = pi.productId
-        LEFT JOIN (
-          SELECT 
-            l.productId,
-            l.id AS likeid,
-            l.userId AS userId
-          FROM likes l 
-          GROUP BY l.productId, l.id
-        ) AS ppp ON ppp.productId = p.id
+        ${userCheck}
         LEFT JOIN (
           SELECT
             p.id AS productId,
@@ -353,8 +350,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         ) AS productOption ON productOption.pcId = pc.id
         GROUP BY p.id	
     ) AS oo ON oo.productId = p.id
-    WHERE p.id = ${productId} ${query} 
-    GROUP BY p.id,ppp.likeid
+    WHERE p.id = ${productId} 
+    GROUP BY p.id ${groutByCondition}
     `);
   },
   getProductPriceByOption: async (optionId: number) => {

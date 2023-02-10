@@ -17,7 +17,6 @@ export class SnapService {
   }
   async getSnapForMain() {
     const result = await SnapRepository.getSnapForMain();
-    console.log(result);
 
     return result;
   }

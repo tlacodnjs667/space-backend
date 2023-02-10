@@ -23,19 +23,26 @@ export class ProductController {
   }
 
   @Get('list')
-  getProductList(
+  async getProductList(
     @Headers('user') userId: number,
     @Query() ordering: ProductListDto,
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
   ) {
+    console.log(userId);
+    console.log(ordering);
     console.log(offset);
-    return this.productService.getProductList(
+    console.log(criteria);
+
+    const result = await this.productService.getProductList(
       ordering,
       +offset,
       criteria,
       userId,
     );
+
+    console.log(result);
+    return result;
   }
 
   @Get('recommend')
@@ -44,11 +51,16 @@ export class ProductController {
   }
 
   @Get('detail/:productId')
-  getProductDetail(
+  async getProductDetail(
     @Param('productId') productId: string,
     @Headers('user') userId: number,
   ) {
-    return this.productService.getProductDetail(productId, +userId);
+    const result = await this.productService.getProductDetail(
+      productId,
+      +userId,
+    );
+
+    return result;
   }
 
   @Get('search')
@@ -72,9 +84,8 @@ export class ProductController {
   }
   @Get('filter')
   getFilters(@Query() criteria: FilterDto) {
-    console.log(criteria);
     // criteria.item = makeMainCategoryStructure(criteria.item);
-    console.log(criteria.item); //삭제될 수도 있는 부분
+
     return this.productService.getFilters(criteria);
   }
 }

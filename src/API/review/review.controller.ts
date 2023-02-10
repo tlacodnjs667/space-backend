@@ -103,6 +103,9 @@ export class ReviewController {
 
   @Get('calendar/:calendarId') //캘린더별 코멘트
   getReviewByCalendar(@Param('calendarId') calendarId: string) {
+    if (!calendarId) {
+      throw new HttpException('CANNOT_FIND_CALENDAR_ID', HttpStatus.NOT_FOUND);
+    }
     return this.reviewService.getReviewByCalendar(+calendarId);
   }
 
@@ -111,7 +114,7 @@ export class ReviewController {
     return this.reviewService.getReviewByEvent(+eventId);
   }
 
-  @Get('img/:reviewId')
+  @Get('main/:reviewId')
   async getReviewDetailAtMain(@Param('reviewId') reviewId: string) {
     const [result] = await this.reviewService.getReviewDetailAtMain(+reviewId);
     return result;
@@ -138,6 +141,7 @@ export class ReviewController {
 
     return { result, message: 'REVIEW_UPDATED' };
   }
+
   @Patch('event') //이벤트 리뷰 수정
   updateEventReview(
     @Headers('user') userId: number,

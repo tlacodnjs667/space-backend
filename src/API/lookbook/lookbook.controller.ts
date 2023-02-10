@@ -5,7 +5,7 @@ import { LookbookService } from './lookbook.service';
 @Controller('lookbook')
 export class LookbookController {
   constructor(private readonly lookbookService: LookbookService) {}
-  @Get('list/:lookbookId')
+  @Get('detail/:lookbookId')
   getLookbookDetail(@Param('lookbookId') lookbookId: string) {
     return this.lookbookService.getLookbookDetail(lookbookId);
   }

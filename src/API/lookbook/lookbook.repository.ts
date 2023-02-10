@@ -19,7 +19,7 @@ export const LookbookRepository = AppDataSource.getRepository(Lookbook).extend({
       SELECT 
 	      lb.id,
 	      lb.title,
-      	lb.sub_title,
+    		lb.sub_title,
 	      lb.content,
 	      lb.thumbnail,
 	      products.lookbook
