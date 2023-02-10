@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 
 @Controller('calendar')
@@ -10,8 +10,8 @@ export class CalendarController {
     return this.calendarService.getCalendarList(offset);
   }
 
-  @Get('detail')
-  getCalendarDetail(@Query('calendar') calendar: string) {
+  @Get('detail/:calendarId')
+  getCalendarDetail(@Param('calendarId') calendar: string) {
     return this.calendarService.getCalendarDetail(calendar);
   }
 }

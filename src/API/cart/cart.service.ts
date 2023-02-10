@@ -13,7 +13,6 @@ export class CartService {
       +userId,
       +cartItem.optionId,
     );
-    // console.log(typeof checkUserCart[0].quantity);
 
     if (checkUserCart.length == 0) {
       return CartRepository.createUserCart(

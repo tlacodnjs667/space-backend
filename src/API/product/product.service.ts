@@ -72,7 +72,6 @@ export class ProductService {
       all: `LEFT `,
     };
     const left: string = count ? `${count[ordering.count]}` : ``;
-    console.log(left);
 
     // let orderQuery = '';
     // if (typeof ordering.sort === 'string') {
@@ -105,10 +104,8 @@ export class ProductService {
     // }
 
     const sum = 18 * (offset - 1);
-    console.log(whereQuery);
 
     const Query: string = userId ? `WHERE l.userId = ${userId}` : ``;
-    console.log(left);
 
     const result = await ProductRepository.getProductList(
       whereQuery,
@@ -140,8 +137,6 @@ export class ProductService {
     const itemQurey: string = productCountList.length
       ? `WHERE ` + productCountList.join(' AND ')
       : ``;
-
-    console.log(itemQurey);
 
     const countColor = [
       {
@@ -195,7 +190,6 @@ export class ProductService {
       all: `LEFT `,
     };
     const left: string = count ? `${count[ordering.count]}` : ``;
-    console.log(left);
 
     let orderQuery = '';
     if (typeof ordering.sort === 'string') {
@@ -204,7 +198,6 @@ export class ProductService {
     if (ordering.sort === 'null') {
       orderQuery = ``;
     }
-    console.log(orderQuery);
 
     let whereQuery = '';
     const conditionArray = [];
@@ -214,6 +207,11 @@ export class ProductService {
 
     if (ordering.item) conditionArray.push(`i.id in (${ordering.item})`);
 
+    if (ordering.subCategory)
+      conditionArray.push(`ms.subCategoryId in (${ordering.subCategory})`);
+
+    if (ordering.mainCategory == 1) ordering.mainCategory = [2, 3, 4]; // 타입 처리
+
     if (ordering.mainCategory)
       conditionArray.push(`ms.mainCategoryId in (${ordering.mainCategory})`);
 
@@ -222,15 +220,14 @@ export class ProductService {
     }
 
     const sum = 18 * (offset - 1);
-    console.log(whereQuery);
 
-    const Query: string = userId ? `WHERE l.userId = ${userId}` : ``;
+    const userLikeQuery: string = userId ? `WHERE l.userId = ${userId}` : ``;
 
     const result = await ProductRepository.getProductList(
       whereQuery,
       orderQuery,
       sum,
-      Query,
+      userLikeQuery,
     );
 
     const productCountList: string[] = [];
@@ -256,8 +253,6 @@ export class ProductService {
     const itemQurey: string = productCountList.length
       ? `WHERE ` + productCountList.join(' AND ')
       : ``;
-
-    console.log(itemQurey);
 
     const countColor = [
       {
@@ -288,14 +283,33 @@ export class ProductService {
   }
 
   async getProductDetail(productId: string, userId: number) {
-    const query = userId ? `AND userId = ${userId}` : ``;
-    const [result] = await ProductRepository.getProductDetail(productId, query);
+    const userCheck = userId
+      ? ` LEFT JOIN (
+        SELECT 
+          l.productId,
+          l.id AS likeId,
+          l.userId AS userId
+        FROM likes l 
+        WHERE userId = ${userId}
+        GROUP BY l.productId, l.id
+      ) AS likeCheck ON likeCheck.productId = p.id
+      `
+      : '';
+
+    const likeCols = userId ? `likeCheck.likeId, likeCheck.userId, ` : '';
+    const groutByCondition = userId ? ', likeCheck.likeId' : '';
+
+    const [result] = await ProductRepository.getProductDetail(
+      productId,
+      userCheck,
+      likeCols,
+      groutByCondition,
+    );
     return result;
   }
 
   async getFilters(criteria: FilterDto) {
     // 필터 가져오는 함수
-    console.log(criteria);
 
     const fulterValueList: string[] = [];
 
@@ -324,7 +338,7 @@ export class ProductService {
     const query: string = fulterValueList.length
       ? `WHERE ` + fulterValueList.join(' AND ')
       : ``;
-    // console.log(query);
+
     // 파라미터 2개로 처리하는 부분
     const filterValueItemMainList: string[] = [];
 
@@ -352,8 +366,6 @@ export class ProductService {
       ? `WHERE ` + filterValueItemMainList.join(' AND ')
       : ``;
 
-    console.log(itemMainQurey);
-
     const filterValueColor = [
       {
         field: 'pc.colorId',
@@ -372,7 +384,7 @@ export class ProductService {
     const colorQurey: string = filterValueColorList.length
       ? `WHERE ` + filterValueColorList.join(' AND ')
       : ``;
-    console.log(colorQurey);
+
     //이 밑에 세가지 필터 리스트는 각 필터링된 필터들 가져나오는 부분
     // const getProductList = await ProductRepository.getProductList(ordering);
 
@@ -397,7 +409,7 @@ export class ProductService {
         : undefined,
       gender: genderFilterList.mainCate,
     };
-    console.log(filterResult);
+
     return filterResult;
   }
 }
@@ -418,6 +430,6 @@ function makeFilteredItemStructure(item: Array<filterElementDTO>) {
       ].flat();
     }
   });
-  console.log(arr1);
+
   return arr1;
 }

@@ -19,9 +19,9 @@ export const CategoryRepository = AppDataSource.getRepository(
 			  ms.mainCategoryId,
 			  JSON_ARRAYAGG(
 				  JSON_OBJECT(
-						'msId', IFNULL(ma.id, ''),
-					  'id', IFNULL(s.id, ''),
-					  'name', IFNULL(s.name, '')
+						'msId', IFNULL(mainCategoryId, ''),
+						'id', IFNULL(s.id, ''),
+						'name', IFNULL(s.name, '')
 				  )
 			  ) AS subCategories
 		  FROM main_sub_categories ms

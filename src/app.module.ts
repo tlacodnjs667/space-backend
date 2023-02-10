@@ -68,6 +68,7 @@ export class AppModule implements NestModule {
         { path: 'review/event/:eventId', method: RequestMethod.GET },
         { path: 'review/main', method: RequestMethod.GET },
         { path: 'review/img/:reviewId', method: RequestMethod.GET },
+        { path: 'like/calendar/:calendarId', method: RequestMethod.POST },
       )
       .forRoutes(
         CartController,
