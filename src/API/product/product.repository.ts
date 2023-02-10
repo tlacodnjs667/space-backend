@@ -24,7 +24,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             COUNT(r.id) AS review,
             AVG(star) AS point,
             options.stockCheck
-            ${obj.columnDefinition}
+            ${obj.columnDefinitionForLikeCheck}
         FROM product p
         LEFT JOIN review r ON r.productId = p.id
         LEFT JOIN items i ON p.itemId = i.id
@@ -65,9 +65,11 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             ) AS opt ON opt.productColorId = pc.id
             GROUP BY productId
           ) AS options ON options.productId = p.id
-          ${obj.joinQuery}
+          ${obj.joinQueryForLikeCheck}
         WHERE mainCategoryId = ${category ? category : 2}
-        GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
+        GROUP BY p.id, c.productColor, options.stockCheck${
+          obj.columnDefinitionForLikeCheck
+        }
         ORDER BY review DESC, point DESC
         LIMIT 8 OFFSET 0
     `);
@@ -83,7 +85,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
           p.created_at,
           COUNT(r.id) AS review,
           options.stockCheck
-          ${obj.columnDefinition}
+          ${obj.columnDefinitionForLikeCheck}
       FROM product p
       LEFT JOIN review r ON r.productId = p.id
       LEFT JOIN items i ON p.itemId = i.id
@@ -126,8 +128,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         ) AS opt ON opt.productColorId = pc.id
           GROUP BY productId
         ) AS options ON options.productId = p.id
-        ${obj.joinQuery}
-      GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinition}
+        ${obj.joinQueryForLikeCheck}
+      GROUP BY p.id, c.productColor, options.stockCheck${obj.columnDefinitionForLikeCheck}
       ORDER BY p.created_at DESC
       LIMIT 11 OFFSET 0
     `);

@@ -72,6 +72,11 @@ export class ReviewService {
 
     return ReviewRepository.createReviewForEvent(userId, createReviewDto);
   }
+
+  async getReviewDetailAtMain(reviewId: number) {
+    return ReviewRepository.getReviewDetailAtMain(reviewId);
+  }
+
   async getReviewAtMain() {
     return ReviewRepository.getReviewAtMain();
   }

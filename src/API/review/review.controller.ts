@@ -111,9 +111,14 @@ export class ReviewController {
     return this.reviewService.getReviewByEvent(+eventId);
   }
 
+  @Get('img/:reviewId')
+  async getReviewDetailAtMain(@Param('reviewId') reviewId: string) {
+    const [result] = await this.reviewService.getReviewDetailAtMain(+reviewId);
+    return result;
+  }
+
   @Get('main')
   getReviewAtMain() {
-    console.log('hihi');
     return this.reviewService.getReviewAtMain();
   }
 
