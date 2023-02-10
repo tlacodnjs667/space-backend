@@ -287,8 +287,9 @@ export class ProductService {
     return { result, productsCountList };
   }
 
-  async getProductDetail(productId: string) {
-    const [result] = await ProductRepository.getProductDetail(productId);
+  async getProductDetail(productId: string, userId: number) {
+    const query = userId ? `AND userId = ${userId}` : ``;
+    const [result] = await ProductRepository.getProductDetail(productId, query);
     return result;
   }
 
