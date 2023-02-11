@@ -11,6 +11,7 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
       ) VALUES (${userId}, ${optionId}, ${+quantity})
     `);
   },
+
   CheckUserCart: (userId: number, optionId: number) => {
     return CartRepository.query(`
       SELECT 
@@ -40,6 +41,7 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
         color.colorName,
         color.imgUrl,
         si.productColorId,
+        IFNULL(si.optionId, null) as optionId,
         optionChange.color,
         userId
       FROM carts ca
@@ -84,9 +86,10 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
           po.productColorId AS pcId,
           JSON_ARRAYAGG(
             JSON_OBJECT(
-              'optionId', size.id,
+              'sizeId', size.id,
               'size', size.name,
-              'stock', stock
+              'stock', stock,
+              'optionId',IFNULL(po.id, null)
             ) 
           ) AS options
         FROM product_options po
@@ -98,7 +101,7 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
       where ca.userId =${userId}
     `);
   },
-  updateQuantityCart: (cartId: string, quantity: string, userId: number) => {
+  updateQuantityCart: (cartId: number, quantity: number, userId: number) => {
     return CartRepository.query(`
     update carts
       SET quantity = ${quantity}

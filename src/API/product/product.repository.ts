@@ -139,6 +139,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
     orderQuery: string,
     offset: number,
     userId: string,
+    likeId: string,
   ) => {
     return ProductRepository.query(`
       SELECT DISTINCT
@@ -147,7 +148,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         p.thumbnail,
         p.price AS price,
         p.created_at AS news,
-        good.likeId,
+        ${likeId}
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'colorId',IFNULL(c.id, ''),
@@ -155,22 +156,15 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             'size', sizes.size	
           )
         ) AS color,
-        orderss.orderCount,
+        orders.orderCount,
         likess.likeCount,
-        reviewss.reviewCount
+        reviews.reviewCount
       FROM main_sub_categories ms
       LEFT JOIN items i ON ms.id = i.mainSubCategoryId
       LEFT JOIN product p ON p.itemId = i.id
       LEFT JOIN product_color pc ON pc.productId = p.id
       LEFT JOIN colors c ON pc.colorId = c.id
-      LEFT JOIN (
-        SELECT 
-          l.productId,
-          JSON_ARRAYAGG(l.id) AS likeId
-        FROM likes l 
-        ${userId}
-        GROUP BY productId
-      ) AS good ON good.productId = p.id
+      ${userId}
       LEFT JOIN (
         SELECT
           po.productColorId,
@@ -194,26 +188,26 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
         LEFT JOIN product_options po ON po.productColorId = pc.id
         LEFT JOIN order_products op ON op.productOptionId = po.id
         GROUP BY p.id
-      ) AS orderss ON orderss.productId = p.id
+      ) AS orders ON orders.productId = p.id
       LEFT JOIN (
         SELECT
           l.productId,
           COUNT(l.id) AS likeCount
         FROM likes l
-    GROUP BY l.productId
-  ) AS likess ON likess.productId = p.id
-  LEFT JOIN (
-    SELECT 
-      r.productId,
-      COUNT(r.id) AS reviewCount
-    FROM review r
-    GROUP BY r.productId
-  ) AS reviewss ON reviewss.productId = p.id
-  ${whereQuery} 
-  GROUP BY p.id, orderss.orderCount, reviewss.reviewCount, ppp.likeId
-  ${orderQuery}
-  LIMIT 14 OFFSET ${offset}
-	`);
+        GROUP BY l.productId
+      ) AS likess ON likess.productId = p.id
+      LEFT JOIN (
+        SELECT 
+          r.productId,
+          COUNT(r.id) AS reviewCount
+        FROM review r
+      GROUP BY r.productId
+      ) AS reviews ON reviews.productId = p.id
+      ${whereQuery}
+      GROUP BY p.id , orders.orderCount, reviews.reviewCount 
+      ${orderQuery}
+      LIMIT 14 OFFSET ${offset}
+	  `);
   },
   getCountOrder: (left: string, colorsQuery: string, itemQuery: string) => {
     return ProductRepository.query(`
@@ -317,6 +311,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             'image', pi.img_url
           )
         ) AS productImages,
+        IFNULL(po.optionId, null) AS optionId,
         oo.color AS options
         FROM product p
         LEFT JOIN product_image pi ON p.id = pi.productId
@@ -341,7 +336,8 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
               JSON_OBJECT(
                 'sizeId', size.id,
                 'size', size.name,
-                'stock', stock
+                'stock', stock,
+                'optionId', IFNULL(po.optionId, null) 
               ) 
             ) AS options 
           FROM product_options po

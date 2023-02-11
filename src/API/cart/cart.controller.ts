@@ -24,34 +24,41 @@ export class CartController {
     @Body() cartItem: CreateCartDto,
     @Headers('user') userId: number,
   ) {
-    return this.cartService.createUserCart(cartItem, +userId);
+    await this.cartService.createUserCart(cartItem, +userId);
+    const message = 'success';
+    return { message };
   }
-
   @Get()
-  getUserCart(@Headers('user') userId: number) {
+  getUserCart(@Query('user') userId: number) {
     return this.cartService.getUserCart(userId);
   }
 
   @Patch('quantity')
-  updateQuantityCart(
+  async updateQuantityCart(
     @Query() optionItem: UpdateCartDto,
     @Headers('user') userId: number,
   ) {
-    return this.cartService.updateQuantityCart(optionItem, userId);
+    await this.cartService.updateQuantityCart(optionItem, userId);
+    const message = 'patch';
+    return { message };
   }
 
   @Patch('option')
-  updateProdutCart(
+  async updateProdutCart(
     @Query() CartOption: UpdateItemDto,
     @Headers('user') userId: number,
   ) {
-    return this.cartService.updateProductCart(CartOption, userId);
+    await this.cartService.updateProductCart(CartOption, userId);
+    const message = 'success';
+    return { message };
   }
   @Delete()
-  deleteCart(
+  async deleteCart(
     @Headers('user') userId: number,
     @Query('cartId') cartId: number | number[],
   ) {
-    return this.cartService.deleteCart(userId, cartId);
+    await this.cartService.deleteCart(userId, cartId);
+    const message = 'delete';
+    return { message };
   }
 }

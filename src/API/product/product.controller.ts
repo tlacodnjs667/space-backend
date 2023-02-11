@@ -1,7 +1,6 @@
 import { Controller, Get, Headers, Param, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FilterDto, ProductListDto } from './dto/filter.dto';
-
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -29,19 +28,12 @@ export class ProductController {
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
   ) {
-    console.log(userId);
-    console.log(ordering);
-    console.log(offset);
-    console.log(criteria);
-
     const result = await this.productService.getProductList(
       ordering,
       +offset,
       criteria,
       userId,
     );
-
-    console.log(result);
     return result;
   }
 

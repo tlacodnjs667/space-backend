@@ -96,7 +96,8 @@ export const LikeRepository = AppDataSource.getRepository(ProductLike).extend({
           JSON_OBJECT(
             'sizeId',IFNULL(s.id, ''),
             'sizeName',IFNULL(s.name, ''),
-            'stock',IFNULL(po.stock, '')		
+            'stock',IFNULL(po.stock, ''),
+            'optionId',IFNULL(po.id, null)
           ) 
         ) AS options
       FROM product_options po
