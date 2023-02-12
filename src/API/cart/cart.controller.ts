@@ -29,7 +29,7 @@ export class CartController {
     return { message };
   }
   @Get()
-  getUserCart(@Query('user') userId: number) {
+  getUserCart(@Headers('user') userId: number) {
     return this.cartService.getUserCart(userId);
   }
 

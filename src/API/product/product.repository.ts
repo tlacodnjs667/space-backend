@@ -311,7 +311,6 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
             'image', pi.img_url
           )
         ) AS productImages,
-        IFNULL(po.optionId, null) AS optionId,
         oo.color AS options
         FROM product p
         LEFT JOIN product_image pi ON p.id = pi.productId
@@ -337,7 +336,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
                 'sizeId', size.id,
                 'size', size.name,
                 'stock', stock,
-                'optionId', IFNULL(po.optionId, null) 
+                'optionId', IFNULL(po.id, null) 
               ) 
             ) AS options 
           FROM product_options po

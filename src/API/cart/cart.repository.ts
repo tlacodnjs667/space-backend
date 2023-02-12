@@ -2,13 +2,13 @@ import { AppDataSource } from 'src/config/database-config';
 import { Cart } from 'src/entities/cart.entity';
 
 export const CartRepository = AppDataSource.getRepository(Cart).extend({
-  createUserCart: (userId: number, optionId: number, quantity: number) => {
+  createUserCart: (addCart: string) => {
     return CartRepository.query(`
       INSERT INTO carts( 
-        userId, 
         optionId, 
-        quantity
-      ) VALUES (${userId}, ${optionId}, ${+quantity})
+        quantity,
+        userId 
+      ) VALUES ${addCart}
     `);
   },
 
@@ -41,6 +41,7 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
         color.colorName,
         color.imgUrl,
         si.productColorId,
+        color.productId,
         IFNULL(si.optionId, null) as optionId,
         optionChange.color,
         userId
@@ -59,7 +60,7 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
       INNER JOIN (
         SELECT 
           pc.id AS productColorId,
-          pc.productId,
+          pc.productId AS productId,
           c.name AS colorName,
           p.name AS productName,
           p.thumbnail AS imgUrl,

@@ -8,6 +8,7 @@ import {
   Query,
   Headers,
   Param,
+  HttpCode,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
@@ -19,12 +20,10 @@ export class LikeController {
 
   @Post()
   async addWishlist(
-    @Headers('user') userId: number,
+    @Body('user') userId: number,
     @Body() likeOption: CreateLikeDto,
   ) {
-    await this.likeService.addWishlist(userId, likeOption);
-    const message = 'SUCCESS';
-    return { message };
+    return this.likeService.addWishlist(userId, likeOption);
   }
 
   @Get()
@@ -38,11 +37,13 @@ export class LikeController {
   }
 
   @Delete()
-  deleteWishlist(
+  async deleteWishlist(
     @Headers('user') userId: number,
     @Query('likeId') likeId: number,
   ) {
-    return this.likeService.deleteWishlist(userId, likeId);
+    await this.likeService.deleteWishlist(userId, likeId);
+    const message = 'delete';
+    return message;
   }
 
   @Post('calendar/:calendarId')

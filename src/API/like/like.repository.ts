@@ -52,59 +52,64 @@ export const LikeRepository = AppDataSource.getRepository(ProductLike).extend({
 
   getWishlist: (userId: number) => {
     return LikeRepository.query(`
-    SELECT
+    SELECT DISTINCT
     l.id AS id,
     aalll.name,
     aalll.thumbnail,
     aalll.price,
     c.name AS colorName,
-    JSON_OBJECT(
+    IFNULL(l.optionId, null) AS optionId,
+       JSON_OBJECT(
       'id',po.sizeId,
       'name', s.name
     ) AS size,
-    IFNULL(l.optionId, null) AS optionId,
     l.userId,
-    aalll.color
+    options
   FROM likes l
   LEFT JOIN product_options po ON l.optionId = po.id
   LEFT JOIN product_color pc ON pc.id = po.productColorId
   LEFT JOIN colors c ON c.id = pc.colorId
   LEFT JOIN size s ON s.id = po.sizeId 
-  LEFT JOIN( 
-    SELECT
-      p.id,
-      p.name,
-      p.thumbnail,
-      p.description,
-      p.price,
-      JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'colorId',IFNULL(c.id, ''),
-          'colorName',IFNULL(c.name, ''),
-          'size', sizes.options	
-        )
-      ) AS color
-    FROM main_sub_categories ms
-    LEFT JOIN items i ON ms.id = i.mainSubCategoryId
-    LEFT JOIN product p ON p.itemId = i.id
-    LEFT JOIN product_color pc ON pc.productId = p.id
-    LEFT JOIN colors c ON pc.colorId = c.id
-    LEFT JOIN (
-      SELECT
-        po.productColorId,
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'sizeId',IFNULL(s.id, ''),
-            'sizeName',IFNULL(s.name, ''),
-            'stock',IFNULL(po.stock, ''),
-            'optionId',IFNULL(po.id, null)
-          ) 
-        ) AS options
-      FROM product_options po
-      LEFT JOIN size s ON s.id = po.sizeId
-      GROUP BY po.productColorId
-    ) AS sizes ON sizes.productColorId = pc.id
-    GROUP BY p.id, sizes.options
+  LEFT JOIN(  
+  SELECT
+        p.id,
+        p.name,
+        p.thumbnail,
+        p.description,
+        p.price,
+        oo.color AS options
+        FROM product p
+        LEFT JOIN (
+          SELECT
+            p.id AS productId,
+            JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'colorId', c.id,
+                'colorName', c.name,
+                'options', productOption.options
+              ) 
+        ) AS color
+        FROM product p
+        LEFT JOIN product_color pc ON p.id = pc.productId
+        LEFT JOIN colors c ON c.id = pc.colorId
+        LEFT JOIN (
+          SELECT
+            po.productColorId AS pcId,
+            JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'sizeId', size.id,
+                'size', size.name,
+                'stock', stock,
+                'optionId', IFNULL(po.id, null) 
+              ) 
+            ) AS options 
+          FROM product_options po
+          LEFT JOIN size ON size.id = po.sizeId
+          GROUP BY pcId
+        ) AS productOption ON productOption.pcId = pc.id
+        GROUP BY p.id
+    ) AS oo ON oo.productId = p.id
+ GROUP BY p.id
   ) AS aalll ON aalll.id = l.productId
   WHERE userId = ${userId}
     `);
