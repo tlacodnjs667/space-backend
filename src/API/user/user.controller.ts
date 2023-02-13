@@ -28,7 +28,7 @@ export class UserController {
   async createUser(@Req() req: RequestForFormData): Promise<ReturnCreated> {
     try {
       const emailValidReg =
-        /^[0-9a-zA-Z]([-_|.]?[0-9a-zA-Z])*@[a-z]([-_|.]?[0-9a-z])*|.[a-zA-Z]{2,3}$/;
+        /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
       const passwordValidReg =
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$^!%*?&]{8,}$/;
 

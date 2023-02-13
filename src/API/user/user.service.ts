@@ -51,17 +51,18 @@ export class UserService {
 
   async checkUser(user: LoginUserDto) {
     const query = `email = '${user.email}'`;
-    const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
-
+    const userInfoFromDB = await UserRepository.checkUserInDB(query);
+    if (!userInfoFromDB.length)
+      throw new HttpException('UNDEFINED_USER', HttpStatus.NOT_FOUND);
     const checkForClient = await this.checkHash(
       user.password,
-      userInfoFromDB.password,
+      userInfoFromDB[0].password,
     );
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
-    return this.getAccessToken(userInfoFromDB);
+    return this.getAccessToken(userInfoFromDB[0]);
   }
 
   async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {

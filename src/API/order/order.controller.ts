@@ -14,6 +14,7 @@ import {
 import { OrderService } from './order.service';
 import {
   CreateOrderDtoByOption,
+  CreateOrderDtoByOptionInProductDetail,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
 import { GetOrderInfoFilter } from './IOrderInterface';
@@ -27,11 +28,31 @@ export class OrderController {
     @Headers('user') userId: number,
     @Body() orderInfo: CreateOrderDtoByUser,
   ) {
+    console.log(orderInfo);
+    console.log('구매하기 페이지 요청');
+
     if (!orderInfo.address || !orderInfo.detail_address || !orderInfo.phone)
       throw new HttpException('INVALID_SHIPMENT', HttpStatus.BAD_REQUEST);
     if (!orderInfo.cartInfo.length)
       throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
     const message = await this.orderService.orderProducts(orderInfo, userId);
+    return { message };
+  }
+
+  @Post('product-detail')
+  async orderProductByOptionsAtProductDetail(
+    @Headers('user') userId: number,
+    @Body() orderInfo: CreateOrderDtoByOptionInProductDetail,
+  ) {
+    if (!orderInfo.address || !orderInfo.detail_address || !orderInfo.phone)
+      throw new HttpException('INVALID_SHIPMENT', HttpStatus.BAD_REQUEST);
+    if (!orderInfo.optionsInfo.length)
+      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+    const message =
+      await this.orderService.orderProductByOptionsAtProductDetail(
+        orderInfo,
+        userId,
+      );
     return { message };
   }
 
@@ -53,12 +74,13 @@ export class OrderController {
   getOrderInfo(
     //구매하기 페이지
     @Headers('user') userId: number,
-    @Body('cartIdList') cartIdList: number[],
+    @Body('cartId') cartId: number[] | number,
   ) {
-    if (!cartIdList.length)
+    console.log('구매하기 페이지 요청');
+    if (!cartId)
       throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
 
-    return this.orderService.getOrderInfo(userId, cartIdList);
+    return this.orderService.getOrderInfo(userId, cartId);
   }
 
   @Get('history')
@@ -71,6 +93,7 @@ export class OrderController {
 
   @Get('mypage') // 마이페이지 오더 인포 (my 페이지 default)
   async getMypageOrderInfo(@Headers('user') userId: number) {
+    console.log('mypage');
     return this.orderService.getMypageOrderInfo(userId);
   }
 

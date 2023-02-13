@@ -10,6 +10,10 @@ export class MakeOrderNumsMiddleware implements NestMiddleware {
       req.body.trackingNumber = req.body.cartInfo.map((el: number) =>
         makeTrackingNum(),
       );
+    } else if (Array.isArray(req.body.optionsId)) {
+      req.body.trackingNumber = req.body.optionsId.map((el: number) =>
+        makeTrackingNum(),
+      );
     } else if (req.body.optionId) {
       req.body.trackingNumber = makeTrackingNum();
     }
@@ -18,7 +22,15 @@ export class MakeOrderNumsMiddleware implements NestMiddleware {
 }
 
 export function makeTrackingNum(): string {
-  return makeString(Math.floor(Math.random() * 10 ** 16), 16);
+  const ahora = new Date();
+
+  return (
+    makeString(ahora.getFullYear(), 4) +
+    makeString(ahora.getMonth() + 1, 2) +
+    makeString(ahora.getDate(), 2) +
+    makeString(ahora.getHours(), 2) +
+    makeString(Math.floor(Math.random() * 10 ** 4), 4)
+  );
 }
 export function makeOrderNum(): string {
   const ahora = new Date();

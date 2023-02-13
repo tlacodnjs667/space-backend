@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateOrderDtoByOption,
+  CreateOrderDtoByOptionInProductDetail,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
@@ -19,10 +20,18 @@ export class OrderService {
     return OrderRepository.makeOrderProduct(orderInfo, userId);
   }
 
-  async getOrderInfo(userId: number, cartIdList: number[]) {
-    const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
-    const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
-    return { userInfo, orderInfo };
+  async orderProductByOptionsAtProductDetail(
+    orderInfo: CreateOrderDtoByOptionInProductDetail,
+    userId: number,
+  ) {
+    const [userInfo] = await UserRepository.getUserPoint(userId);
+    if (userInfo.point < orderInfo.price) {
+      throw new HttpException('LACK_OF_USER_POINT', HttpStatus.BAD_REQUEST);
+    }
+    return OrderRepository.orderProductByOptionsAtProductDetail(
+      orderInfo,
+      userId,
+    );
   }
 
   async makeOrderProductByProduct(
@@ -40,6 +49,11 @@ export class OrderService {
     return OrderRepository.makeOrderProductByProduct(orderInfo, userId);
   }
 
+  async getOrderInfo(userId: number, cartIdList: number[] | number) {
+    const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
+    const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
+    return { userInfo, orderInfo };
+  }
   async getOrderHistory(userId: number, historyFilter: GetOrderInfoFilter) {
     if (
       historyFilter.history_end_date?.length &&
@@ -104,10 +118,17 @@ export class OrderService {
   async getMypageOrderInfo(userId: number) {
     const now = new Date();
     const query = `${makeDateQuery(now)} AND userId = ${userId}`;
-
+    console.log(query);
     const orderStatus = await OrderRepository.getOrderStatus();
     const orderCountByStatus = await OrderRepository.getMypageOrderInfo(query);
     const orderHistory = await OrderRepository.getOrderHistory(query);
+
+    console.log('orderStatus');
+    console.log(orderStatus);
+    console.log('orderCountByStatus');
+    console.log(orderCountByStatus);
+    console.log('orderHistory');
+    console.log(orderHistory);
 
     return { orderStatus, orderCountByStatus, orderHistory };
   }
@@ -150,16 +171,16 @@ export class OrderService {
 }
 
 function makeDateQuery(now: Date): string {
-  now.setDate(now.getDate() + 15);
+  now.setDate(now.getDate());
   const endDateForm = `'${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()
-    .padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}'`;
+    .padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}'`;
 
-  now.setMonth(now.getMonth() - 1);
+  now.setMonth(now.getMonth() - 3);
 
   const startDateForm = `'${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()
-    .padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}'`;
+    .padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}'`;
 
   return `${startDateForm} AND ${endDateForm}`;
 }

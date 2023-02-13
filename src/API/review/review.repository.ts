@@ -28,6 +28,9 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   },
 
   createReviewOfProduct(keyQuery: string, valueQuery: string) {
+    console.log(keyQuery);
+    console.log(valueQuery);
+
     return ReviewRepository.query(`
         INSERT INTO review (
           ${keyQuery}
@@ -70,7 +73,7 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
     ReviewRepository.query(`
       UPDATE review
       SET ${queyrToUpdate}
-      WHERE reviewId = ${reviewId}
+      WHERE id = ${reviewId}
     `);
   },
 
@@ -79,25 +82,21 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   ): Promise<IReviewCanCreate[]> {
     return ReviewRepository.query(`
         SELECT DISTINCT
-          reviewCheck.thumbnail,
-          reviewCheck.productName,
-          reviewCheck.productId
+          p.thumbnail,
+          p.id AS productId,
+          p.name AS productName
         FROM order_products op
-        LEFT JOIN orders o ON op.orderId = o.id
+        LEFT JOIN product_options po ON po.id = op.productOptionId
+        LEFT JOIN product_color pc ON pc.id = po.productColorId
+        LEFT JOIN product p ON pc.productId = p.id
+        LEFT JOIN orders o ON o.id = op.orderId
         LEFT JOIN (
-           SELECT
-             po.id AS optionId,
-             r.id AS reviewId,
-             p.name AS productName,
-             p.id AS productId,
-             p.thumbnail
-           FROM product_options po 
-           LEFT JOIN size s ON po.sizeId = s.id
-           LEFT JOIN product_color pc ON po.productColorId = pc.id
-           LEFT JOIN colors c ON pc.colorId = c.id
-           LEFT JOIN product p ON pc.productId = p.id
-           LEFT JOIN review r ON r.productId = p.id
-        ) AS reviewCheck ON reviewCheck.optionId = op.productOptionId
+          SELECT
+            id AS reviewId,
+            productId
+          FROM review
+          WHERE userId = ${userId}
+        ) AS reviewCheck ON reviewCheck.productId = p.id
         WHERE reviewCheck.reviewId IS NULL AND o.userId = ${userId} AND op.shipmentStatusId = ${SHIPMENT_STATUS.PURCHASE_CONFIRMED}
     `);
   },
@@ -131,7 +130,6 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
     return ReviewRepository.query(`
         SELECT 
 	        r.id,
-	        r.title,
 	        r.content,
 	        r.created_at,
 	        r.star,
@@ -169,7 +167,6 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
           r.id,
           r.productId,
           r.thumbnail,
-          r.title,
           r.content,
           r.created_at,
           r.updated_at,
@@ -269,15 +266,28 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
       GROUP BY r.id
     `);
   },
+
   getReviewAtMain() {
     return ReviewRepository.query(`
       SELECT 
         id AS reviewId,
         thumbnail
-      from review 
+      FROM review 
       ORDER BY rand()
       LIMIT 11 OFFSET 0;
     `);
+  },
+
+  getReviewByReviewId(userId: number, reviewId: number) {
+    return ReviewRepository.query(`
+        SELECT
+          id AS reviewId,
+          thumbnail,
+          content,
+          star
+        FROM review
+        WHERE userId = ${userId} AND id = ${reviewId}
+      `);
   },
 
   updateEventReview(userId: number, infoToUpdate: UpdateEventReview) {

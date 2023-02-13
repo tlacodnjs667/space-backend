@@ -1,6 +1,8 @@
 import { AppDataSource } from 'src/config/database-config';
 import {
+  CreateOrderAtProductDetail,
   CreateOrderDtoByOption,
+  CreateOrderDtoByOptionInProductDetail,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
 import { OrderHistoryFilter, ProductInfo } from './IOrderInterface';
@@ -31,7 +33,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
 
       if (!optionsInfoToOrder.length) {
         throw new HttpException(
-          'DO_NOT_EXIST_PRODUCT_IN_USER_CARTS_FOR_SELECTED_CART_ID',
+          'NOT_USERS_REQUEST_OR_ALREADY_PROCESSED_REQUEST',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -59,6 +61,18 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
           '${orderInfo.name}'
         )
       `);
+      //stock check
+      optionsInfoToOrder.forEach(async (el: ProductInfo) => {
+        const [result] = await queryRunner.query(`
+            SELECT  
+              stock
+            FROM product_options
+            WHERE id = ${el.optionId}
+        `);
+        console.log(result);
+        if (result.stock < el.quantity)
+          throw new HttpException('OUT_OF_STOCK', HttpStatus.CONFLICT);
+      });
 
       const { insertId: orderId } = await queryRunner.query(`
           INSERT INTO orders (
@@ -126,7 +140,108 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
-      message = 'ERROR_IN_THE_MIDDLE_OF_ORDER';
+      message = err.message;
+    } finally {
+      await queryRunner.release();
+      return message;
+    }
+  },
+  async orderProductByOptionsAtProductDetail(
+    orderInfo: CreateOrderDtoByOptionInProductDetail,
+    userId: number,
+  ): Promise<string> {
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let message = '';
+    try {
+      const { insertId: shipmentId } = await queryRunner.query(`
+        INSERT INTO shipment (
+          address,
+          detail_address,
+          zip_code,
+          phone,
+          name
+        ) VALUES (
+          '${orderInfo.address}',
+          '${orderInfo.detail_address}',
+          '${orderInfo.zip_code}',
+          '${orderInfo.phone}',
+          '${orderInfo.name}'
+        )
+      `);
+      //stock check
+      orderInfo.optionsInfo.forEach(async (el: CreateOrderAtProductDetail) => {
+        const [result] = await queryRunner.query(`
+            SELECT  
+              stock
+            FROM product_options
+            WHERE id = ${el.optionId}
+        `);
+
+        if (result[0].stock < el.quantity)
+          throw new HttpException('OUT_OF_STOCK', HttpStatus.CONFLICT);
+      });
+
+      const { insertId: orderId } = await queryRunner.query(`
+          INSERT INTO orders (
+              order_number,
+              userId,
+              total_price,
+              shipmentId,
+              orderStatusId
+          ) VALUES (
+            '${orderInfo.orderNumber}',
+            ${userId},
+            ${orderInfo.price},
+            ${shipmentId},
+            ${ORDER_STATUS.BEFORE_PAYMENT}
+          );
+      `);
+
+      orderInfo.optionsInfo.forEach((el) => {
+        queryRunner.query(`
+            INSERT INTO order_products (
+                productOptionId,
+                quantity,
+                orderId,
+                tracking_number,
+                shipmentStatusId
+            ) VALUES 
+                ${el.optionId},
+                ${el.quantity},
+                ${orderId},
+                '${orderInfo.trackingNumber}',
+                ${SHIPMENT_STATUS.PREPARING_PRODUCT} 
+        `);
+      });
+
+      orderInfo.optionsInfo.forEach((el) => {
+        queryRunner.query(`
+            UPDATE product_options 
+            SET stock = stock - ${el.quantity} 
+            WHERE id = ${el.optionId}
+        `);
+      });
+
+      await queryRunner.query(`
+          UPDATE user
+          SET points = points - ${orderInfo.price}
+          WHERE id = ${userId}
+      `);
+
+      await queryRunner.query(`
+          UPDATE orders
+          SET orderStatusId = ${ORDER_STATUS.PAID}
+          WHERE id = ${orderId}
+      `);
+
+      await queryRunner.commitTransaction();
+      message = 'ORDER_SUCCESS';
+    } catch (err) {
+      console.error(err);
+      await queryRunner.rollbackTransaction();
+      message = err.message;
     } finally {
       await queryRunner.release();
       return message;
@@ -199,6 +314,16 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
 
     let message = '';
     try {
+      const [result] = await queryRunner.query(`
+          SELECT
+            stock
+          FROM product_options
+          WHERE id = ${orderInfo.optionId}
+      `);
+
+      if (result.stock < orderInfo.quantity)
+        throw new HttpException('OUT_OF_STOCK', HttpStatus.CONFLICT);
+
       const { insertId: shipmentId } = await queryRunner.query(`
         INSERT INTO shipment (
           address,
@@ -478,7 +603,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         WHERE id = ${orderProductId}
     `);
   },
-  async getOrderInfo(cartIdList: number[]) {
+  async getOrderInfo(cartIdList: number[] | number) {
     return OrderRepository.query(`
         SELECT
         	carts.id AS cartId,

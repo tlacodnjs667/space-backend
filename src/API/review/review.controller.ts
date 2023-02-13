@@ -28,22 +28,23 @@ export class ReviewController {
   @Post('product')
   createReviewForProduct(@Req() req: CreateReviewReqDto) {
     const createReviewInfo = req.body;
+    // console.log(req.body);
+    // console.log(req.headers.user);
     if (
-      !req.header.userId ||
+      !req.headers.user ||
       !req.body.productId ||
       !req.body.star ||
       !req.body.content
     ) {
       throw new HttpException('MISS_INFOMATION', HttpStatus.FORBIDDEN);
     }
-
     if (req.file) {
       const { location } = req.file;
 
       createReviewInfo.thumbnail = location;
     }
     const result = this.reviewService.createReviewOfProduct(
-      req.header.userId,
+      req.headers.user,
       createReviewInfo,
     );
 
@@ -125,17 +126,33 @@ export class ReviewController {
     return this.reviewService.getReviewAtMain();
   }
 
+  @Get('/:reviewId')
+  async getReviewByReviewId(
+    @Headers('user') userId: number,
+    @Param('reviewId') reviewId: string,
+  ) {
+    console.log(reviewId);
+
+    const [result] = await this.reviewService.getReviewByReviewId(
+      userId,
+      +reviewId,
+    );
+    console.log(result);
+    return result;
+  }
+
   @Patch('product')
   async updateProductReview(@Req() req: UpdateProductReviewReqDto) {
     const updateReviewInfo = req.body;
 
     if (req.file) {
       const { location } = req.file;
+
       updateReviewInfo.thumbnail = location;
     }
 
     const result = await this.reviewService.updateProductReview(
-      req.header.userId,
+      req.headers.user,
       updateReviewInfo,
     );
 
