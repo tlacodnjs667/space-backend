@@ -11,6 +11,7 @@ export class LikeService {
       likeOption.productId,
       likeOption.optionId,
     );
+
     if (!checkWishlist.length) {
       return await LikeRepository.addWishlist(
         userId,
