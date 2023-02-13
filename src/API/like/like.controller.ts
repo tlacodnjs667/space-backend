@@ -22,18 +22,11 @@ export class LikeController {
     @Headers('user') userId: number,
     @Body() likeOption: CreateLikeDto,
   ) {
-    console.log('userID' + userId);
-    console.log('likeOption');
-    console.log(likeOption);
-
-    const aa = await this.likeService.addWishlist(userId, likeOption);
-    console.log(aa);
-    const message = 'SUCCESS';
-    return { message };
+    return this.likeService.addWishlist(userId, likeOption);
   }
 
   @Get()
-  getWishlist(@Headers('user') userId: number) {
+  getWishlist(@Query('user') userId: number) {
     return this.likeService.getWishlist(+userId);
   }
 
@@ -43,11 +36,13 @@ export class LikeController {
   }
 
   @Delete()
-  deleteWishlist(
+  async deleteWishlist(
     @Headers('user') userId: number,
     @Query('likeId') likeId: number,
   ) {
-    return this.likeService.deleteWishlist(userId, likeId);
+    await this.likeService.deleteWishlist(userId, likeId);
+    const message = 'delete';
+    return message;
   }
 
   @Post('calendar/:calendarId')

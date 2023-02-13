@@ -17,17 +17,17 @@ export const LookbookRepository = AppDataSource.getRepository(Lookbook).extend({
   getLookbookDetail(lookbookId: string) {
     return LookbookRepository.query(`
       SELECT 
-	      lb.id,
-	      lb.title,
-    		lb.sub_title,
-	      lb.content,
-	      lb.thumbnail,
-	      products.lookbook
+	    lb.id,
+	    lb.title,
+		lb.sub_title,
+	    lb.content,
+	    lb.thumbnail,
+	    products.lookbook
       FROM lookbooks lb
       left JOIN(
-	      SELECT
-		      lp.lookbooksId,
-		        JSON_ARRAYAGG(
+	    SELECT
+			lp.lookbooksId,
+		    	JSON_ARRAYAGG(
 		        	JSON_OBJECT(
 				        'productId',p.id,
 				        'image',p.thumbnail,

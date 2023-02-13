@@ -9,22 +9,23 @@ import {
 @Injectable()
 export class CartService {
   async createUserCart(cartItem: CreateCartDto, userId: number) {
+    const array: any = [];
+    const id = userId;
+    cartItem.cartItem.forEach((el) => {
+      array.push(`(${el.optionId}, ${el.quantity}, ${id})`);
+    });
+    const addCart = array.join(', ');
     const checkUserCart = await CartRepository.CheckUserCart(
-      +userId,
-      +cartItem.optionId,
+      userId,
+      cartItem.cartItem[0].optionId,
     );
-
     if (checkUserCart.length == 0) {
-      return CartRepository.createUserCart(
-        +userId,
-        +cartItem.optionId,
-        +cartItem.quantity,
-      );
+      return await CartRepository.createUserCart(addCart);
     } else if (checkUserCart.length == 1) {
-      return CartRepository.updateUserCart(
+      return await CartRepository.updateUserCart(
         +userId,
-        +cartItem.optionId,
-        checkUserCart[0].quantity + Number(cartItem.quantity),
+        +cartItem.cartItem[0].optionId,
+        checkUserCart[0].quantity + Number(cartItem.cartItem[0].quantity),
       );
     }
   }

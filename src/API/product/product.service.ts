@@ -67,6 +67,18 @@ export class ProductService {
       high: `price DESC`,
       name: `name ASC`,
     };
+    const userlike = userId
+      ? ` SELECT 
+        l.productId,
+        JSON_ARRAYAGG(l.id) as likeId
+      FROM likes l 
+      WHERE userId = ${userId}
+      GROUP BY l.productId
+    ) AS good ON good.productId = p.id
+      `
+      : '';
+
+    const likeId = userId ? ` good.likeId, ` : '';
 
     const count: any = {
       all: `LEFT `,
@@ -105,13 +117,14 @@ export class ProductService {
 
     const sum = 18 * (offset - 1);
 
-    const Query: string = userId ? `WHERE l.userId = ${userId}` : ``;
+    // const Query: string = userId ? `WHERE l.userId = ${userId}` : ``;
 
     const result = await ProductRepository.getProductList(
       whereQuery,
       orderQuery,
       sum,
-      Query,
+      userlike,
+      likeId,
     );
 
     const productCountList: string[] = [];
@@ -185,6 +198,19 @@ export class ProductService {
       high: `price DESC`,
       name: `name ASC`,
     };
+    const userlike = userId
+      ? ` LEFT JOIN ( 
+        SELECT 
+        l.productId,
+        JSON_ARRAYAGG(l.id) as likeId
+      FROM likes l 
+      WHERE userId = ${userId}
+      GROUP BY l.productId
+    ) AS good ON good.productId = p.id
+      `
+      : '';
+
+    const likeId = userId ? ` good.likeId, ` : '';
 
     const count: any = {
       all: `LEFT `,
@@ -221,13 +247,12 @@ export class ProductService {
 
     const sum = 18 * (offset - 1);
 
-    const userLikeQuery: string = userId ? `WHERE l.userId = ${userId}` : ``;
-
     const result = await ProductRepository.getProductList(
       whereQuery,
       orderQuery,
       sum,
-      userLikeQuery,
+      userlike,
+      likeId,
     );
 
     const productCountList: string[] = [];

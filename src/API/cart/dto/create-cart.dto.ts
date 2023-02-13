@@ -1,11 +1,14 @@
 export class CreateCartDto {
-  optionId: string | number; //프로덕트 옵션 id
-  quantity: string | number;
+  cartItem: CartItem[];
 }
 
+export class CartItem {
+  optionId: any;
+  quantity: any;
+}
 export class UpdateCartDto {
-  cartId: string;
-  quantity: string;
+  cartId: number;
+  quantity: number;
 }
 
 export class UpdateItemDto {
