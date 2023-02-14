@@ -57,7 +57,18 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       )
     `);
   },
-
+  getUserInfoAtMypage(userId: number) {
+    return UserRepository.query(`
+        SELECT
+          name,
+          email,
+          phone,
+          thumbnail,
+          points
+        FROM user
+        WHERE id = ${userId}
+    `);
+  },
   async getUserPoint(userId: number) {
     return UserRepository.query(`
         SELECT

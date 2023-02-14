@@ -5,7 +5,11 @@ import {
   CreateOrderDtoByOptionInProductDetail,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
-import { OrderHistoryFilter, ProductInfo } from './IOrderInterface';
+import {
+  IProdInfoByOptionId,
+  OrderHistoryFilter,
+  ProductInfo,
+} from './IOrderInterface';
 import { Order } from '../../entities/order.entity';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -69,7 +73,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             FROM product_options
             WHERE id = ${el.optionId}
         `);
-        console.log(result);
+
         if (result.stock < el.quantity)
           throw new HttpException('OUT_OF_STOCK', HttpStatus.CONFLICT);
       });
@@ -179,7 +183,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
             WHERE id = ${el.optionId}
         `);
 
-        if (result[0].stock < el.quantity)
+        if (result.stock < el.quantity)
           throw new HttpException('OUT_OF_STOCK', HttpStatus.CONFLICT);
       });
 
@@ -207,13 +211,13 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
                 orderId,
                 tracking_number,
                 shipmentStatusId
-            ) VALUES 
+            ) VALUES (
                 ${el.optionId},
                 ${el.quantity},
                 ${orderId},
                 '${orderInfo.trackingNumber}',
                 ${SHIPMENT_STATUS.PREPARING_PRODUCT} 
-        `);
+            )`);
       });
 
       orderInfo.optionsInfo.forEach((el) => {
@@ -388,7 +392,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
-      message = 'ERROR_IN_THE_MIDDLE_OF_ORDER';
+      message = err.message;
     } finally {
       await queryRunner.release();
       return message;
@@ -431,7 +435,6 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         LEFT JOIN order_status os ON o.orderStatusId = os.id
         WHERE DATE(created_at) BETWEEN ${query}
         GROUP BY orderStatusId
-        ORDER BY orderStatusId
     `);
   },
   async withdrawOrder(orderId: number, userid: number) {
@@ -459,6 +462,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
           el.shipmentStatusId === SHIPMENT_STATUS.SHIPPINGINPROGRESS ||
           el.shipmentStatusId == SHIPMENT_STATUS.SHIPPING_COMPLETED,
       );
+
       const orderBeforeShipping = orderProducts.filter(
         (el: ProductsByOrder) =>
           el.shipmentStatusId === SHIPMENT_STATUS.PREPARING_PRODUCT,
@@ -468,7 +472,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         orderBeforeShipping.forEach((el: ProductsByOrder) => {
           queryRunner.query(`
                 UPDATE order_products
-                SET shipmentStatusId = ${SHIPMENT_STATUS.REFUND_COMPLETED}
+                SET shipmentStatusId = ${SHIPMENT_STATUS.ORDER_CANCLED}
                 WHERE id = ${el.orderProductId}
           `);
 
@@ -480,7 +484,8 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         });
 
         const refundPoint = orderBeforeShipping.reduce(
-          (acc: number, curr: ProductsByOrder) => curr.priceByOption + acc,
+          (acc: number, curr: ProductsByOrder) =>
+            Number(curr.priceByOption) + acc,
           0,
         );
 
@@ -531,6 +536,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
       console.error(err);
       returnMessage = err.message;
       queryRunner.rollbackTransaction;
+      throw new HttpException(err.message, HttpStatus.CONFLICT);
     } finally {
       await queryRunner.release();
       return returnMessage;
@@ -559,10 +565,11 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
   async withdrawOrderByOption(
     orderProductId: number,
     userId: number,
-  ): Promise<void> {
+  ): Promise<string> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    let message = 'WITHDRAW_SUCCESS';
 
     try {
       queryRunner.query(`
@@ -576,7 +583,7 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         'priceByOption'
       >[] = await queryRunner.query(`
         SELECT
-          p.price * quantity AS priceByOption
+          p.price * op.quantity AS priceByOption
         FROM order_products op
         LEFT JOIN product_options ON op.productOptionId = product_options.id
         LEFT JOIN product_color ON product_options.productColorId = product_color.id
@@ -588,12 +595,15 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
           SET points = points + ${priceInfoToResetUserPoint.priceByOption}
           WHERE id = ${userId}
       `);
+
       await queryRunner.commitTransaction();
     } catch (err) {
       console.error(err);
+      message = err.message;
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
+      return message;
     }
   },
   async changeStatusForRefundRequestByProduct(orderProductId: number) {
@@ -603,6 +613,26 @@ export const OrderRepository = AppDataSource.getRepository(Order).extend({
         WHERE id = ${orderProductId}
     `);
   },
+  async getOrderInfoByOption(
+    optionIdList: number[],
+  ): Promise<IProdInfoByOptionId[]> {
+    return OrderRepository.query(`
+      SELECT
+        p.name,
+        po.id AS optionId,
+        thumbnail,
+        price AS priceByProduct,
+        c.name AS color,
+        s.name AS size
+      FROM product_options po
+      LEFT JOIN size s ON po.sizeId = s.id
+      LEFT JOIN product_color pc ON po.productColorId = pc.id
+      LEFT JOIN colors c ON c.id = pc.colorId
+      LEFT JOIN product p ON pc.productId = p.id
+      WHERE po.id IN (${optionIdList})
+    `);
+  },
+
   async getOrderInfo(cartIdList: number[] | number) {
     return OrderRepository.query(`
         SELECT

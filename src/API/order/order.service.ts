@@ -6,7 +6,11 @@ import {
 } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
 import { UserRepository } from '../user/user.repository';
-import { GetOrderInfoFilter } from './IOrderInterface';
+import {
+  GetOrderInfoFilter,
+  IOption,
+  IProdInfoByOptionId,
+} from './IOrderInterface';
 import { ORDER_STATUS, SHIPMENT_STATUS } from './StatusEnum';
 import { ProductRepository } from '../product/product.repository';
 
@@ -52,8 +56,31 @@ export class OrderService {
   async getOrderInfo(userId: number, cartIdList: number[] | number) {
     const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
     const orderInfo = await OrderRepository.getOrderInfo(cartIdList);
+
     return { userInfo, orderInfo };
   }
+
+  async getOrderInfoByOption(userId: number, optionIdList: IOption[]) {
+    const [userInfo] = await UserRepository.getUserInfoForOrder(userId);
+    const optionIds = optionIdList.map((el) => el.optionId);
+    const orderInfoToReturn: IProdInfoByOptionId[] =
+      await OrderRepository.getOrderInfoByOption(optionIds);
+
+    const orderInfo = orderInfoToReturn.map((el) => {
+      for (let i = 0; i < optionIdList.length; i++) {
+        if (optionIdList[i].optionId != el.optionId) continue;
+        else {
+          el.priceByProduct *= optionIdList[i].quantity;
+          el.quantity = optionIdList[i].quantity;
+          break;
+        }
+      }
+      return el;
+    });
+
+    return { userInfo, orderInfo };
+  }
+
   async getOrderHistory(userId: number, historyFilter: GetOrderInfoFilter) {
     if (
       historyFilter.history_end_date?.length &&
@@ -118,17 +145,10 @@ export class OrderService {
   async getMypageOrderInfo(userId: number) {
     const now = new Date();
     const query = `${makeDateQuery(now)} AND userId = ${userId}`;
-    console.log(query);
+
     const orderStatus = await OrderRepository.getOrderStatus();
     const orderCountByStatus = await OrderRepository.getMypageOrderInfo(query);
     const orderHistory = await OrderRepository.getOrderHistory(query);
-
-    console.log('orderStatus');
-    console.log(orderStatus);
-    console.log('orderCountByStatus');
-    console.log(orderCountByStatus);
-    console.log('orderHistory');
-    console.log(orderHistory);
 
     return { orderStatus, orderCountByStatus, orderHistory };
   }

@@ -74,6 +74,7 @@ export class AppModule implements NestModule {
         LikeController,
         ReviewController,
         { path: '/user/info', method: RequestMethod.GET },
+        { path: '/user/mypage', method: RequestMethod.GET },
         { path: '/user/info', method: RequestMethod.PATCH },
       );
     consumer

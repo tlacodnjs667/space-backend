@@ -28,8 +28,7 @@ export class ReviewController {
   @Post('product')
   createReviewForProduct(@Req() req: CreateReviewReqDto) {
     const createReviewInfo = req.body;
-    // console.log(req.body);
-    // console.log(req.headers.user);
+
     if (
       !req.headers.user ||
       !req.body.productId ||
@@ -131,13 +130,11 @@ export class ReviewController {
     @Headers('user') userId: number,
     @Param('reviewId') reviewId: string,
   ) {
-    console.log(reviewId);
-
     const [result] = await this.reviewService.getReviewByReviewId(
       userId,
       +reviewId,
     );
-    console.log(result);
+
     return result;
   }
 

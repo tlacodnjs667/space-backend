@@ -12,8 +12,6 @@ import { UserRepository } from 'src/API/user/user.repository';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    // console.log(req.headers.authorization);
-
     if (!req.headers.authorization) {
       throw new HttpException(
         'NOT_FOUND_AUTHORIZATION',
@@ -31,7 +29,6 @@ export class AuthMiddleware implements NestMiddleware {
       throw new HttpException('UNVALID_TOKEN', HttpStatus.NOT_ACCEPTABLE);
 
     req.headers.user = userId;
-    console.log(req.headers.user);
 
     next();
   }

@@ -90,7 +90,7 @@ export class ReviewService {
     const result = await ReviewRepository.getWhichReviewUserCanWriteReview(
       userId,
     );
-    console.log(result);
+
     return result;
   }
 
@@ -158,8 +158,7 @@ export class ReviewService {
     const [checkValidAuthor] = await ReviewRepository.checkAuthorOfReview(
       reviewId,
     );
-    console.log('checkValidAuthor');
-    console.log(checkValidAuthor);
+
     if (checkValidAuthor.userId !== userId) {
       throw new HttpException('UNVALID_AUTHOR', HttpStatus.FORBIDDEN);
     }

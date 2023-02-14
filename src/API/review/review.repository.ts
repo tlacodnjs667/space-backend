@@ -28,9 +28,6 @@ export const ReviewRepository = AppDataSource.getRepository(Review).extend({
   },
 
   createReviewOfProduct(keyQuery: string, valueQuery: string) {
-    console.log(keyQuery);
-    console.log(valueQuery);
-
     return ReviewRepository.query(`
         INSERT INTO review (
           ${keyQuery}

@@ -39,3 +39,18 @@ export interface ProductsByOrder {
   priceByOption: number;
   quantity: number;
 }
+
+export interface IOption {
+  optionId: number;
+  quantity: number;
+}
+
+export interface IProdInfoByOptionId {
+  name: string;
+  optionId: number;
+  thumbnail: string;
+  priceByProduct: number;
+  color: string;
+  size: string;
+  quantity?: number;
+}
