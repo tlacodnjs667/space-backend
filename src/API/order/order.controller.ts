@@ -7,16 +7,15 @@ import {
   Query,
   Delete,
   Param,
-  ParseIntPipe,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import {
-  CreateOrderDtoByOption,
+  CreateOrderDtoByOptionInProductDetail,
   CreateOrderDtoByUser,
 } from './dto/create-order.dto';
-import { GetOrderInfoFilter } from './IOrderInterface';
+import { GetOrderInfoFilter, IOption } from './IOrderInterface';
 
 @Controller('order')
 export class OrderController {
@@ -38,28 +37,54 @@ export class OrderController {
   @Post('by-optionId')
   async orderProductsByOption(
     @Headers('user') userId: number,
-    @Body() orderInfo: CreateOrderDtoByOption,
+    @Body() orderInfo: CreateOrderDtoByOptionInProductDetail,
   ) {
     if (!orderInfo.address || !orderInfo.detail_address || !orderInfo.phone)
       throw new HttpException('INVALID_SHIPMENT', HttpStatus.BAD_REQUEST);
 
-    if (!orderInfo.optionId || !orderInfo.quantity)
+    if (!orderInfo.optionsInfo)
       throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
 
-    return this.orderService.makeOrderProductByProduct(orderInfo, userId);
+    return this.orderService.orderProductByOptionsAtProductDetail(
+      orderInfo,
+      userId,
+    );
   }
 
   @Post()
   getOrderInfo(
-    //구매하기 페이지
+    //프로덕트 디테일에서 바로 구매하기 페이지 넘어가는 부분
     @Headers('user') userId: number,
-    @Body('cartIdList') cartIdList: number[],
+    @Body('optionIdList') optionIdList: IOption[] | null,
+    @Body('cartIdList') cartIdList: number[] | null,
   ) {
-    if (!cartIdList.length)
-      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+    if (!optionIdList && !cartIdList) {
+      throw new HttpException(
+        'DO_NOT_FIND_PROD_INFO_TO_ORDER',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-    return this.orderService.getOrderInfo(userId, cartIdList);
+    if (Array.isArray(optionIdList) && optionIdList.length)
+      return this.orderService.getOrderInfoByOption(userId, optionIdList);
+
+    if (Array.isArray(cartIdList) && cartIdList.length)
+      return this.orderService.getOrderInfo(userId, cartIdList);
+
+    throw new HttpException('_ERROR_', HttpStatus.CONFLICT);
   }
+
+  // @Post()
+  // getOrderInfo(
+  //   //구매하기 페이지
+  //   @Headers('user') userId: number,
+  //   @Body('cartIdList') cartIdList: number[],
+  // ) {
+  //   if (!cartIdList.length)
+  //     throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+
+  //   return this.orderService.getOrderInfo(userId, cartIdList);
+  // }
 
   @Get('history')
   async getOrderHistory(
@@ -74,7 +99,7 @@ export class OrderController {
     return this.orderService.getMypageOrderInfo(userId);
   }
 
-  @Delete('all')
+  @Delete('all/:orderId')
   async withdrawOrder(
     @Headers('user') userId: number,
     @Param('orderId') orderId: string,
@@ -90,13 +115,13 @@ export class OrderController {
   @Delete('/:orderProductId')
   async withdrawOrderByOption(
     @Headers('user') userId: number,
-    @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
+    @Param('orderProductId') orderProductId: string,
   ) {
     if (!orderProductId)
       throw new HttpException('INVALID_REQUEST', HttpStatus.BAD_REQUEST);
 
     const message = await this.orderService.withdrawOrderByOption(
-      orderProductId,
+      +orderProductId,
       userId,
     );
 

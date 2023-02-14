@@ -72,6 +72,11 @@ export class UserController {
     return this.userService.kakaoLogin(access_token);
   }
 
+  @Get('mypage') //유저정보 수정 시 필요한 데이터 GET
+  async getUserInfoAtMypage(@Headers('user') userId: number) {
+    return this.userService.getUserInfoAtMypage(userId);
+  }
+
   @Get('info') //유저정보 수정 시 필요한 데이터 GET
   async getUserInfoToChange(@Headers('user') userId: number) {
     return this.userService.getUserInfoToChange(+userId);

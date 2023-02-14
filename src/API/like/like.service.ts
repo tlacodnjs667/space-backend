@@ -13,11 +13,12 @@ export class LikeService {
     );
 
     if (!checkWishlist.length) {
-      return await LikeRepository.addWishlist(
+      const { insertId } = await LikeRepository.addWishlist(
         userId,
         likeOption.productId,
         likeOption.optionId,
       );
+      return { insertId };
     } else {
       return await LikeRepository.checkDeleteWishlist(
         userId,

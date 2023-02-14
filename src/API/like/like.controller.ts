@@ -8,7 +8,6 @@ import {
   Query,
   Headers,
   Param,
-  HttpCode,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
@@ -20,14 +19,14 @@ export class LikeController {
 
   @Post()
   async addWishlist(
-    @Body('user') userId: number,
+    @Headers('user') userId: number,
     @Body() likeOption: CreateLikeDto,
   ) {
     return this.likeService.addWishlist(userId, likeOption);
   }
 
   @Get()
-  getWishlist(@Query('user') userId: number) {
+  getWishlist(@Headers('user') userId: number) {
     return this.likeService.getWishlist(+userId);
   }
 

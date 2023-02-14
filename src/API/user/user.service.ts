@@ -51,17 +51,24 @@ export class UserService {
 
   async checkUser(user: LoginUserDto) {
     const query = `email = '${user.email}'`;
-    const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
-
+    const userInfoFromDB = await UserRepository.checkUserInDB(query);
+    if (!userInfoFromDB.length)
+      throw new HttpException('UNDEFINED_USER', HttpStatus.NOT_FOUND);
     const checkForClient = await this.checkHash(
       user.password,
-      userInfoFromDB.password,
+      userInfoFromDB[0].password,
     );
 
     if (!checkForClient) {
       throw new HttpException("PASSWORD_ISN'T_VALID", HttpStatus.UNAUTHORIZED);
     }
-    return this.getAccessToken(userInfoFromDB);
+    return this.getAccessToken(userInfoFromDB[0]);
+  }
+
+  async getUserInfoAtMypage(userId: number) {
+    const [result] = await UserRepository.getUserInfoAtMypage(userId);
+
+    return result;
   }
 
   async getInfoOfGoogleUser(credentialResponse: GetGoogleUser) {
@@ -150,7 +157,7 @@ export class UserService {
     const [userInfoFromDB] = await UserRepository.checkUserInDB(query);
     //DB 내에 비밀번호가 없을 때는 들어온 비밀번호를 넣어줘야하고,
     // DB 내에 비밀 번호가 있는데 userPassword가 있으면 페크 해주어야 함
-    console.log(userInfoToChange);
+
     if (
       !userInfoFromDB.kakao_id &&
       !userInfoFromDB.google_id &&
@@ -182,8 +189,6 @@ export class UserService {
       }
     }
 
-    console.log(QueryForChange);
-
     if (!QueryForChange.length) {
       throw new HttpException(
         'CANNOT_FIND_INFO_FOR_CHANGE',
@@ -198,14 +203,10 @@ export class UserService {
   }
 
   getAccessToken(user: UserInfoForJWT) {
-    console.log(user);
-
     const jwtt = this.jwtService.sign(
       { email: user.email, userId: user.id },
       { secret: process.env.JWT_SECRETKEY, expiresIn: '2h' },
     );
-
-    console.log(jwtt);
 
     return jwtt;
   }

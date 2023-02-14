@@ -12,7 +12,7 @@ export interface IReviewInfo {
 }
 
 export interface IReviewInfoToCreateOnHeader {
-  userId: number;
+  user: number;
 }
 
 export interface IReviewInfoToCreateOnFile {

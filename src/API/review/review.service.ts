@@ -24,12 +24,13 @@ export class ReviewService {
       throw new HttpException('DUPLICATED_REVIEW', HttpStatus.FORBIDDEN);
 
     const keys = ['userId'];
-    const values = [userId];
+    const values: (string | number)[] = [userId];
 
     for (const [key, value] of Object.entries(createReviewInfo)) {
       if (value) {
         keys.push(key);
-        values.push(value);
+        if (!Number(value)) values.push(`'${value}'`);
+        else values.push(value);
       }
     }
 
@@ -86,7 +87,11 @@ export class ReviewService {
   async getWhichReviewUserCanWriteReview(
     userId: number,
   ): Promise<IReviewCanCreate[]> {
-    return ReviewRepository.getWhichReviewUserCanWriteReview(userId);
+    const result = await ReviewRepository.getWhichReviewUserCanWriteReview(
+      userId,
+    );
+
+    return result;
   }
 
   async getReviewAvgByProductId(productId: number) {
@@ -126,6 +131,10 @@ export class ReviewService {
     return ReviewRepository.getReviewByUserId(userId, offset);
   }
 
+  getReviewByReviewId(userId: number, reviewId: number) {
+    return ReviewRepository.getReviewByReviewId(userId, reviewId);
+  }
+
   async getReviewByCalendar(calendarId: number) {
     const reviews = await ReviewRepository.getReviewByCalendar(calendarId);
     const queryToCount = `FROM calendar_comments WHERE calendarId = ${calendarId}`;
@@ -146,7 +155,7 @@ export class ReviewService {
     updateReviewInfo: UpdateProductReviewDto,
   ) {
     const reviewId = updateReviewInfo.reviewId;
-    const checkValidAuthor = await ReviewRepository.checkAuthorOfReview(
+    const [checkValidAuthor] = await ReviewRepository.checkAuthorOfReview(
       reviewId,
     );
 
@@ -158,8 +167,11 @@ export class ReviewService {
 
     for (const [key, value] of Object.entries(updateReviewInfo)) {
       if (key === 'reviewId') continue;
-      if (value) {
+      else if (key === 'file') continue;
+      if (Number(value)) {
         queyrToUpdate.push(`${key} = ${value}`);
+      } else {
+        queyrToUpdate.push(`${key} = '${value}'`);
       }
     }
 

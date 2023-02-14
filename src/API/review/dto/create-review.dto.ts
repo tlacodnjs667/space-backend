@@ -13,7 +13,7 @@ export class CreateReviewDto {
 
 export class CreateReviewReqDto {
   body: CreateReviewDto;
-  header: IReviewInfoToCreateOnHeader;
+  headers: IReviewInfoToCreateOnHeader;
   file?: IReviewInfoToCreateOnFile;
 }
 
@@ -27,14 +27,13 @@ export class CreateEventReviewDto {
 }
 export class UpdateProductReviewDto {
   reviewId: number;
-  title?: string;
   content?: string;
   star?: number;
   thumbnail?: string;
 }
 export class UpdateProductReviewReqDto {
   body: UpdateProductReviewDto;
-  header: IReviewInfoToCreateOnHeader;
+  headers: IReviewInfoToCreateOnHeader;
   file?: IReviewInfoToCreateOnFile;
 }
 export class UpdateEventReview {

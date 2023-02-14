@@ -33,7 +33,6 @@ import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-in
 import { ProductController } from './API/product/product.controller';
 import { OrderController } from './API/order/order.controller';
 import { ReviewController } from './API/review/review.controller';
-import { UserController } from './API/user/user.controller';
 
 @Module({
   imports: [
@@ -68,27 +67,30 @@ export class AppModule implements NestModule {
         { path: 'review/event/:eventId', method: RequestMethod.GET },
         { path: 'review/main', method: RequestMethod.GET },
         { path: 'review/img/:reviewId', method: RequestMethod.GET },
-        { path: 'like/calendar/:calendarId', method: RequestMethod.POST },
       )
       .forRoutes(
         CartController,
         OrderController,
         LikeController,
         ReviewController,
-        { path: 'user/info', method: RequestMethod.GET },
-        { path: 'user/info', method: RequestMethod.PATCH },
+        { path: '/user/info', method: RequestMethod.GET },
+        { path: '/user/mypage', method: RequestMethod.GET },
+        { path: '/user/info', method: RequestMethod.PATCH },
       );
     consumer
       .apply(MakeOrderNumsMiddleware)
       .forRoutes(
         { path: '/order/by-cart', method: RequestMethod.POST },
         { path: '/order/by-optionId', method: RequestMethod.POST },
+        { path: '/order/product-detail', method: RequestMethod.POST },
       );
     consumer
       .apply(FileUploaderMiddleware)
       .forRoutes(
         { path: '/user/create', method: RequestMethod.POST },
         { path: '/user/info', method: RequestMethod.PATCH },
+        { path: '/review/product', method: RequestMethod.POST },
+        { path: '/review/product', method: RequestMethod.PATCH },
       );
     consumer
       .apply(CheckUserInfoFromAuthMiddleware)

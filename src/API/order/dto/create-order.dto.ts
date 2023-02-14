@@ -6,6 +6,7 @@ export class CreateOrderDto {
   name: string;
   orderNumber: string;
   trackingNumber: string[] | string;
+  price: number;
 }
 
 export class CreateOrderDtoByUser extends CreateOrderDto {
@@ -17,5 +18,14 @@ export class CreateOrderDtoByOption extends CreateOrderDto {
   optionId: number;
   quantity: number;
   trackingNumber: string;
-  price?: number;
+}
+
+export class CreateOrderDtoByOptionInProductDetail extends CreateOrderDto {
+  optionsInfo: CreateOrderAtProductDetail[];
+  trackingNumber: string;
+}
+
+export interface CreateOrderAtProductDetail {
+  optionId: number;
+  quantity: number;
 }
