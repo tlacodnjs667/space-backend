@@ -6,7 +6,7 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Get()
-  getCalendarList(@Query('offset') offset: string) {
+  getCalendarList(@Query('offset') offset: number) {
     return this.calendarService.getCalendarList(offset);
   }
 

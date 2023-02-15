@@ -4,7 +4,7 @@ import { LaunchingCalendar } from 'src/entities/launching_calendar.entity';
 export const LaunchingCalendarRepository = AppDataSource.getRepository(
   LaunchingCalendar,
 ).extend({
-  getCalendarList: (offset: string) => {
+  getCalendarList: (offset: number) => {
     return LaunchingCalendarRepository.query(`
       SELECT
 	      l.id,

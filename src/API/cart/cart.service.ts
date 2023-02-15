@@ -15,18 +15,24 @@ export class CartService {
       array.push(`(${el.optionId}, ${el.quantity}, ${id})`);
     });
     const addCart = array.join(', ');
-    const checkUserCart = await CartRepository.CheckUserCart(
-      userId,
-      cartItem.cartItem[0].optionId,
-    );
-    if (checkUserCart.length == 0) {
-      return await CartRepository.createUserCart(addCart);
-    } else if (checkUserCart.length == 1) {
-      return await CartRepository.updateUserCart(
-        +userId,
-        +cartItem.cartItem[0].optionId,
-        checkUserCart[0].quantity + Number(cartItem.cartItem[0].quantity),
+
+    for (const element of cartItem.cartItem) {
+      const checkUserCart = await CartRepository.CheckUserCart(
+        userId,
+        element.optionId,
       );
+      console.log(checkUserCart.length);
+      if (checkUserCart.length === 1) {
+        await CartRepository.updateUserCart(
+          +userId,
+          element.optionId,
+          element.quantity,
+        );
+        console.log(checkUserCart);
+      }
+      if (!checkUserCart || checkUserCart.length === 0) {
+        return await CartRepository.createUserCart(addCart);
+      }
     }
   }
 

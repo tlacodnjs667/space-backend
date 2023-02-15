@@ -7,3 +7,7 @@ export class CreateLikeDto {
   productId: number;
   optionId: number;
 }
+export class CreateItem {
+  optionId: number;
+  productId: number;
+}

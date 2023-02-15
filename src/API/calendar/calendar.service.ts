@@ -3,7 +3,7 @@ import { LaunchingCalendarRepository } from './calendar.repository';
 
 @Injectable()
 export class CalendarService {
-  getCalendarList(offset: string) {
+  getCalendarList(offset: number) {
     return LaunchingCalendarRepository.getCalendarList(offset);
   }
 
