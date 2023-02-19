@@ -21,14 +21,13 @@ export class CartService {
         userId,
         element.optionId,
       );
-      console.log(checkUserCart.length);
+
       if (checkUserCart.length === 1) {
         await CartRepository.updateUserCart(
           +userId,
           element.optionId,
           element.quantity,
         );
-        console.log(checkUserCart);
       }
       if (!checkUserCart || checkUserCart.length === 0) {
         return await CartRepository.createUserCart(addCart);

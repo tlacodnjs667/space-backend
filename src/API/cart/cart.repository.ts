@@ -24,7 +24,6 @@ export const CartRepository = AppDataSource.getRepository(Cart).extend({
     `);
   },
   updateUserCart: (userId: number, optionId: number, quantity: number) => {
-    console.log(userId, optionId, quantity);
     return CartRepository.query(`
     update carts
       SET quantity = quantity + ${quantity}
