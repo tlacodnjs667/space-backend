@@ -206,7 +206,7 @@ export const ProductRepository = AppDataSource.getRepository(Product).extend({
       ${whereQuery}
       GROUP BY p.id , orders.orderCount, reviews.reviewCount 
       ${orderQuery}
-      LIMIT 14 OFFSET ${offset}
+      LIMIT 9 OFFSET ${offset}
 	  `);
   },
   getCountOrder: (left: string, colorsQuery: string, itemQuery: string) => {

@@ -28,12 +28,14 @@ export class ProductController {
     @Query('offset') offset: string,
     @Query() criteria: FilterDto,
   ) {
+    console.log(userId);
     const result = await this.productService.getProductList(
       ordering,
       +offset,
       criteria,
       userId,
     );
+    console.log(result);
     return result;
   }
 

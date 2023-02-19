@@ -10,7 +10,11 @@ import {
   Param,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
+import {
+  CreateItem,
+  CreateLikeDto,
+  CreateReviewLikeDto,
+} from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
 
 @Controller('like')
@@ -25,14 +29,24 @@ export class LikeController {
     return this.likeService.addWishlist(userId, likeOption);
   }
 
+  @Post('option')
+  async createUserLike(
+    @Headers('user') userId: number,
+    @Body() item: CreateItem,
+  ) {
+    await this.likeService.createUserLike(userId, item);
+    const message = 'SUCCESS';
+    return message;
+  }
+
   @Get()
   getWishlist(@Headers('user') userId: number) {
     return this.likeService.getWishlist(+userId);
   }
 
   @Patch()
-  update(@Headers('user') userId: number, @Body() item: UpdateLikeDto) {
-    return this.likeService.updateWishlist(userId, item);
+  async update(@Headers('user') userId: number, @Body() item: UpdateLikeDto) {
+    return await this.likeService.updateWishlist(userId, item);
   }
 
   @Delete()

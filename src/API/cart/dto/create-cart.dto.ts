@@ -3,8 +3,8 @@ export class CreateCartDto {
 }
 
 export class CartItem {
-  optionId: any;
-  quantity: any;
+  optionId: number;
+  quantity: number;
 }
 export class UpdateCartDto {
   cartId: number;

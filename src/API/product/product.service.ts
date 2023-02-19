@@ -241,6 +241,8 @@ export class ProductService {
     if (ordering.mainCategory)
       conditionArray.push(`ms.mainCategoryId in (${ordering.mainCategory})`);
 
+    if (ordering.name) conditionArray.push(`p.name LIKE '%${ordering.name}%'`);
+
     if (conditionArray.length) {
       whereQuery = `WHERE ${conditionArray.join(' AND ')}`;
     }

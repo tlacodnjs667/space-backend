@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLikeDto, CreateReviewLikeDto } from './dto/create-like.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  CreateItem,
+  CreateLikeDto,
+  CreateReviewLikeDto,
+} from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
 import { LikeRepository } from './like.repository';
 
@@ -13,18 +17,35 @@ export class LikeService {
     );
 
     if (!checkWishlist.length) {
-      const { insertId } = await LikeRepository.addWishlist(
+      return await LikeRepository.addWishlist(
         userId,
         likeOption.productId,
         likeOption.optionId,
       );
-      return { insertId };
     } else {
       return await LikeRepository.checkDeleteWishlist(
         userId,
         likeOption.productId,
         likeOption.optionId,
       );
+    }
+  }
+
+  async createUserLike(userId: number, item: CreateItem) {
+    const checkWishlist = await LikeRepository.checkWishlist(
+      userId,
+      item.productId,
+      item.optionId,
+    );
+    if (!checkWishlist.length) {
+      return await LikeRepository.addWishlist(
+        userId,
+        item.productId,
+        item.optionId,
+      );
+    } else {
+      const message = 'PRODUCT_ALREADY_REGISTERED';
+      return message;
     }
   }
 
@@ -36,11 +57,21 @@ export class LikeService {
     const query = likeId
       ? `WHERE userId = ${userId} AND id IN (${likeId})`
       : `WHERE userId = ${userId}`;
-    return LikeRepository.deleteWishlist(+query);
+    return LikeRepository.deleteWishlist(query);
   }
 
-  updateWishlist(userId: number, item: UpdateLikeDto) {
-    return LikeRepository.updateWishlist(userId, item.optionId, item.productId);
+  async updateWishlist(userId: number, item: UpdateLikeDto) {
+    const checkWishlist = await LikeRepository.checkWishlist(
+      userId,
+      item.productId,
+      item.optionId,
+    );
+
+    if (!checkWishlist || checkWishlist.length === 0) {
+      return await LikeRepository.updateWishlist(item.optionId, item.likeId);
+    } else if (checkWishlist.length === 1) {
+      throw new HttpException('ALREADY', HttpStatus.BAD_REQUEST);
+    }
   }
   addCalendarLike(userId: number, calendarId: number) {
     return LikeRepository.addCalendarLike(userId, calendarId);
