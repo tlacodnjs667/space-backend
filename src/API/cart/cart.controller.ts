@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Patch,
+  Query,
+  Headers,
+  Delete,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import {
+  CreateCartDto,
+  UpdateCartDto,
+  UpdateItemDto,
+} from './dto/create-cart.dto';
 
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  async createUserCart(
+    @Body() cartItem: CreateCartDto,
+    @Headers('user') userId: number,
+  ) {
+    return this.cartService.createUserCart(cartItem, +userId);
   }
 
   @Get()
-  findAll() {
-    return this.cartService.findAll();
+  getUserCart(@Headers('user') userId: number) {
+    return this.cartService.getUserCart(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
+  @Patch('quantity')
+  updateQuantityCart(
+    @Query() optionItem: UpdateCartDto,
+    @Headers('user') userId: number,
+  ) {
+    return this.cartService.updateQuantityCart(optionItem, userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
+  @Patch('option')
+  updateProdutCart(
+    @Query() CartOption: UpdateItemDto,
+    @Headers('user') userId: number,
+  ) {
+    return this.cartService.updateProductCart(CartOption, userId);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  @Delete()
+  deleteCart(
+    @Headers('user') userId: number,
+    @Query('cartId') cartId: number | number[],
+  ) {
+    return this.cartService.deleteCart(userId, cartId);
   }
 }

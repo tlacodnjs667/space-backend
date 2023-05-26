@@ -4,6 +4,6 @@ import { WeeklyCodyController } from './weekly_cody.controller';
 
 @Module({
   controllers: [WeeklyCodyController],
-  providers: [WeeklyCodyService]
+  providers: [WeeklyCodyService],
 })
 export class WeeklyCodyModule {}

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Like,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -8,6 +9,8 @@ import {
 import { Size } from './size.entity';
 import { ProductColor } from './product_color.entity';
 import { OrderProducts } from './order_product.entity';
+import { Cart } from './cart.entity';
+import { ProductLike } from './like.entity';
 
 @Entity()
 export class ProductOptions {
@@ -43,6 +46,10 @@ export class ProductOptions {
     (order_products) => order_products.product_option,
   )
   order_products: OrderProducts[];
+  @OneToMany(() => Cart, (cart) => cart.product_option)
+  carts: Cart[];
+  @OneToMany(() => ProductLike, (like) => like.option)
+  likes: ProductLike[];
   @ManyToOne(
     () => ProductColor,
     (product_color) => product_color.product_options,

@@ -29,7 +29,7 @@ export class Event {
   thumbnail: string;
   @Column({ length: 1000, nullable: true })
   template: string;
-  @ManyToOne(() => EventStatus, (event_status) => event_status.id, {
+  @ManyToOne(() => EventStatus, (event_status) => event_status.events, {
     nullable: false,
     onDelete: 'CASCADE',
   })

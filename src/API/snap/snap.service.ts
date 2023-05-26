@@ -1,26 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSnapDto } from './dto/create-snap.dto';
-import { UpdateSnapDto } from './dto/update-snap.dto';
+import { SnapDto } from './dto/create-snap.dto';
+import { SnapRepository } from './snap.repository';
 
 @Injectable()
 export class SnapService {
-  create(createSnapDto: CreateSnapDto) {
-    return 'This action adds a new snap';
+  async getSnapList(hashtag: string) {
+    const snap = await SnapRepository.getSnapList(hashtag);
+    const count = await SnapRepository.getCountSnap(hashtag);
+    return { snap, count };
   }
-
-  findAll() {
-    return `This action returns all snap`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} snap`;
-  }
-
-  update(id: number, updateSnapDto: UpdateSnapDto) {
-    return `This action updates a #${id} snap`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} snap`;
+  async getSnapDetail(snap: SnapDto) {
+    const list = await SnapRepository.getSnapList(snap.hashtag);
+    const counts = await SnapRepository.getCountSnap(snap.hashtag);
+    const detail = await SnapRepository.getSnapDetail(snap.snapId);
+    return { list, counts, detail };
   }
 }

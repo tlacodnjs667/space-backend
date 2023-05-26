@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  Query,
+  Headers,
+} from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
@@ -8,27 +17,44 @@ export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  create(@Body() createLikeDto: CreateLikeDto) {
-    return this.likeService.create(createLikeDto);
+  addWishlist(
+    @Headers('user') userId: number,
+    @Body('productId') productId: string,
+  ) {
+    return this.likeService.addWishlist(userId, productId);
   }
 
   @Get()
-  findAll() {
-    return this.likeService.findAll();
+  getWishlist(@Headers('user') userId: number) {
+    return this.likeService.getWishlist(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.likeService.findOne(+id);
+  @Patch()
+  update(@Headers('user') userId: number, @Body() item: UpdateLikeDto) {
+    return this.likeService.updateWishlist(userId, item);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-    return this.likeService.update(+id, updateLikeDto);
+  @Delete()
+  deleteWishlist(
+    @Headers('user') userId: number,
+    @Query('productId') productId: string,
+  ) {
+    return this.likeService.deleteWishlist(userId, productId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.likeService.remove(+id);
+  @Post('calendar')
+  addCalendarLike(
+    @Headers('user') userId: number,
+    @Body('calendarId') calendarId: string,
+  ) {
+    return this.likeService.addCalendarLike(userId, calendarId);
+  }
+
+  @Post('review')
+  addReviewLike(
+    @Headers('user') userId: number,
+    @Body() review: CreateLikeDto,
+  ) {
+    return this.likeService.addReviewLike(userId, review);
   }
 }

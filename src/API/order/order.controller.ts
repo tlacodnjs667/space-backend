@@ -1,34 +1,102 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Headers,
+  Get,
+  Query,
+  Delete,
+  Param,
+  ParseIntPipe,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import {
+  CreateOrderDtoByOption,
+  CreateOrderDtoByUser,
+} from './dto/create-order.dto';
+import { GetOrderInfoFilter } from './IOrderInterface';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Post('by-cart')
+  async orderProducts(
+    @Headers('user') userId: number,
+    @Body() orderInfo: CreateOrderDtoByUser,
+  ) {
+    if (!orderInfo.address || !orderInfo.detail_address || !orderInfo.phone)
+      throw new HttpException('INVALID_SHIPMENT', HttpStatus.BAD_REQUEST);
+    if (!orderInfo.cartInfo.length)
+      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+    const message = await this.orderService.orderProducts(orderInfo, userId);
+    return { message };
+  }
+  @Post('by-optionId')
+  async orderProductsByOption(
+    @Headers('user') userId: number,
+    @Body() orderInfo: CreateOrderDtoByOption,
+  ) {
+    if (!orderInfo.address || !orderInfo.detail_address || !orderInfo.phone)
+      throw new HttpException('INVALID_SHIPMENT', HttpStatus.BAD_REQUEST);
+
+    if (!orderInfo.optionId || !orderInfo.quantity)
+      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+
+    return this.orderService.makeOrderProductByProduct(orderInfo, userId);
+  }
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  getOrderInfo(
+    //구매하기 페이지
+    @Headers('user') userId: number,
+    @Body('cartIdList') cartIdList: number[],
+  ) {
+    if (!cartIdList.length)
+      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+
+    return this.orderService.getOrderInfo(userId, cartIdList);
   }
 
-  @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @Get('history/:user')
+  async getOrderHistory(
+    @Param('user') userId: number,
+    @Query() dateFilter: GetOrderInfoFilter,
+  ) {
+    return this.orderService.getOrderHistory(userId, dateFilter);
+  }
+  @Get('mypage/:user')
+  async getMypageOrderInfo(@Param('user') userId: number) {
+    return this.orderService.getMypageOrderInfo(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+  @Delete('all')
+  async withdrawOrder(
+    @Headers('user') userId: number,
+    @Body('orderId') orderId: number,
+  ) {
+    if (!orderId)
+      throw new HttpException('INVALID_ORDER_OPTION', HttpStatus.BAD_REQUEST);
+
+    const message = await this.orderService.withdrawOrder(userId, orderId);
+
+    return { message };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
-  }
+  @Delete('/:orderProductId')
+  async withdrawOrderByOption(
+    @Param('orderProductId', new ParseIntPipe()) orderProductId: number,
+    @Headers('user') userId: number,
+  ) {
+    if (!orderProductId)
+      throw new HttpException('INVALID_', HttpStatus.BAD_REQUEST);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+    const message = await this.orderService.withdrawOrderByOption(
+      orderProductId,
+      userId,
+    );
+
+    return { message };
   }
 }

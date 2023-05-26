@@ -1,26 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { CartRepository } from './cart.repository';
+import {
+  CreateCartDto,
+  UpdateCartDto,
+  UpdateItemDto,
+} from './dto/create-cart.dto';
 
 @Injectable()
 export class CartService {
-  create(createCartDto: CreateCartDto) {
-    return 'This action adds a new cart';
+  async createUserCart(cartItem: CreateCartDto, userId: number) {
+    const checkUserCart = await CartRepository.CheckUserCart(
+      +userId,
+      +cartItem.optionId,
+    );
+    // console.log(typeof checkUserCart[0].quantity);
+
+    if (checkUserCart.length == 0) {
+      return CartRepository.createUserCart(
+        +userId,
+        +cartItem.optionId,
+        +cartItem.quantity,
+      );
+    } else if (checkUserCart.length == 1) {
+      return CartRepository.updateUserCart(
+        +userId,
+        +cartItem.optionId,
+        checkUserCart[0].quantity + Number(cartItem.quantity),
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all cart`;
+  getUserCart(userId: number) {
+    return CartRepository.getUserCart(userId);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+  async updateQuantityCart(optionItem: UpdateCartDto, userId: number) {
+    await CartRepository.updateQuantityCart(
+      optionItem.cartId,
+      optionItem.quantity,
+      userId,
+    );
+    return CartRepository.getUserCart(userId);
+  }
+  async updateProductCart(cartOption: UpdateItemDto, userId: number) {
+    await CartRepository.updateProductCart(
+      +cartOption.optionId,
+      +cartOption.cartId,
+      userId,
+    );
+    return CartRepository.getUserCart(userId);
   }
 
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
-  }
+  async deleteCart(userId: number, cartId: number | number[]) {
+    const query = cartId
+      ? `WHERE userId = ${userId} AND id IN (${cartId})`
+      : `WHERE userId = ${userId}`;
 
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+    return CartRepository.deleteCart(query);
   }
 }

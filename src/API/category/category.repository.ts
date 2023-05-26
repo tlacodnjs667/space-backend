@@ -1,4 +1,4 @@
-import { AppDataSource } from 'src/config/data-source';
+import { AppDataSource } from 'src/config/database-config';
 import { MainCategories } from 'src/entities/main_categories.entity';
 
 export const CategoryRepository = AppDataSource.getRepository(
@@ -6,25 +6,37 @@ export const CategoryRepository = AppDataSource.getRepository(
 ).extend({
   findCategories() {
     return CategoryRepository.query(`
-        SELECT
-          	m.id,
-          	m.name,
-          	sc.subCate	
-        FROM main_categories m
-        LEFT JOIN (
-	        SELECT
-	        	ms.main_id AS mainId,
-		        JSON_ARRAYAGG(
-		        	JSON_OBJECT(
-		    	    	'id', IFNULL(s.id, ''),
-		    	    	'name', IFNULL(s.name, '')
-		    	    )
-        		) AS subCate
-	        FROM main_sub_categories ms
-	        LEFT JOIN sub_categories s ON ms.sub_id = s.id	
-			) AS sc ON sc.mainId = m.id
-		WHERE m.id = 2 OR m.id=3
-  	    GROUP BY mainId
-      `);
+		SELECT
+			m.id,
+			m.name,
+			sc.subCategories,
+			naming.namingCategoies
+		FROM main_categories m
+		LEFT JOIN (
+		  SELECT
+			  ms.mainCategoryId,
+			  JSON_ARRAYAGG(
+				  JSON_OBJECT(
+					  'id', IFNULL(s.id, ''),
+					  'name', IFNULL(s.name, '')
+				  )
+			  ) AS subCategories
+		  FROM main_sub_categories ms
+		  LEFT JOIN sub_categories s ON ms.subCategoryId = s.id
+		  GROUP BY mainCategoryId
+		) AS sc ON sc.mainCategoryId = m.id
+		LEFT JOIN (
+		  SELECT
+			  mainCategoryId,
+			  JSON_ARRAYAGG(
+				  JSON_OBJECT(
+					  'namingId',naming.id,
+					  'namingName', naming.name
+					  )
+			  ) AS namingCategoies
+		  FROM naming_categories naming
+		  GROUP BY mainCategoryId
+		) AS naming ON naming.mainCategoryId = m.id
+		      `);
   },
 });

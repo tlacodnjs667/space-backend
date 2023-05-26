@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ILookbookForMain, ILookbookForMainDetail } from './ILookbook';
 import { LookbookService } from './lookbook.service';
-import { CreateLookbookDto } from './dto/create-lookbook.dto';
-import { UpdateLookbookDto } from './dto/update-lookbook.dto';
 
 @Controller('lookbook')
 export class LookbookController {
   constructor(private readonly lookbookService: LookbookService) {}
-
-  @Post()
-  create(@Body() createLookbookDto: CreateLookbookDto) {
-    return this.lookbookService.create(createLookbookDto);
-  }
-
   @Get()
-  findAll() {
-    return this.lookbookService.findAll();
+  getLookbookList(@Query('offset') offset: string) {
+    return this.lookbookService.getLookbookList(+offset);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lookbookService.findOne(+id);
+  @Get('list')
+  getLookbookDetail(@Query('lookbookId') lookbookId: string) {
+    return this.lookbookService.getLookbookDetail(lookbookId);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLookbookDto: UpdateLookbookDto) {
-    return this.lookbookService.update(+id, updateLookbookDto);
+  @Get('main')
+  getLookbookForMain(): Promise<ILookbookForMain[]> {
+    return this.lookbookService.getLookbookForMain();
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.lookbookService.remove(+id);
+  @Get('main/:lookbookId')
+  getLookbookDetailForMain(
+    @Param('lookbookId') lookbookId: string,
+  ): Promise<ILookbookForMainDetail[]> {
+    return this.lookbookService.getLookbookDetailForMain(+lookbookId);
   }
 }

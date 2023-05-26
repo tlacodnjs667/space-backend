@@ -1,28 +1,81 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
-import { UserController } from './API/user/user.controller';
-import { UserService } from './API/user/user.service';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
+
 import { ConfigModule } from '@nestjs/config';
-import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { CategoryModule } from './API/category/category.module';
-import { CategoryController } from './API/category/category.controller';
-import { CategoryService } from './API/category/category.service';
-import { ProductController } from './API/product/product.controller';
-import { ProductService } from './API/product/product.service';
 import { ProductModule } from './API/product/product.module';
 import { JwtModule } from '@nestjs/jwt';
-dotenv.config();
+import { CartModule } from './API/cart/cart.module';
+import { UserModule } from './API/user/user.module';
+import { LookbookModule } from './API/lookbook/lookbook.module';
+import { CalendarModule } from './API/calendar/calendar.module';
+import { ReviewModule } from './API/review/review.module';
+import { EventModule } from './API/event/event.module';
+import { WeeklyCodyModule } from './API/weekly_cody/weekly_cody.module';
+import { SnapModule } from './API/snap/snap.module';
+import { OrderModule } from './API/order/order.module';
+import { LikeModule } from './API/like/like.module';
+import { CheckUserInfoFromAuthMiddleware } from './middleware/auth/check-user-info-from-auth.middleware';
+import { ProductController } from './API/product/product.controller';
+
+import { FileUploaderMiddleware } from './middleware/file-uploader/file-uploader.middleware';
+import { AuthMiddleware } from './middleware/auth/auth.middleware';
+import { MakeOrderNumsMiddleware } from './middleware/make-order-nums.middleware';
+
+import { CartController } from './API/cart/cart.controller';
+import { LikeController } from './API/like/like.controller';
+
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-    CategoryModule,
     ProductModule,
     JwtModule,
+    CategoryModule,
+    ProductModule,
+    CartModule,
+    UserModule,
+    JwtModule,
+    LookbookModule,
+    CalendarModule,
+    OrderModule,
+    ReviewModule,
+    EventModule,
+    SnapModule,
+    WeeklyCodyModule,
+    LikeModule,
   ],
-  controllers: [UserController, CategoryController, ProductController],
-  providers: [UserService, CategoryService, ProductService],
+  exports: [JwtModule],
+  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(
+        CartController,
+        LikeController,
+        { path: '/review', method: RequestMethod.POST },
+        { path: '/review', method: RequestMethod.PATCH },
+        { path: '/review', method: RequestMethod.DELETE },
+      );
+    consumer
+      .apply(MakeOrderNumsMiddleware)
+      .forRoutes(
+        { path: '/order/by-cart', method: RequestMethod.POST },
+        { path: '/order/by-optionId', method: RequestMethod.POST },
+      );
+    consumer
+      .apply(FileUploaderMiddleware)
+      .forRoutes({ path: '/user/create', method: RequestMethod.POST });
+    consumer
+      .apply(CheckUserInfoFromAuthMiddleware)
+      .forRoutes(ProductController);
+  }
+}
